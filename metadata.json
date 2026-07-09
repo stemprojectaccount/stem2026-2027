@@ -1,0 +1,6 @@
+{
+  "name": "SmartStudy - Trợ lý Học tập Thông minh",
+  "description": "Ứng dụng hỗ trợ học tập bắt mắt và sinh động, cho phép soạn giáo án bài mới, ôn tập bài cũ và kiểm tra kiến thức trực quan.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
