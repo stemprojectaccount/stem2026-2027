@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { 
+import FriendChallenge from "./FriendChallenge";
+import { Swords,  
   Zap, 
   Flame, 
   Trophy, 
@@ -85,7 +86,9 @@ const DAILY_TRIVIA = [
   }
 ];
 
-export default function Dashboard({ 
+export default function Dashboard({
+  
+ 
   lessons, 
   progress, 
   onSelectTab, 
@@ -103,6 +106,7 @@ export default function Dashboard({
   const [triviaIndex, setTriviaIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [isSimulatorExpanded, setIsSimulatorExpanded] = useState(false);
+  const [showPKModal, setShowPKModal] = useState(false);
   const [chartMode, setChartMode] = useState<"daily" | "weekly">("daily");
   const [viewMode, setViewMode] = useState<"grid" | "list">(() => {
     return (localStorage.getItem("dashboard_lessons_view_mode") as "grid" | "list") || "grid";
@@ -220,6 +224,13 @@ export default function Dashboard({
               className="px-6 py-3.5 bg-indigo-500/30 backdrop-blur text-white rounded-xl font-extrabold text-sm border border-white/20 hover:bg-indigo-500/40 transition-all"
             >
               Vào Thách Đố 🧠
+            </button>
+            <button 
+              onClick={() => setShowPKModal(true)}
+              className="px-6 py-3.5 bg-rose-500/30 backdrop-blur text-white rounded-xl font-extrabold text-sm border border-white/20 hover:bg-rose-500/40 transition-all flex items-center gap-2"
+            >
+              <Swords className="w-4 h-4" />
+              Thách Đấu PK ⚔️
             </button>
           </div>
         </div>
@@ -1165,6 +1176,8 @@ export default function Dashboard({
           </div>
         )}
       </div>
+    
+      {showPKModal && <FriendChallenge onClose={() => setShowPKModal(false)} />}
     </div>
   );
 }

@@ -29,6 +29,22 @@ export interface QuizSession {
   score: number;
 }
 
+export interface MagicCard {
+  id: string;
+  name: string;
+  emoji: string;
+  tier: "dong" | "sat" | "bac" | "vang" | "kimcuong" | "baymau";
+  rarity: "Common" | "Rare" | "Epic" | "Legendary" | "Mythic";
+  tierLabel: string;
+  colorClass: string;
+  bgClass: string;
+  borderClass: string;
+  description: string;
+  effect: string;
+  power: number;
+  cooldownRounds: number;
+}
+
 export interface UserProgress {
   points: number;
   level: number;
@@ -65,3 +81,10 @@ export interface Flashcard {
   status: "new" | "learning" | "reviewing" | "mastered";
 }
 
+
+export interface FusionRecipe {
+  id: string;
+  ingredients: string[];
+  resultCardId: string;
+  baseSuccessRate: number;
+}

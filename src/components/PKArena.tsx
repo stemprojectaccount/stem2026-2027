@@ -29,7 +29,8 @@ import {
   Eye,
   HelpCircle
 } from "lucide-react";
-import { UserProgress, Question, Lesson } from "../types";
+import { UserProgress, Question, Lesson, MagicCard } from "../types";
+import { MAGIC_CARDS } from "../data";
 import { getAvatarAtLevel } from "../lib/avatarEvolution";
 import ConfettiCelebration from "./ConfettiCelebration";
 import { motion, AnimatePresence } from "motion/react";
@@ -190,295 +191,6 @@ const BOT_POOL = [
   { name: "Hoàng Minh Tuấn", avatarEmoji: "🐸", level: 5, title: "Ếch Khoa Học", winRate: 58 }
 ];
 
-export interface MagicCardDef {
-  id: string;
-  name: string;
-  emoji: string;
-  description: string;
-  effect: string;
-  colorClass: string;
-  bgClass: string;
-  tier: "dong" | "sat" | "bac" | "vang" | "kimcuong" | "baymau";
-  tierLabel: string;
-  power: number; // 0-100 rating based on potency
-  cooldownRounds: number; // rounds of cooldown needed after use
-}
-
-export const MAGIC_CARDS_LIST: MagicCardDef[] = [
-  {
-    id: "hint",
-    name: "Gợi Ý Tri Thức",
-    emoji: "💡",
-    description: "Khai sáng tư duy, soi lối đáp án.",
-    effect: "Tự động loại bỏ 2 phương án sai của câu hỏi hiện tại cho em.",
-    colorClass: "text-amber-600 bg-amber-50",
-    bgClass: "bg-amber-50 border-amber-300",
-    tier: "dong",
-    tierLabel: "Đồng (Common)",
-    power: 35,
-    cooldownRounds: 1
-  },
-  {
-    id: "timeslow",
-    name: "Ngưng Đọng Thời Gian",
-    emoji: "⏳",
-    description: "Ngưng đọng thời gian học tập.",
-    effect: "Cộng thêm 10 giây suy nghĩ cho câu hỏi hiện tại.",
-    colorClass: "text-orange-500 bg-orange-50",
-    bgClass: "bg-orange-50 border-orange-300",
-    tier: "dong",
-    tierLabel: "Đồng (Common)",
-    power: 40,
-    cooldownRounds: 1
-  },
-  {
-    id: "blind",
-    name: "Lá Che Màn Hình",
-    emoji: "🌫️",
-    description: "Sử dụng sương mù ma thuật làm mù mắt đối thủ.",
-    effect: "Gây mù màn hình bot 5s (giảm mạnh tỷ lệ đúng của bot còn 10% và delay bot trả lời).",
-    colorClass: "text-slate-600 bg-slate-50",
-    bgClass: "bg-slate-50 border-slate-350",
-    tier: "sat",
-    tierLabel: "Sắt (Uncommon)",
-    power: 50,
-    cooldownRounds: 1
-  },
-  {
-    id: "shield",
-    name: "Khiên Học Thuật",
-    emoji: "🛡️",
-    description: "Tạo lá chắn bảo vệ.",
-    effect: "Nếu đối thủ trả lời đúng ở lượt này, họ sẽ không được cộng điểm.",
-    colorClass: "text-blue-600 bg-blue-50",
-    bgClass: "bg-blue-50 border-blue-300",
-    tier: "sat",
-    tierLabel: "Sắt (Uncommon)",
-    power: 45,
-    cooldownRounds: 1
-  },
-  {
-    id: "freeze",
-    name: "Lá Đóng Băng",
-    emoji: "❄️",
-    description: "Đóng băng tuyệt đối hành động của đối thủ.",
-    effect: "Ngăn chặn đối thủ trả lời và ghi điểm ở vòng này. (Chỉ dùng tối đa 1 lần/trận).",
-    colorClass: "text-sky-500 bg-sky-50",
-    bgClass: "bg-sky-50 border-sky-300",
-    tier: "bac",
-    tierLabel: "Bạc (Rare)",
-    power: 85,
-    cooldownRounds: 2
-  },
-  {
-    id: "sabotage",
-    name: "Lá Gây Khó Đối Thủ",
-    emoji: "🌪️",
-    description: "Cuồng phong câu hỏi nhiễu loạn đối thủ.",
-    effect: "Biến câu hỏi của bot thành siêu khó (giảm tỷ lệ đúng còn 15%), nếu bot đúng chỉ nhận điểm gốc.",
-    colorClass: "text-teal-600 bg-teal-50",
-    bgClass: "bg-teal-50 border-teal-300",
-    tier: "bac",
-    tierLabel: "Bạc (Rare)",
-    power: 70,
-    cooldownRounds: 2
-  },
-  {
-    id: "steal",
-    name: "Tinh Linh Trộm Điểm",
-    emoji: "🦊",
-    description: "Trộm điểm số từ đối thủ.",
-    effect: "Nếu đối thủ đúng, nhận ngay 50% số điểm của họ làm của mình.",
-    colorClass: "text-emerald-600 bg-emerald-50",
-    bgClass: "bg-emerald-50 border-emerald-300",
-    tier: "bac",
-    tierLabel: "Bạc (Rare)",
-    power: 75,
-    cooldownRounds: 2
-  },
-  {
-    id: "mult15",
-    name: "Lá Nhân Hệ Số 1.5",
-    emoji: "⚡",
-    description: "Dòng điện cường hóa điểm số.",
-    effect: "Tăng 1.5 lần số điểm nhận được ở lượt hiện tại nếu em trả lời chính xác.",
-    colorClass: "text-yellow-600 bg-yellow-50",
-    bgClass: "bg-yellow-50 border-yellow-300",
-    tier: "vang",
-    tierLabel: "Vàng (Epic)",
-    power: 60,
-    cooldownRounds: 1
-  },
-  {
-    id: "luck",
-    name: "Xúc Xắc Trí Tuệ",
-    emoji: "🎲",
-    description: "Xúc xắc may rủi nhận điểm số.",
-    effect: "Nếu đúng, nhận ngẫu nhiên x1.5, x2 hoặc x3 điểm số lượt này!",
-    colorClass: "text-purple-600 bg-purple-50",
-    bgClass: "bg-purple-50 border-purple-300",
-    tier: "vang",
-    tierLabel: "Vàng (Epic)",
-    power: 68,
-    cooldownRounds: 2
-  },
-  {
-    id: "mult2",
-    name: "Lá Nhân Hệ Số 2.0",
-    emoji: "🔥",
-    description: "Ngọn lửa bứt phá điểm số tối thượng.",
-    effect: "Nhân đôi (x2) điểm số nhận được ở lượt hiện tại nếu em trả lời chính xác.",
-    colorClass: "text-rose-600 bg-rose-50",
-    bgClass: "bg-rose-50 border-rose-350",
-    tier: "kimcuong",
-    tierLabel: "Kim Cương (Legendary)",
-    power: 80,
-    cooldownRounds: 2
-  },
-  {
-    id: "divine",
-    name: "Thần Nhãn Học Đường",
-    emoji: "👁️",
-    description: "Mắt thần chỉ đường dẫn lối đáp án.",
-    effect: "Tiết lộ trực tiếp và tự chọn ngay đáp án chính xác của câu hỏi này!",
-    colorClass: "text-indigo-600 bg-indigo-50",
-    bgClass: "bg-indigo-50 border-indigo-300",
-    tier: "kimcuong",
-    tierLabel: "Kim Cương (Legendary)",
-    power: 88,
-    cooldownRounds: 3
-  },
-  {
-    id: "challenge",
-    name: "Thách Thức Vô Song",
-    emoji: "🌌",
-    description: "Vực sâu tri thức vũ trụ huyền thoại.",
-    effect: "Nâng độ khó lên mức siêu phàm 'Vô Song'. Trả lời đúng nhận ngẫu nhiên x2 hoặc x3 điểm!",
-    colorClass: "text-fuchsia-600 bg-fuchsia-50",
-    bgClass: "bg-gradient-to-br from-fuchsia-50 via-indigo-50 to-pink-50 border-fuchsia-400",
-    tier: "baymau",
-    tierLabel: "Bảy Màu (Mythic)",
-    power: 95,
-    cooldownRounds: 3
-  },
-  {
-    id: "omega",
-    name: "Ma Pháp Omega",
-    emoji: "🪐",
-    description: "Quyền năng tối thượng dung hợp.",
-    effect: "Tự động trả lời đúng, nhân đôi điểm số, đồng thời đóng băng đối thủ ở lượt này!",
-    colorClass: "text-violet-600 bg-violet-50",
-    bgClass: "bg-gradient-to-br from-violet-50 via-purple-100 to-indigo-100 border-violet-400",
-    tier: "baymau",
-    tierLabel: "Bảy Màu (Mythic)",
-    power: 99,
-    cooldownRounds: 3
-  },
-  {
-    id: "time_warp",
-    name: "Vòng Lặp Thời Gian",
-    emoji: "🌀",
-    description: "Bùa chú uốn cong thời gian, sửa chữa sai lầm.",
-    effect: "Độc quyền Fusion! Nếu trả lời sai lượt này, hồi phục lượt chơi và cho phép chọn lại mà không bị phạt điểm.",
-    colorClass: "text-cyan-500 bg-cyan-50",
-    bgClass: "bg-gradient-to-br from-cyan-50 via-sky-100 to-indigo-100 border-cyan-400",
-    tier: "baymau",
-    tierLabel: "Bảy Màu (Độc Quyền)",
-    power: 92,
-    cooldownRounds: 3
-  },
-  {
-    id: "double_strike",
-    name: "Song Kích Trí Tuệ",
-    emoji: "⚔️",
-    description: "Đòn tấn công kép hủy diệt điểm số đối thủ.",
-    effect: "Độc quyền Fusion! Trả lời đúng lượt này sẽ trừ ngay 100 điểm của đối thủ và cộng vào điểm của em!",
-    colorClass: "text-rose-500 bg-rose-50",
-    bgClass: "bg-gradient-to-br from-rose-50 via-pink-100 to-red-100 border-rose-400",
-    tier: "baymau",
-    tierLabel: "Bảy Màu (Độc Quyền)",
-    power: 96,
-    cooldownRounds: 3
-  },
-  {
-    id: "double_time",
-    name: "Tốc Độ Kép",
-    emoji: "🏃⚡",
-    description: "Kích hoạt dòng chảy thời gian thần tốc.",
-    effect: "Nhận thêm +100% điểm cơ bản nếu trả lời đúng trong vòng 3 giây đầu tiên của câu hỏi!",
-    colorClass: "text-sky-600 bg-sky-50",
-    bgClass: "bg-gradient-to-br from-sky-50 via-sky-100 to-indigo-100 border-sky-300",
-    tier: "dong",
-    tierLabel: "Đồng (Common)",
-    power: 42,
-    cooldownRounds: 1
-  },
-  {
-    id: "intel_link",
-    name: "Thấu Thị Thần Truyền",
-    emoji: "🧠",
-    description: "Sợi dây liên kết tâm trí, khai thông huệ nhãn.",
-    effect: "Trả lời đúng vòng này sẽ biết trước nội dung và đáp án đúng của câu hỏi tiếp theo!",
-    colorClass: "text-emerald-500 bg-emerald-50",
-    bgClass: "bg-gradient-to-br from-emerald-50 via-teal-100 to-emerald-100 border-emerald-300",
-    tier: "bac",
-    tierLabel: "Bạc (Rare)",
-    power: 72,
-    cooldownRounds: 2
-  },
-  {
-    id: "shield_drain",
-    name: "Giáp Hấp Thụ",
-    emoji: "🛡️⚡",
-    description: "Hấp thụ năng lượng dư thừa từ đối thủ.",
-    effect: "Nếu đối thủ đúng vòng này, Khiên hấp thụ điểm của họ: họ nhận 0đ, em nhận 100% điểm đó!",
-    colorClass: "text-amber-600 bg-amber-50",
-    bgClass: "bg-gradient-to-br from-amber-50 via-yellow-100 to-amber-100 border-amber-400 shadow-amber-100",
-    tier: "vang",
-    tierLabel: "Vàng (Epic)",
-    power: 79,
-    cooldownRounds: 2
-  },
-  {
-    id: "mind_swap",
-    name: "Thoán Đoạt Tư Duy",
-    emoji: "🎭",
-    description: "Đồng hóa tâm trí đối thủ, hoán đổi may rủi.",
-    effect: "Nếu em trả lời sai và đối thủ trả lời đúng vòng này, hoán đổi may rủi và nhận trọn điểm đối thủ!",
-    colorClass: "text-violet-650 bg-violet-50",
-    bgClass: "bg-gradient-to-br from-violet-50 via-indigo-100 to-purple-100 border-violet-400",
-    tier: "kimcuong",
-    tierLabel: "Kim Cương (Legendary)",
-    power: 89,
-    cooldownRounds: 3
-  },
-  {
-    id: "mirror_force",
-    name: "Gương Phản Chiếu",
-    emoji: "🪞",
-    description: "Gương phản chiếu ma pháp, hóa giải mọi đòn hại.",
-    effect: "Độc quyền Fusion! Phản lại hiệu ứng 'Lá Che Màn' từ đối thủ, trừ 50 điểm của đối thủ và làm mù họ 5s!",
-    colorClass: "text-cyan-500 bg-cyan-50",
-    bgClass: "bg-gradient-to-br from-cyan-50 via-teal-50 to-indigo-50 border-cyan-300 shadow-cyan-100",
-    tier: "baymau",
-    tierLabel: "Bảy Màu (Độc Quyền)",
-    power: 94,
-    cooldownRounds: 3
-  },
-  {
-    id: "super_nova",
-    name: "Vũ Trụ Siêu Tân Tinh",
-    emoji: "💥",
-    description: "Cơn bão tri thức kích nổ điểm số vũ trụ.",
-    effect: "Độc quyền Fusion! Tự động trả lời đúng, đồng thời nhân gấp 3 lần (x3.0) số điểm của vòng này!",
-    colorClass: "text-rose-500 bg-rose-50",
-    bgClass: "bg-gradient-to-br from-rose-50 via-pink-100 to-red-100 border-rose-400 shadow-rose-200 animate-pulse",
-    tier: "baymau",
-    tierLabel: "Bảy Màu (Độc Quyền)",
-    power: 98,
-    cooldownRounds: 3
-  }
-];
 
 export default function PKArena({ progress, selectedAvatarIdx, updateProgress, triggerSuccessMessage, lessons = [] }: PKArenaProps) {
   const [pkTab, setPkTab] = useState<"lobby" | "leaderboard" | "matchmaking" | "battle" | "results">("lobby");
@@ -619,29 +331,11 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
 
   // Magic Cards persistent battle states
   const [magicCards, setMagicCards] = useState<Record<string, number>>(() => {
-    const defaultCards = { 
-      hint: 0, 
-      timeslow: 0, 
-      blind: 0, 
-      shield: 0, 
-      freeze: 0, 
-      sabotage: 0, 
-      steal: 0, 
-      mult15: 0, 
-      luck: 0, 
-      mult2: 0, 
-      divine: 0, 
-      challenge: 0, 
-      omega: 0,
-      time_warp: 0,
-      double_strike: 0,
-      double_time: 0,
-      intel_link: 0,
-      shield_drain: 0,
-      mind_swap: 0,
-      mirror_force: 0,
-      super_nova: 0
-    };
+    const defaultCards: Record<string, number> = {};
+    MAGIC_CARDS.forEach(card => {
+      defaultCards[card.id] = 0;
+    });
+    
     try {
       const saved = localStorage.getItem("smart_study_magic_cards_v2");
       return saved ? { ...defaultCards, ...JSON.parse(saved) } : defaultCards;
@@ -1216,7 +910,7 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
     localStorage.setItem("smart_study_magic_cards_v2", JSON.stringify(nextInventory));
     setCardUsedThisRound(true);
 
-    const cardDef = MAGIC_CARDS_LIST.find(c => c.id === cardId);
+    const cardDef = MAGIC_CARDS.find(c => c.id === cardId);
     if (cardDef) {
       setCardCooldowns(prev => ({ ...prev, [cardId]: cardDef.cooldownRounds }));
     }
@@ -1510,7 +1204,7 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
                 <span>Kho bài phép thuật ma thuật ({Object.values(magicCards).reduce((a,b)=>a+b, 0)} lá)</span>
               </p>
               <div className="flex flex-wrap gap-1.5">
-                {MAGIC_CARDS_LIST.map(c => {
+                {MAGIC_CARDS.map(c => {
                   const qty = magicCards[c.id] || 0;
                   if (qty <= 0) return null;
                   return (
@@ -1978,7 +1672,7 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5">
-                  {MAGIC_CARDS_LIST.map((card) => {
+                  {MAGIC_CARDS.map((card) => {
                     const qty = magicCards[card.id] || 0;
                     const isFreeze = card.id === "freeze";
                     const isFreezeDisabled = isFreeze && isFreezeUsedThisMatch;

@@ -1,6 +1,7 @@
 import React from "react";
 import { 
-  LayoutDashboard, 
+  LayoutDashboard,
+  Wand2, 
   BookOpen, 
   GraduationCap, 
   Trophy, 

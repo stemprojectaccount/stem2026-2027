@@ -27,6 +27,7 @@ const getDifficulty = (content: string = "") => {
   }
 };
 
+
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>("dashboard");
   const [lessons, setLessons] = useState<Lesson[]>([]);
@@ -1831,7 +1832,6 @@ Nếu ví chủ đề này như một bàn cờ vua ♟️:
               isOnline={isOnline}
             />
           )}
-
 
           {activeTab === "shop" && (
             <Shop 

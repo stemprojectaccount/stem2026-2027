@@ -17,11 +17,17 @@ import {
   RefreshCw,
   Plus
 } from "lucide-react";
-import { UserProgress } from "../types";
+import { UserProgress, MagicCard } from "../types";
+import { MAGIC_CARDS } from "../data";
+
+
+
+
+
 import { getAvatarAtLevel, AVATAR_EVOLUTIONS } from "../lib/avatarEvolution";
 import { motion, AnimatePresence } from "motion/react";
 
-interface ShopItem {
+export interface ShopItem {
   id: string;
   name: string;
   price: number;
@@ -33,20 +39,7 @@ interface ShopItem {
   longDesc: string;
 }
 
-export interface MagicCard {
-  id: string;
-  name: string;
-  emoji: string;
-  tier: "dong" | "sat" | "bac" | "vang" | "kimcuong" | "baymau";
-  tierLabel: string;
-  colorClass: string;
-  bgClass: string;
-  borderClass: string;
-  description: string;
-  effect: string;
-  power: number;
-  cooldownRounds: number;
-}
+
 
 export interface CardPack {
   id: string;
@@ -63,359 +56,13 @@ export interface CardPack {
   rates: { dong: number; sat: number; bac: number; vang: number; kimcuong: number; baymau: number };
 }
 
-const SHOP_ITEMS: ShopItem[] = [
-  {
-    id: "cookie",
-    name: "Bánh Quy Linh Thú",
-    price: 15,
-    description: "Thức ăn vặt bổ dưỡng cho linh thú.",
-    xpBoost: 10,
-    emoji: "🍪",
-    iconColor: "text-amber-600",
-    bgLight: "bg-amber-50 border-amber-100",
-    longDesc: "Loại bánh quy nướng giòn rụm từ lúa mạch hảo hạng. Khi cho ăn, linh thú sẽ vô cùng vui sướng và tặng lại em +10 XP!"
-  },
-  {
-    id: "lollipop",
-    name: "Kẹo Mút Thần Kỳ",
-    price: 30,
-    description: "Kẹo ngọt lấp lánh sạc đầy năng lượng.",
-    xpBoost: 25,
-    emoji: "🍭",
-    iconColor: "text-pink-500",
-    bgLight: "bg-pink-50 border-pink-100",
-    longDesc: "Món kẹo xoắn bảy sắc cầu vồng ngọt ngào. Kích thích khả năng tập trung, giúp em và linh thú bứt phá thêm +25 XP!"
-  },
-  {
-    id: "shield",
-    name: "Hộ Mệnh Phù",
-    price: 45,
-    description: "Lá bùa hộ vệ tăng cường ý chí tự học.",
-    xpBoost: 40,
-    emoji: "🔮",
-    iconColor: "text-purple-500",
-    bgLight: "bg-purple-50 border-purple-100",
-    longDesc: "Viên pha lê chứa đựng dòng chảy tri thức cổ xưa. Khai sáng tư duy nhạy bén, hồi phục ngay lập tức +40 XP!"
-  },
-  {
-    id: "elixir",
-    name: "Nước Tăng Lực Tập Trung",
-    price: 60,
-    description: "Thảo mộc giúp đầu óc tỉnh táo, minh mẫn.",
-    xpBoost: 60,
-    emoji: "🧪",
-    iconColor: "text-sky-500",
-    bgLight: "bg-sky-50 border-sky-100",
-    longDesc: "Chiết xuất tinh túy giúp tăng cường phản xạ nơ-ron thần kinh. Đập tan cơn buồn ngủ, thăng tiến vượt bậc +60 XP!"
-  },
-  {
-    id: "crown",
-    name: "Vương Miện Vinh Quang",
-    price: 120,
-    description: "Trang bị lộng lẫy nhất của rồng thần.",
-    xpBoost: 130,
-    emoji: "👑",
-    iconColor: "text-yellow-600",
-    bgLight: "bg-yellow-50 border-yellow-100",
-    longDesc: "Vật phẩm hoàng gia tôn vinh những nỗ lực tự học kiên trì nhất. Giúp linh thú tiến hóa vượt thời gian với +130 XP cực khủng!"
-  }
-];
 
-export const MAGIC_CARDS: MagicCard[] = [
-  {
-    id: "hint",
-    name: "Gợi Ý Tri Thức",
-    emoji: "💡",
-    tier: "dong",
-    tierLabel: "Đồng (Uncommon)",
-    colorClass: "text-amber-600",
-    bgClass: "bg-gradient-to-br from-amber-50 to-amber-100/40",
-    borderClass: "border-amber-300 shadow-amber-100",
-    description: "Khai sáng tư duy, soi lối đáp án.",
-    effect: "Tự động loại bỏ 2 phương án sai của câu hỏi hiện tại cho em.",
-    power: 35,
-    cooldownRounds: 1
-  },
-  {
-    id: "timeslow",
-    name: "Ngưng Đọng Thời Gian",
-    emoji: "⏳",
-    tier: "dong",
-    tierLabel: "Đồng (Uncommon)",
-    colorClass: "text-orange-500",
-    bgClass: "bg-gradient-to-br from-orange-50 to-orange-100/40",
-    borderClass: "border-orange-300 shadow-orange-100",
-    description: "Ngưng đọng thời gian học tập.",
-    effect: "Cộng thêm 10 giây suy nghĩ cho câu hỏi hiện tại.",
-    power: 40,
-    cooldownRounds: 1
-  },
-  {
-    id: "blind",
-    name: "Lá Che Màn Hình",
-    emoji: "🌫️",
-    tier: "sat",
-    tierLabel: "Sắt (Common)",
-    colorClass: "text-slate-600",
-    bgClass: "bg-gradient-to-br from-slate-100 to-slate-200/50",
-    borderClass: "border-slate-350 shadow-slate-100",
-    description: "Sử dụng sương mù ma thuật làm mù mắt đối thủ.",
-    effect: "Gây mù màn hình bot 5s (giảm mạnh tỷ lệ đúng của bot còn 10% và delay bot trả lời).",
-    power: 50,
-    cooldownRounds: 1
-  },
-  {
-    id: "shield",
-    name: "Khiên Học Thuật",
-    emoji: "🛡️",
-    tier: "sat",
-    tierLabel: "Sắt (Common)",
-    colorClass: "text-blue-600",
-    bgClass: "bg-gradient-to-br from-blue-50 to-blue-100/40",
-    borderClass: "border-blue-300 shadow-blue-100",
-    description: "Tạo lá chắn bảo vệ.",
-    effect: "Nếu đối thủ trả lời đúng ở lượt này, họ sẽ không được cộng điểm.",
-    power: 45,
-    cooldownRounds: 1
-  },
-  {
-    id: "freeze",
-    name: "Lá Đóng Băng",
-    emoji: "❄️",
-    tier: "bac",
-    tierLabel: "Bạc (Rare)",
-    colorClass: "text-sky-500",
-    bgClass: "bg-gradient-to-br from-sky-50 to-sky-100/50",
-    borderClass: "border-sky-300 shadow-sky-100",
-    description: "Đóng băng tuyệt đối hành động của đối thủ.",
-    effect: "Ngăn chặn đối thủ trả lời và ghi điểm ở vòng này. (Chỉ dùng tối đa 1 lần/trận).",
-    power: 85,
-    cooldownRounds: 2
-  },
-  {
-    id: "sabotage",
-    name: "Lá Gây Khó Đối Thủ",
-    emoji: "🌪️",
-    tier: "bac",
-    tierLabel: "Bạc (Rare)",
-    colorClass: "text-teal-600",
-    bgClass: "bg-gradient-to-br from-teal-50 to-teal-100/50",
-    borderClass: "border-teal-300 shadow-teal-100",
-    description: "Cuồng phong câu hỏi nhiễu loạn đối thủ.",
-    effect: "Biến câu hỏi của bot thành siêu khó (giảm tỷ lệ đúng còn 15%), nếu bot đúng chỉ nhận điểm gốc.",
-    power: 70,
-    cooldownRounds: 2
-  },
-  {
-    id: "steal",
-    name: "Tinh Linh Trộm Điểm",
-    emoji: "🦊",
-    tier: "bac",
-    tierLabel: "Bạc (Rare)",
-    colorClass: "text-emerald-600",
-    bgClass: "bg-gradient-to-br from-emerald-50 to-emerald-100/40",
-    borderClass: "border-emerald-300 shadow-emerald-100",
-    description: "Trộm điểm số từ đối thủ.",
-    effect: "Nếu đối thủ đúng, nhận ngay 50% số điểm của họ làm của mình.",
-    power: 75,
-    cooldownRounds: 2
-  },
-  {
-    id: "mult15",
-    name: "Lá Nhân Hệ Số 1.5",
-    emoji: "⚡",
-    tier: "vang",
-    tierLabel: "Vàng (Epic)",
-    colorClass: "text-yellow-600",
-    bgClass: "bg-gradient-to-br from-yellow-50 to-amber-100/40",
-    borderClass: "border-yellow-400 shadow-yellow-100",
-    description: "Dòng điện cường hóa điểm số.",
-    effect: "Tăng 1.5 lần số điểm nhận được ở lượt hiện tại nếu em trả lời chính xác.",
-    power: 60,
-    cooldownRounds: 1
-  },
-  {
-    id: "luck",
-    name: "Xúc Xắc Trí Tuệ",
-    emoji: "🎲",
-    tier: "vang",
-    tierLabel: "Vàng (Epic)",
-    colorClass: "text-purple-600",
-    bgClass: "bg-gradient-to-br from-purple-50 to-purple-100/40",
-    borderClass: "border-purple-300 shadow-purple-100",
-    description: "Xúc xắc may rủi nhận điểm số.",
-    effect: "Nếu đúng, nhận ngẫu nhiên x1.5, x2 hoặc x3 điểm số lượt này!",
-    power: 68,
-    cooldownRounds: 2
-  },
-  {
-    id: "mult2",
-    name: "Lá Nhân Hệ Số 2.0",
-    emoji: "🔥",
-    tier: "kimcuong",
-    tierLabel: "Kim Cương (Legendary)",
-    colorClass: "text-rose-600",
-    bgClass: "bg-gradient-to-br from-rose-50 to-pink-100/40",
-    borderClass: "border-rose-400 shadow-rose-150",
-    description: "Ngọn lửa bứt phá điểm số tối thượng.",
-    effect: "Nhân đôi (x2) điểm số nhận được ở lượt hiện tại nếu em trả lời chính xác.",
-    power: 80,
-    cooldownRounds: 2
-  },
-  {
-    id: "divine",
-    name: "Thần Nhãn Học Đường",
-    emoji: "👁️",
-    tier: "kimcuong",
-    tierLabel: "Kim Cương (Legendary)",
-    colorClass: "text-indigo-600",
-    bgClass: "bg-gradient-to-br from-indigo-50 to-indigo-100/40",
-    borderClass: "border-indigo-300 shadow-indigo-100",
-    description: "Mắt thần chỉ đường dẫn lối đáp án.",
-    effect: "Tiết lộ trực tiếp và tự chọn ngay đáp án chính xác của câu hỏi này!",
-    power: 88,
-    cooldownRounds: 3
-  },
-  {
-    id: "challenge",
-    name: "Thách Thức Vô Song",
-    emoji: "🌌",
-    tier: "baymau",
-    tierLabel: "Bảy Màu (Mythic)",
-    colorClass: "text-fuchsia-600",
-    bgClass: "bg-gradient-to-br from-fuchsia-50 via-indigo-50 to-pink-50",
-    borderClass: "border-fuchsia-400 shadow-fuchsia-200 animate-pulse",
-    description: "Vực sâu tri thức vũ trụ huyền thoại.",
-    effect: "Nâng độ khó lên mức siêu phàm 'Vô Song'. Trả lời đúng nhận ngẫu nhiên x2 hoặc x3 điểm!",
-    power: 95,
-    cooldownRounds: 3
-  },
-  {
-    id: "omega",
-    name: "Ma Pháp Omega",
-    emoji: "🪐",
-    tier: "baymau",
-    tierLabel: "Bảy Màu (Mythic)",
-    colorClass: "text-violet-600",
-    bgClass: "bg-gradient-to-br from-violet-50 via-purple-100 to-indigo-100",
-    borderClass: "border-violet-400 shadow-violet-200 animate-pulse",
-    description: "Quyền năng tối thượng dung hợp.",
-    effect: "Tự động trả lời đúng, nhân đôi điểm số, đồng thời đóng băng đối thủ ở lượt này!",
-    power: 99,
-    cooldownRounds: 3
-  },
-  {
-    id: "time_warp",
-    name: "Vòng Lặp Thời Gian",
-    emoji: "🌀",
-    tier: "baymau",
-    tierLabel: "Bảy Màu (Độc Quyền)",
-    colorClass: "text-cyan-500",
-    bgClass: "bg-gradient-to-br from-cyan-50 via-sky-100 to-indigo-100",
-    borderClass: "border-cyan-400 shadow-cyan-200 animate-pulse",
-    description: "Bùa chú uốn cong thời gian, sửa chữa sai lầm.",
-    effect: "Độc quyền Fusion! Nếu trả lời sai lượt này, hồi phục lượt chơi và cho phép chọn lại mà không bị phạt điểm.",
-    power: 92,
-    cooldownRounds: 3
-  },
-  {
-    id: "double_strike",
-    name: "Song Kích Trí Tuệ",
-    emoji: "⚔️",
-    tier: "baymau",
-    tierLabel: "Bảy Màu (Độc Quyền)",
-    colorClass: "text-rose-500",
-    bgClass: "bg-gradient-to-br from-rose-50 via-pink-100 to-red-100",
-    borderClass: "border-rose-400 shadow-rose-200 animate-pulse",
-    description: "Đòn tấn công kép hủy diệt điểm số đối thủ.",
-    effect: "Độc quyền Fusion! Trả lời đúng lượt này sẽ trừ ngay 100 điểm của đối thủ và cộng vào điểm của em!",
-    power: 96,
-    cooldownRounds: 3
-  },
-  {
-    id: "double_time",
-    name: "Tốc Độ Kép",
-    emoji: "🏃⚡",
-    tier: "dong",
-    tierLabel: "Đồng (Common)",
-    colorClass: "text-sky-655",
-    bgClass: "bg-gradient-to-br from-sky-50 to-sky-100/40",
-    borderClass: "border-sky-300 shadow-sky-100",
-    description: "Kích hoạt dòng chảy thời gian thần tốc.",
-    effect: "Nhận thêm +100% điểm cơ bản nếu trả lời đúng trong vòng 3 giây đầu tiên của câu hỏi!",
-    power: 42,
-    cooldownRounds: 1
-  },
-  {
-    id: "intel_link",
-    name: "Thấu Thị Thần Truyền",
-    emoji: "🧠",
-    tier: "bac",
-    tierLabel: "Bạc (Rare)",
-    colorClass: "text-emerald-500",
-    bgClass: "bg-gradient-to-br from-emerald-50 to-emerald-100/40",
-    borderClass: "border-emerald-300 shadow-emerald-100",
-    description: "Sợi dây liên kết tâm trí, khai thông huệ nhãn.",
-    effect: "Trả lời đúng vòng này sẽ biết trước nội dung và đáp án đúng của câu hỏi tiếp theo!",
-    power: 72,
-    cooldownRounds: 2
-  },
-  {
-    id: "shield_drain",
-    name: "Giáp Hấp Thụ",
-    emoji: "🛡️⚡",
-    tier: "vang",
-    tierLabel: "Vàng (Epic)",
-    colorClass: "text-amber-600",
-    bgClass: "bg-gradient-to-br from-amber-50 to-amber-100/40",
-    borderClass: "border-amber-400 shadow-amber-100",
-    description: "Hấp thụ năng lượng dư thừa từ đối thủ.",
-    effect: "Nếu đối thủ đúng vòng này, Khiên hấp thụ điểm của họ: họ nhận 0đ, em nhận 100% điểm đó!",
-    power: 79,
-    cooldownRounds: 2
-  },
-  {
-    id: "mind_swap",
-    name: "Thoán Đoạt Tư Duy",
-    emoji: "🎭",
-    tier: "kimcuong",
-    tierLabel: "Kim Cương (Legendary)",
-    colorClass: "text-violet-650",
-    bgClass: "bg-gradient-to-br from-violet-50 to-violet-100/40",
-    borderClass: "border-violet-400 shadow-violet-100",
-    description: "Đồng hóa tâm trí đối thủ, hoán đổi may rủi.",
-    effect: "Nếu em trả lời sai và đối thủ trả lời đúng vòng này, hoán đổi may rủi và nhận trọn điểm đối thủ!",
-    power: 89,
-    cooldownRounds: 3
-  },
-  {
-    id: "mirror_force",
-    name: "Gương Phản Chiếu",
-    emoji: "🪞",
-    tier: "baymau",
-    tierLabel: "Bảy Màu (Độc Quyền)",
-    colorClass: "text-cyan-500",
-    bgClass: "bg-gradient-to-br from-cyan-50 via-teal-50 to-indigo-50",
-    borderClass: "border-cyan-300 shadow-cyan-100",
-    description: "Gương phản chiếu ma pháp, hóa giải mọi đòn hại.",
-    effect: "Độc quyền Fusion! Phản lại hiệu ứng 'Lá Che Màn' từ đối thủ, trừ 50 điểm của đối thủ và làm mù họ 5s!",
-    power: 94,
-    cooldownRounds: 3
-  },
-  {
-    id: "super_nova",
-    name: "Vũ Trụ Siêu Tân Tinh",
-    emoji: "💥",
-    tier: "baymau",
-    tierLabel: "Bảy Màu (Độc Quyền)",
-    colorClass: "text-rose-500",
-    bgClass: "bg-gradient-to-br from-rose-50 via-pink-100 to-red-100",
-    borderClass: "border-rose-400 shadow-rose-200 animate-pulse",
-    description: "Cơn bão tri thức kích nổ điểm số vũ trụ.",
-    effect: "Độc quyền Fusion! Tự động trả lời đúng, đồng thời nhân gấp 3 lần (x3.0) số điểm của vòng này!",
-    power: 98,
-    cooldownRounds: 3
-  }
+export const SHOP_ITEMS: ShopItem[] = [
+  { id: "cookie", name: "Bánh Quy", price: 10, description: "Bánh quy thơm ngon", xpBoost: 5, emoji: "🍪", iconColor: "text-amber-500", bgLight: "bg-amber-50", longDesc: "Bánh quy thơm ngon bổ dưỡng." },
+  { id: "lollipop", name: "Kẹo Mút", price: 20, description: "Kẹo mút ngọt ngào", xpBoost: 12, emoji: "🍭", iconColor: "text-pink-500", bgLight: "bg-pink-50", longDesc: "Kẹo mút siêu ngọt." },
+  { id: "shield", name: "Khiên Gỗ", price: 50, description: "Khiên bảo vệ", xpBoost: 35, emoji: "🛡️", iconColor: "text-slate-500", bgLight: "bg-slate-50", longDesc: "Khiên bảo vệ vật lý." },
+  { id: "elixir", name: "Thuốc Phép", price: 100, description: "Thuốc phép ma thuật", xpBoost: 80, emoji: "🧪", iconColor: "text-purple-500", bgLight: "bg-purple-50", longDesc: "Thuốc phép tăng điểm kinh nghiệm cực mạnh." },
+  { id: "crown", name: "Vương Miện", price: 300, description: "Vương miện hoàng gia", xpBoost: 300, emoji: "👑", iconColor: "text-yellow-500", bgLight: "bg-yellow-50", longDesc: "Vương miện hoàng gia quý phái." }
 ];
 
 export const CARD_PACKS: CardPack[] = [
@@ -513,7 +160,7 @@ interface ShopProps {
 }
 
 export default function Shop({ progress, onUpdateProgress, selectedAvatarIdx, triggerSuccess }: ShopProps) {
-  const [activeTab, setActiveTab] = useState<"items" | "magic_cards" | "fusion">("items");
+  const [activeTab, setActiveTab] = useState<"items" | "magic_cards">("items");
 
   // Fusion-specific state
   const [selectedFusionSlots, setSelectedFusionSlots] = useState<string[]>([]);
@@ -578,24 +225,22 @@ export default function Shop({ progress, onUpdateProgress, selectedAvatarIdx, tr
     return 5; // kimcuong or baymau
   };
 
-  const getFusionSuccessRate = (slots: string[]): number => {
-    if (slots.length < 2) return 0;
-    const cards = slots.map(id => MAGIC_CARDS.find(c => c.id === id)).filter(Boolean) as MagicCard[];
-    if (cards.length === 0) return 0;
-
+  const calculateFusionSuccess = (cards: MagicCard[]): number => {
+    if (cards.length < 2) return 0;
+    
     const firstCard = cards[0];
     const isAllIdentical = cards.every(c => c.id === firstCard.id);
-    const tier = firstCard.tier;
-    const count = slots.length;
+    const rarity = firstCard.rarity;
+    const count = cards.length;
 
-    if (tier === "dong" || tier === "sat") {
+    if (rarity === "Common") {
       if (count === 2) return isAllIdentical ? 0.75 : 0.55;
       return 1.0; // 3 cards
-    } else if (tier === "bac" || tier === "vang") {
+    } else if (rarity === "Rare" || rarity === "Epic") {
       if (count === 2) return isAllIdentical ? 0.50 : 0.35;
       if (count === 3) return isAllIdentical ? 0.80 : 0.65;
       return 1.0; // 4 cards
-    } else { // kimcuong or baymau
+    } else { // Legendary or Mythic
       if (count === 2) return isAllIdentical ? 0.30 : 0.20;
       if (count === 3) return isAllIdentical ? 0.60 : 0.45;
       if (count === 4) return isAllIdentical ? 0.85 : 0.70;
@@ -624,7 +269,7 @@ export default function Shop({ progress, onUpdateProgress, selectedAvatarIdx, tr
     // Check if they are highest tier (baymau)
     if (tier === "baymau") {
       const specialPool = MAGIC_CARDS.filter(c => ["omega", "time_warp", "double_strike", "mirror_force", "super_nova"].includes(c.id));
-      const successRate = getFusionSuccessRate(slots);
+      const successRate = calculateFusionSuccess(slots.map(id => MAGIC_CARDS.find(c => c.id === id)).filter(Boolean) as MagicCard[]);
       const isSuccess = Math.random() < successRate;
 
       if (isSuccess) {
@@ -646,7 +291,7 @@ export default function Shop({ progress, onUpdateProgress, selectedAvatarIdx, tr
     const nextTierCards = MAGIC_CARDS.filter(c => c.tier === nextTier);
     const sameTierCards = MAGIC_CARDS.filter(c => c.tier === tier);
 
-    const upgradeChance = getFusionSuccessRate(slots);
+    const upgradeChance = calculateFusionSuccess(slots.map(id => MAGIC_CARDS.find(c => c.id === id)).filter(Boolean) as MagicCard[]);
     const isUpgrade = Math.random() < upgradeChance;
 
     if (isUpgrade && nextTierCards.length > 0) {
@@ -702,29 +347,11 @@ export default function Shop({ progress, onUpdateProgress, selectedAvatarIdx, tr
 
   // Magic cards inventory
   const [magicCardsInventory, setMagicCardsInventory] = useState<Record<string, number>>(() => {
-    const defaultCards = { 
-      hint: 0, 
-      timeslow: 0, 
-      blind: 0, 
-      shield: 0, 
-      freeze: 0, 
-      sabotage: 0, 
-      steal: 0, 
-      mult15: 0, 
-      luck: 0, 
-      mult2: 0, 
-      divine: 0, 
-      challenge: 0, 
-      omega: 0,
-      time_warp: 0,
-      double_strike: 0,
-      double_time: 0,
-      intel_link: 0,
-      shield_drain: 0,
-      mind_swap: 0,
-      mirror_force: 0,
-      super_nova: 0
-    };
+    const defaultCards: Record<string, number> = {};
+    MAGIC_CARDS.forEach(card => {
+      defaultCards[card.id] = 0;
+    });
+    
     try {
       const saved = localStorage.getItem("smart_study_magic_cards_v2");
       return saved ? { ...defaultCards, ...JSON.parse(saved) } : defaultCards;
@@ -982,17 +609,6 @@ export default function Shop({ progress, onUpdateProgress, selectedAvatarIdx, tr
           <Layers className="w-4 h-4 text-fuchsia-500" />
           <span>Gói Thẻ Ma Thuật 🃏</span>
         </button>
-        <button
-          onClick={() => setActiveTab("fusion")}
-          className={`flex-1 py-3 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${
-            activeTab === "fusion" 
-              ? "bg-white text-indigo-650 shadow-md" 
-              : "text-slate-500 hover:text-slate-800"
-          }`}
-        >
-          <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />
-          <span>Dung Hợp Thẻ 🌌</span>
-        </button>
       </div>
 
       {/* TAB 1: ITEMS AND PET FEEDING */}
@@ -1012,7 +628,8 @@ export default function Shop({ progress, onUpdateProgress, selectedAvatarIdx, tr
                 {isFeeding && (
                   <div className="absolute inset-0 bg-indigo-100/60 rounded-[2.5rem] z-10 flex items-center justify-center text-5xl animate-bounce">
                     {SHOP_ITEMS.find(i => i.id === isFeeding)?.emoji}
-                  </div>
+                    </div>
+
                 )}
                 <div className="text-7xl relative z-0 transition-transform duration-300 hover:scale-110">
                   {currentPet.emoji}
@@ -1058,12 +675,12 @@ export default function Shop({ progress, onUpdateProgress, selectedAvatarIdx, tr
                       <div className="flex items-center gap-3">
                         <div className="text-2xl bg-slate-50 w-10 h-10 rounded-xl flex items-center justify-center border border-slate-100">
                           {item.emoji}
-                        </div>
+                      </div>
                         <div>
                           <p className="text-xs font-black text-slate-800">{item.name}</p>
                           <p className="text-[10px] text-indigo-600 font-bold">+{item.xpBoost} XP khi sử dụng</p>
-                        </div>
                       </div>
+                    </div>
 
                       <div>
                         {count > 0 ? (
@@ -1077,8 +694,8 @@ export default function Shop({ progress, onUpdateProgress, selectedAvatarIdx, tr
                         ) : (
                           <span className="text-[10px] font-bold text-slate-400 px-2">Hết đồ</span>
                         )}
-                      </div>
                     </div>
+                  </div>
                   );
                 })}
               </div>
@@ -1144,14 +761,14 @@ export default function Shop({ progress, onUpdateProgress, selectedAvatarIdx, tr
                           <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-100 px-2.5 py-1 rounded-xl text-xs font-black text-amber-600 shadow-sm">
                             <Coins className="w-3.5 h-3.5 fill-amber-300" />
                             <span>{item.price} Xu</span>
-                          </div>
                         </div>
+                      </div>
 
                         <div className="space-y-1">
                           <h4 className="font-display font-black text-slate-850 text-xs">{item.name}</h4>
                           <p className="text-[10px] text-slate-400 leading-normal line-clamp-2">{item.description}</p>
-                        </div>
                       </div>
+                    </div>
 
                       <div className="flex items-center justify-between pt-2 border-t border-slate-50">
                         <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">+{item.xpBoost} XP</span>
@@ -1164,8 +781,8 @@ export default function Shop({ progress, onUpdateProgress, selectedAvatarIdx, tr
                         >
                           Mua ngay
                         </button>
-                      </div>
                     </div>
+                  </div>
                   );
                 })}
               </div>
@@ -1178,7 +795,7 @@ export default function Shop({ progress, onUpdateProgress, selectedAvatarIdx, tr
                     <div>
                       <h5 className="text-xs font-black text-slate-850">{selectedItem.name}</h5>
                       <p className="text-[10px] text-slate-400">Trị giá: <strong className="text-amber-600">{selectedItem.price} Xu</strong> • Công dụng: <strong className="text-indigo-600">+{selectedItem.xpBoost} XP</strong></p>
-                    </div>
+                  </div>
                   </div>
                   <p className="text-xs text-slate-500 leading-relaxed font-medium">
                     {selectedItem.longDesc}
@@ -1242,7 +859,7 @@ export default function Shop({ progress, onUpdateProgress, selectedAvatarIdx, tr
                       
                       <div className="text-3xl bg-slate-50 w-11 h-11 rounded-2xl flex items-center justify-center border border-slate-100 shrink-0 shadow-inner">
                         {card.emoji}
-                      </div>
+                    </div>
 
                       <div className="flex-1 space-y-1 min-w-0">
                         <div className="flex items-center justify-between gap-2">
@@ -1250,18 +867,18 @@ export default function Shop({ progress, onUpdateProgress, selectedAvatarIdx, tr
                           <span className="text-[10px] font-black text-fuchsia-600 shrink-0 bg-fuchsia-50 px-1.5 py-0.2 rounded">
                             x{qty}
                           </span>
-                        </div>
+                      </div>
                         <p className={`text-[9px] font-bold ${card.colorClass}`}>{card.tierLabel}</p>
                         <div className="flex items-center gap-2 text-[9px] font-bold text-slate-550 mt-0.5 mb-1">
                           <span className="bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100 flex items-center gap-0.5">💪 Lực: {card.power}</span>
                           <span className="bg-amber-50/60 text-amber-800 px-1.5 py-0.5 rounded border border-amber-100 flex items-center gap-0.5">⏳ Hồi: {card.cooldownRounds}v</span>
-                        </div>
+                      </div>
                         <p className="text-[10px] text-slate-450 leading-tight font-medium">{card.description}</p>
                         <p className="text-[9.5px] text-indigo-650 bg-indigo-50/50 p-1.5 rounded-lg border border-indigo-100/30 mt-1 font-semibold leading-normal">
                           <strong>Tác dụng:</strong> {card.effect}
                         </p>
-                      </div>
                     </div>
+                  </div>
                   );
                 })}
               </div>
@@ -1310,8 +927,8 @@ export default function Shop({ progress, onUpdateProgress, selectedAvatarIdx, tr
                           <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-100 px-3 py-1 rounded-xl text-xs font-black text-amber-600 shadow-sm">
                             <Coins className="w-3.5 h-3.5 fill-amber-300 animate-spin-slow" />
                             <span>{pack.price} Xu</span>
-                          </div>
                         </div>
+                      </div>
 
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
@@ -1319,10 +936,10 @@ export default function Shop({ progress, onUpdateProgress, selectedAvatarIdx, tr
                             <span className={`text-[8.5px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded-full ${pack.badgeColor}`}>
                               {pack.cardCount} Lá
                             </span>
-                          </div>
-                          <p className="text-[10px] text-slate-400 leading-normal line-clamp-2">{pack.description}</p>
                         </div>
+                          <p className="text-[10px] text-slate-400 leading-normal line-clamp-2">{pack.description}</p>
                       </div>
+                    </div>
 
                       <div className="flex items-center justify-between pt-2 border-t border-slate-50">
                         <span className="text-[9px] font-bold text-fuchsia-600 bg-fuchsia-50 px-2 py-0.5 rounded">Rút {pack.cardCount} Lá Bài</span>
@@ -1335,8 +952,8 @@ export default function Shop({ progress, onUpdateProgress, selectedAvatarIdx, tr
                         >
                           Bóc Thẻ 📦
                         </button>
-                      </div>
                     </div>
+                  </div>
                   );
                 })}
               </div>
@@ -1349,7 +966,7 @@ export default function Shop({ progress, onUpdateProgress, selectedAvatarIdx, tr
                     <div>
                       <h5 className="text-xs font-black text-slate-850">{selectedPack.name}</h5>
                       <p className="text-[10px] text-slate-450 font-bold">Số lượng: <strong className="text-fuchsia-600 font-extrabold">{selectedPack.cardCount} Lá Bài</strong> • Giá: <strong className="text-amber-600 font-extrabold">{selectedPack.price} Xu</strong></p>
-                    </div>
+                  </div>
                   </div>
                   
                   <p className="text-xs text-slate-500 leading-relaxed font-semibold">
@@ -1363,28 +980,28 @@ export default function Shop({ progress, onUpdateProgress, selectedAvatarIdx, tr
                       <div className="bg-amber-100/50 p-1 rounded">
                         <p className="text-[8px] text-amber-800">Đồng</p>
                         <p className="text-[10px] text-amber-950 font-black">{selectedPack.rates.dong}%</p>
-                      </div>
+                    </div>
                       <div className="bg-slate-100 p-1 rounded">
                         <p className="text-[8px] text-slate-600">Sắt</p>
                         <p className="text-[10px] text-slate-900 font-black">{selectedPack.rates.sat}%</p>
-                      </div>
+                    </div>
                       <div className="bg-sky-100/50 p-1 rounded">
                         <p className="text-[8px] text-sky-800">Bạc</p>
                         <p className="text-[10px] text-sky-950 font-black">{selectedPack.rates.bac}%</p>
-                      </div>
+                    </div>
                       <div className="bg-yellow-100/60 p-1 rounded">
                         <p className="text-[8px] text-yellow-800">Vàng</p>
                         <p className="text-[10px] text-yellow-950 font-black">{selectedPack.rates.vang}%</p>
-                      </div>
+                    </div>
                       <div className="bg-indigo-100/50 p-1 rounded">
                         <p className="text-[8px] text-indigo-800">K.Cương</p>
                         <p className="text-[10px] text-indigo-950 font-black">{selectedPack.rates.kimcuong}%</p>
-                      </div>
+                    </div>
                       <div className="bg-fuchsia-100/50 p-1 rounded animate-pulse">
                         <p className="text-[8px] text-fuchsia-800">Bảy Màu</p>
                         <p className="text-[10px] text-fuchsia-950 font-black">{selectedPack.rates.baymau}%</p>
-                      </div>
                     </div>
+                  </div>
                   </div>
                 </div>
               )}
@@ -1407,353 +1024,10 @@ export default function Shop({ progress, onUpdateProgress, selectedAvatarIdx, tr
           </div>
         </div>
       )}
-
-      {/* TAB 3: CARD FUSION SYSTEM */}
-      {activeTab === "fusion" && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
-          
-          {/* LEFT COLUMN: Select card from inventory */}
-          <div className="space-y-6 lg:col-span-1">
-            <div className="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm space-y-5">
-              <div className="flex items-center justify-between border-b border-slate-50 pb-3">
-                <div className="flex items-center gap-2">
-                  <Database className="w-5 h-5 text-amber-500" />
-                  <h3 className="font-display font-black text-slate-850 text-sm">Chọn Thẻ Dung Hợp</h3>
-                </div>
-                <span className="text-[10px] bg-amber-50 text-amber-700 px-2.5 py-0.5 rounded-full font-bold">
-                  Sở hữu: {Object.values(magicCardsInventory).reduce((a, b) => a + b, 0)} lá
-                </span>
-              </div>
-
-              <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
-                Nhấn chọn các thẻ bài trong kho của em để đặt vào các ô trống lò luyện. Các thẻ dung hợp phải <strong>giống hệt nhau</strong> hoặc <strong>cùng phẩm cấp</strong>!
-              </p>
-
-              <div className="space-y-3 max-h-[460px] overflow-y-auto pr-1">
-                {MAGIC_CARDS.map((card) => {
-                  const slotsCount = selectedFusionSlots.filter(id => id === card.id).length;
-                  const qtyAvailable = (magicCardsInventory[card.id] || 0) - slotsCount;
-                  const originalQty = magicCardsInventory[card.id] || 0;
-                  
-                  return (
-                    <div 
-                      key={card.id}
-                      onClick={() => {
-                        if (fusionStatus === "fusing") return;
-                        
-                        // If slots are full
-                        const activeMaxSlots = getActiveMaxSlots();
-                        if (selectedFusionSlots.length >= activeMaxSlots) {
-                          triggerSuccess(`⚠️ Lò luyện đối với phẩm cấp này chỉ chứa tối đa ${activeMaxSlots} thẻ bài!`);
-                          playFusionSound("error");
-                          return;
-                        }
-                        
-                        if (qtyAvailable <= 0) {
-                          triggerSuccess("⚠️ Em đã sử dụng hết số lượng thẻ này trong kho!");
-                          playFusionSound("error");
-                          return;
-                        }
-                        
-                        // Check compatibility
-                        if (selectedFusionSlots.length > 0) {
-                          const firstCardId = selectedFusionSlots[0];
-                          const firstCard = MAGIC_CARDS.find(c => c.id === firstCardId);
-                          if (firstCard && card.id !== firstCard.id && card.tier !== firstCard.tier) {
-                            triggerSuccess("⚠️ Thẻ dung hợp phải cùng loại (giống nhau) hoặc cùng phẩm cấp (Đồng, Sắt, Bạc, Vàng, v.v.)!");
-                            playFusionSound("error");
-                            return;
-                          }
-                        }
-                        
-                        // Add to slots
-                        setSelectedFusionSlots(prev => [...prev, card.id]);
-                        setFusionStatus("idle");
-                        setFusedResultCard(null);
-                      }}
-                      className={`p-3.5 rounded-2xl border transition-all flex items-start gap-3.5 relative overflow-hidden cursor-pointer ${
-                        originalQty > 0 
-                          ? qtyAvailable > 0
-                            ? "border-slate-100 bg-white hover:border-slate-200 shadow-sm"
-                            : "border-indigo-100 bg-indigo-50/10 opacity-70"
-                          : "border-slate-50 bg-slate-50/40 opacity-40 cursor-not-allowed"
-                      }`}
-                    >
-                      <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500" />
-                      
-                      <div className="text-3xl bg-slate-50 w-11 h-11 rounded-2xl flex items-center justify-center border border-slate-100 shrink-0 shadow-inner">
-                        {card.emoji}
-                      </div>
-
-                      <div className="flex-1 space-y-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2">
-                          <h4 className="text-xs font-black text-slate-850 truncate">{card.name}</h4>
-                          <span className={`text-[10px] font-black shrink-0 px-2 py-0.5 rounded-full ${
-                            qtyAvailable > 0 
-                              ? "bg-indigo-50 text-indigo-700" 
-                              : "bg-slate-100 text-slate-400"
-                          }`}>
-                            x{qtyAvailable} {slotsCount > 0 && <span className="text-amber-500 font-extrabold">(+{slotsCount} lò)</span>}
-                          </span>
-                        </div>
-                        <p className={`text-[9px] font-bold ${card.colorClass}`}>{card.tierLabel}</p>
-                        
-                        <div className="flex items-center justify-between pt-1">
-                          <span className="text-[9.5px] font-bold text-slate-450">Sức mạnh: {card.power}</span>
-                          {qtyAvailable > 0 ? (
-                            <span className="text-[9px] font-semibold text-emerald-600 flex items-center gap-0.5">
-                              ✨ Sẵn sàng đặt vào!
-                            </span>
-                          ) : slotsCount > 0 ? (
-                            <span className="text-[9px] font-bold text-indigo-500">
-                              Đã đặt trong lò luyện
-                            </span>
-                          ) : (
-                            <span className="text-[9px] font-semibold text-slate-350">Chưa sở hữu</span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* RIGHT COLUMN: The Fusion Chamber (Altar) */}
-          <div className="space-y-6 lg:col-span-2">
-            <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-950 border border-slate-800 rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden min-h-[560px] flex flex-col justify-between">
-              {/* Magic runic backgrounds */}
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.15),transparent_60%)]" />
-              <div className="absolute -right-24 -bottom-24 w-72 h-72 bg-purple-600 rounded-full blur-3xl opacity-20" />
-              <div className="absolute -left-24 -top-24 w-72 h-72 bg-blue-600 rounded-full blur-3xl opacity-20" />
-              
-              <div className="text-center relative z-10 space-y-2">
-                <span className="text-[10px] font-black uppercase tracking-widest bg-amber-500/20 text-amber-300 px-3.5 py-1 rounded-full border border-amber-500/20 inline-block animate-pulse">
-                  LÒ LUYỆN MA PHÁP 🌌
-                </span>
-                <h3 className="font-display font-black text-xl">Dung Hợp Thẻ Bài Tối Thượng</h3>
-                <p className="text-xs text-indigo-200 max-w-md mx-auto">Chọn từ 2 đến 5 thẻ bài giống nhau hoặc cùng cấp để rèn đúc thẻ mới mạnh hơn với hiệu ứng đặc quyền cực cao!</p>
-              </div>
-
-              {/* Central Altar Chamber */}
-              <div className="my-8 flex flex-col items-center justify-center relative z-10 min-h-[300px]">
-                {fusionStatus === "idle" && selectedFusionSlots.length === 0 && (
-                  <div className="text-center p-6 space-y-4 max-w-sm animate-fade-in">
-                    <div className="w-24 h-24 rounded-full border-4 border-dashed border-indigo-500/30 flex items-center justify-center mx-auto bg-slate-800/40 shadow-inner relative animate-pulse-slow">
-                      <Layers className="w-10 h-10 text-indigo-400/40" />
-                    </div>
-                    <p className="text-xs text-indigo-200 font-bold leading-relaxed">
-                      Lò luyện rỗng. Hãy chọn từ 2 đến 5 thẻ bài cùng phẩm cấp hoặc cùng loại từ cột bên trái để đặt vào lò luyện!
-                    </p>
-                  </div>
-                )}
-
-                {fusionStatus === "idle" && selectedFusionSlots.length > 0 && (
-                  <div className="text-center space-y-6 max-w-2xl w-full animate-fade-in flex flex-col items-center">
-                    {/* Altar Slots */}
-                    <div className="flex flex-wrap gap-4 w-full max-w-xl justify-center relative py-4">
-                      {/* Magic circle background behind slots */}
-                      <div className="absolute inset-0 w-64 h-64 border border-indigo-500/10 rounded-full animate-spin-slow self-center mx-auto pointer-events-none" />
-                      
-                      {(() => {
-                        const maxSlots = getActiveMaxSlots();
-                        const indices = Array.from({ length: maxSlots }, (_, idx) => idx);
-                        return indices.map((idx) => {
-                          const slotCardId = selectedFusionSlots[idx];
-                          const card = MAGIC_CARDS.find(c => c.id === slotCardId);
-                          
-                          if (card) {
-                            return (
-                              <div 
-                                key={idx}
-                                onClick={() => {
-                                  setSelectedFusionSlots(prev => prev.filter((_, sIdx) => sIdx !== idx));
-                                }}
-                                className="relative w-28 h-32 bg-slate-800/90 border-2 border-amber-400 rounded-2xl flex flex-col justify-between p-3 shadow-lg cursor-pointer hover:scale-105 active:scale-95 transition-all overflow-hidden group"
-                              >
-                                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                                <div className="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md">
-                                  ✕
-                                </div>
-                                <span className="text-3xl self-center my-1">{card.emoji}</span>
-                                <div className="text-center">
-                                  <p className="text-[9px] font-black text-amber-300 truncate leading-tight">{card.name}</p>
-                                  <p className={`text-[7.5px] font-bold ${card.colorClass} tracking-tight`}>{card.tierLabel}</p>
-                                </div>
-                              </div>
-                            );
-                          } else {
-                            return (
-                              <div 
-                                key={idx}
-                                className="w-28 h-32 border-2 border-dashed border-slate-700 rounded-2xl flex flex-col items-center justify-center p-3 text-slate-500 bg-slate-900/40 relative"
-                              >
-                                <Plus className="w-5 h-5 text-slate-600 animate-pulse mb-1" />
-                                <span className="text-[8.5px] font-black uppercase tracking-widest text-slate-550">Ô {idx + 1}</span>
-                                <span className="text-[7.5px] text-slate-600 font-medium">Trống</span>
-                              </div>
-                            );
-                          }
-                        });
-                      })()}
-                    </div>
-
-                    {/* Formula / Recipe Analysis */}
-                    {(() => {
-                      const firstCard = MAGIC_CARDS.find(c => c.id === selectedFusionSlots[0]);
-                      if (!firstCard) return null;
-                      
-                      const cards = selectedFusionSlots.map(id => MAGIC_CARDS.find(c => c.id === id)).filter(Boolean) as MagicCard[];
-                      const isAllIdentical = cards.every(c => c.id === firstCard.id);
-                      const maxSlots = getActiveMaxSlots();
-                      const successRate = getFusionSuccessRate(selectedFusionSlots);
-                      const successPct = Math.round(successRate * 100);
-                      
-                      let recipeTitle = "";
-                      let recipeDesc = "";
-                      let nextTierName = firstCard.tier === "dong" ? "Sắt" : firstCard.tier === "sat" ? "Bạc" : firstCard.tier === "bac" ? "Vàng" : firstCard.tier === "vang" ? "Kim Cương" : "Bảy Màu";
-
-                      if (selectedFusionSlots.length === 1) {
-                        recipeTitle = "⚡ Đang khởi động lõi năng lượng";
-                        recipeDesc = `Đã đặt 1 thẻ (${firstCard.name}). Cần thêm ít nhất 1 thẻ cùng cấp hoặc cùng loại (${firstCard.tierLabel}) để bắt đầu dung hợp. Phẩm cấp này hỗ trợ kết hợp tối đa ${maxSlots} thẻ!`;
-                      } else {
-                        if (isAllIdentical) {
-                          recipeTitle = `🔥 Đồng Bộ Tối Đa (${successPct}% Thành công)`;
-                          recipeDesc = `Kết hợp ${selectedFusionSlots.length} thẻ ${firstCard.name} giống hệt nhau. Cơ hội rèn đúc đột phá lên phẩm ${nextTierName} là ${successPct}%!`;
-                        } else {
-                          recipeTitle = `🔮 Đa Tinh Cộng Hưởng (${successPct}% Thành công)`;
-                          recipeDesc = `Kết hợp ${selectedFusionSlots.length} thẻ cùng phẩm cấp ${firstCard.tierLabel} khác nhau. Tỷ lệ rèn đúc đột phá là ${successPct}%!`;
-                        }
-                        if (selectedFusionSlots.length < maxSlots) {
-                          recipeDesc += ` Thêm thẻ cùng loại để nâng cao tỷ lệ thành công lên tới 100% (Tối đa ${maxSlots} thẻ)!`;
-                        }
-                      }
-
-                      return (
-                        <div className="space-y-4 max-w-md w-full">
-                          <div className="bg-indigo-950/40 p-4 rounded-2xl border border-indigo-500/10 space-y-1">
-                            <p className="text-[11px] font-black uppercase tracking-wider text-amber-300">{recipeTitle}</p>
-                            <p className="text-[10px] text-slate-300 font-medium leading-relaxed">{recipeDesc}</p>
-                          </div>
-
-                          {selectedFusionSlots.length >= 2 && (
-                            <button
-                              onClick={handleFusion}
-                              className="px-8 py-3.5 bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-600 hover:to-rose-700 text-white font-black text-xs uppercase tracking-wider rounded-2xl transition-all shadow-lg hover:shadow-amber-500/20 active:scale-95 cursor-pointer relative z-20 flex items-center gap-2 mx-auto animate-bounce mt-2"
-                            >
-                              <Sparkles className="w-4 h-4 text-white animate-spin-slow" />
-                              <span>KÍCH HOẠT DUNG HỢP ✨</span>
-                            </button>
-                          )}
-                        </div>
-                      );
-                    })()}
-                  </div>
-                )}
-
-                {fusionStatus === "fusing" && (
-                  <div className="text-center space-y-6 max-w-sm animate-fade-in flex flex-col items-center">
-                    {/* Mythic Orbit Synthesis Animation */}
-                    <div className="relative w-36 h-36 flex items-center justify-center">
-                      <div className="absolute inset-0 rounded-full border-4 border-dashed border-indigo-500 animate-spin-slow opacity-60" />
-                      <div className="absolute inset-2 rounded-full border-2 border-dashed border-amber-400 animate-spin opacity-80" />
-                      <div className="absolute inset-6 rounded-full border border-rose-500 animate-ping opacity-40" />
-                      <div className="w-20 h-20 rounded-full bg-slate-900 border-2 border-indigo-400 shadow-2xl shadow-indigo-500/50 flex items-center justify-center animate-pulse relative z-10">
-                        <Sparkles className="w-8 h-8 text-amber-400 animate-spin" />
-                      </div>
-                      
-                      {/* Floating glowing nodes representing fusing elements */}
-                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-4 bg-indigo-400 rounded-full blur-[2px] animate-bounce" />
-                      <div className="absolute bottom-2 left-4 w-4 h-4 bg-rose-400 rounded-full blur-[2px] animate-bounce delay-150" />
-                      <div className="absolute bottom-2 right-4 w-4 h-4 bg-amber-400 rounded-full blur-[2px] animate-bounce delay-300" />
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-xs font-black text-amber-300 animate-pulse uppercase tracking-widest">ĐANG PHÂN TÍCH & HỢP NHẤT...</p>
-                      <p className="text-[10px] text-indigo-200">Giao thoa ma pháp, liên kết các phần tử tri thức nguyên bản.</p>
-                    </div>
-                  </div>
-                )}
-
-                {fusionStatus === "success" && fusedResultCard && (
-                  <div className="text-center space-y-6 max-w-sm animate-fade-in flex flex-col items-center">
-                    <div className="relative group p-1">
-                      <div className="absolute inset-0 bg-gradient-to-tr from-cyan-400 via-rose-500 to-amber-400 rounded-3xl blur-xl opacity-60 animate-pulse" />
-                      <div className="w-44 h-64 bg-slate-900 border-2 border-amber-400 rounded-3xl p-5 flex flex-col justify-between items-center text-center shadow-2xl relative z-10 overflow-hidden">
-                        <div className="absolute inset-2 border border-amber-500/10 rounded-2xl pointer-events-none" />
-                        <div className="absolute top-0 right-0 w-12 h-12 bg-amber-500/10 rounded-bl-full pointer-events-none" />
-
-                        <div className="text-center space-y-2 w-full">
-                          <span className="text-5xl block animate-bounce mt-2">{fusedResultCard.emoji}</span>
-                          <h4 className="font-display font-black text-xs text-amber-300 leading-tight truncate px-1">{fusedResultCard.name}</h4>
-                          <span className={`text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-800 border ${fusedResultCard.colorClass}`}>
-                            {fusedResultCard.tierLabel}
-                          </span>
-                        </div>
-
-                        <div className="space-y-1 text-center w-full">
-                          <p className="text-[9px] text-slate-400 line-clamp-2 leading-relaxed">{fusedResultCard.description}</p>
-                          <div className="bg-slate-950/60 p-2 rounded-xl border border-slate-800 mt-2 text-[8px] text-indigo-300 font-semibold leading-normal">
-                            💪 Lực: {fusedResultCard.power} • ⏳ Hồi: {fusedResultCard.cooldownRounds}v
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div className="space-y-1">
-                        <p className="text-sm font-black text-emerald-400 uppercase tracking-wider">RÈN ĐÚC THÀNH CÔNG! 🎉</p>
-                        <p className="text-[10px] text-slate-300 leading-relaxed">Thẻ ma thuật mới đã sẵn sàng xuất hiện trong hòm đồ PK của em.</p>
-                      </div>
-
-                      <div className="flex gap-3 justify-center">
-                        <button
-                          onClick={() => {
-                            setFusedResultCard(null);
-                            setFusionStatus("idle");
-                            setSelectedFusionSlots([]);
-                          }}
-                          className="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-black text-[9px] uppercase tracking-wider rounded-xl transition-all cursor-pointer"
-                        >
-                          Đóng Reveal
-                        </button>
-                        <button
-                          onClick={() => {
-                            setFusedResultCard(null);
-                            setFusionStatus("idle");
-                            setSelectedFusionSlots([]);
-                          }}
-                          className="px-5 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-black text-[9px] uppercase tracking-wider rounded-xl transition-all shadow-sm cursor-pointer animate-pulse"
-                        >
-                          Dung hợp tiếp
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Chamber instructions bottom */}
-              <div className="p-4 bg-slate-950/40 border border-slate-850 rounded-2xl text-[11px] text-indigo-200/80 leading-relaxed text-left">
-                <strong>💡 Chỉ dẫn lò luyện:</strong>
-                <ul className="list-disc pl-4 mt-1 space-y-0.5 text-indigo-300/80 font-medium">
-                  <li>Dung hợp tiêu hao từ <strong className="text-amber-300">2 hoặc 3 thẻ</strong> cùng cấp hoặc cùng loại ở bệ chứa.</li>
-                  <li>Tỷ lệ dung hợp thành công là <strong className="text-emerald-400">100%</strong> không lo thất bại hoặc vỡ thẻ!</li>
-                  <li>Dung hợp <strong className="text-rose-400">3 thẻ giống hệt nhau</strong> chắc chắn kích hoạt công thức thần thánh nâng cấp lên cấp cao hơn!</li>
-                  <li>Nếu dung hợp các thẻ phẩm cấp tối thượng <strong>Bảy Màu (Exclusive)</strong>, em sẽ đột phá rèn đúc được các thẻ đặc quyền chỉ có qua Dung hợp: <strong>Ma Pháp Omega (🪐)</strong>, <strong>Vòng Lặp Thời Gian (🌀)</strong> và <strong>Song Kích Trí Tuệ (⚔️)</strong>!</li>
-                </ul>
-              </div>
-
-            </div>
-          </div>
-
-        </div>
-      )}
-
       {/* GACHA UNBOXING FULL SCREEN ANIMATED OVERLAY */}
       <AnimatePresence>
         {unboxingStep !== "idle" && unboxingPack && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -1832,7 +1106,7 @@ export default function Shop({ progress, onUpdateProgress, selectedAvatarIdx, tr
                       <span className="text-[9px] font-bold text-amber-700 bg-amber-50/70 px-2 py-0.5 rounded-full border border-amber-100 flex items-center gap-0.5">
                         ⏳ Hồi: {unboxedCards[revealedCardIdx].cooldownRounds}v
                       </span>
-                    </div>
+                  </div>
                   </div>
 
                   {/* Mid big Emoji */}
@@ -1852,7 +1126,7 @@ export default function Shop({ progress, onUpdateProgress, selectedAvatarIdx, tr
                     <div className="bg-white/90 border border-slate-100 rounded-2xl p-2.5 text-[10.5px] text-indigo-750 font-black leading-tight shadow-sm">
                       <p className="text-[9px] text-fuchsia-500 uppercase font-black tracking-wider mb-0.5">Hiệu ứng Đấu Trường PK</p>
                       {unboxedCards[revealedCardIdx].effect}
-                    </div>
+                  </div>
                   </div>
                 </motion.div>
 
