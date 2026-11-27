@@ -1,0 +1,14 @@
+/* Hồ Bơi Tính Nhẩm – CSS riêng của game (chỉ scope .pool-scene / .badge-pop).
+   Cảnh hồ bơi, thợ lặn, sóng nước vẽ bằng canvas: xem PoolCanvas.tsx + ../vfx/PoolPhysicsEngine.ts. */
+.pool-scene canvas { touch-action: manipulation; }
+
+.pool-badge-pop { animation: pool-pop 1.2s ease-out both; pointer-events: none; }
+@keyframes pool-pop {
+  0% { transform: translateY(6px) scale(0.8); opacity: 0; }
+  20% { transform: translateY(0) scale(1.05); opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translateY(-8px); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pool-badge-pop { animation: none !important; }
+}

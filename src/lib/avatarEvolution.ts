@@ -43,7 +43,7 @@ export const AVATAR_EVOLUTIONS: AvatarEvolution[] = [
     stages: [
       { stageNum: 1, minLevel: 1, emoji: "🐾", title: "Chân Nhỏ Tinh Nghịch", description: "Chú cáo nhỏ mới chỉ để lại những dấu chân tò mò đầu tiên." },
       { stageNum: 2, minLevel: 2, emoji: "🦊", title: "Cáo Lanh Lợi", description: "Nhạy bén giải quyết các câu hỏi hóc búa từ AI cực kỳ thông minh." },
-      { stageNum: 3, minLevel: 4, emoji: "🐺", title: "Sói Bạc Kiên Cường", description: "Kỷ luật thép, luôn kiên trì tự lập kế hoạch học tập xuất sắc." },
+      { stageNum: 3, minLevel: 4, emoji: "🦊", title: "Cáo Bạc Kiên Cường", description: "Bộ lông ánh bạc của sự kỷ luật, luôn kiên trì tự lập kế hoạch học tập xuất sắc." },
       { stageNum: 4, minLevel: 6, emoji: "🦄", title: "Lân Quang Vũ Trụ", description: "Hóa thân thành sinh vật huyền thoại lấp lánh hào quang tri thức." }
     ]
   },
@@ -53,7 +53,7 @@ export const AVATAR_EVOLUTIONS: AvatarEvolution[] = [
     color: "bg-blue-100 border-blue-200 text-blue-600",
     stages: [
       { stageNum: 1, minLevel: 1, emoji: "🧸", title: "Gấu Bông Tập Sự", description: "Chú gấu nhỏ ngoan ngoãn lắng nghe bài giảng chăm chỉ mỗi ngày." },
-      { stageNum: 2, minLevel: 2, emoji: "🐼", title: "Gấu Trúc Cần Mẫn", description: "Siêu sao gặm nhấm sách vở, miệt mài ghi chú bài học chất lượng." },
+      { stageNum: 2, minLevel: 2, emoji: "🐻", title: "Gấu Nhỏ Cần Mẫn", description: "Chú gấu nhỏ chăm chỉ gặm nhấm sách vở, miệt mài ghi chú bài học chất lượng." },
       { stageNum: 3, minLevel: 4, emoji: "🐻", title: "Gấu Xám Uy Nghi", description: "Sức mạnh trí tuệ vô song, không ngại bất kỳ thử thách khó nhằn nào." },
       { stageNum: 4, minLevel: 6, emoji: "🐻‍❄️", title: "Bạch Gấu Bắc Cực", description: "Làm chủ vùng đất lạnh giá của tri thức siêu việt và tinh thông." }
     ]
@@ -75,7 +75,7 @@ export const AVATAR_EVOLUTIONS: AvatarEvolution[] = [
     color: "bg-amber-100 border-amber-200 text-amber-600",
     stages: [
       { stageNum: 1, minLevel: 1, emoji: "🦁", title: "Sư Tử Nhí", description: "Chú sư tử con nghịch ngợm, dấn thân vào các bài học đầy hào hứng." },
-      { stageNum: 2, minLevel: 2, emoji: "🐆", title: "Báo Swift Bứt Phá", description: "Nhanh như cắt, hoàn thành đố vui trắc nghiệm đạt điểm tối đa." },
+      { stageNum: 2, minLevel: 2, emoji: "🦁", title: "Sư Tử Bứt Phá", description: "Sư tử nhỏ lớn nhanh, chạy nhanh như cắt, hoàn thành đố vui trắc nghiệm đạt điểm tối đa." },
       { stageNum: 3, minLevel: 4, emoji: "🦁", title: "Sư Tử Tôn Quý", description: "Dáng dấp thủ lĩnh kiêu hãnh, luôn dẫn đầu bảng thành tích học tập." },
       { stageNum: 4, minLevel: 6, emoji: "👑🦁", title: "Chúa Tể Muôn Loài", description: "Vị vua sở hữu vương miện danh vọng và bộ óc chiến thuật thiên tài." }
     ]

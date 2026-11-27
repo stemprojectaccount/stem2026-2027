@@ -1,0 +1,160 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Validation helper for User entity
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid']) &&
+        data.uid is string && data.uid == request.auth.uid &&
+        (!('email' in data) || (data.email is string && data.email.size() <= 320)) &&
+        (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 200)) &&
+        (!('photoURL' in data) || (data.photoURL is string && data.photoURL.size() <= 1000)) &&
+        (!('grade' in data) || (data.grade is string && data.grade.size() <= 50)) &&
+        (!('school' in data) || (data.school is string && data.school.size() <= 200)) &&
+        (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 100)) &&
+        (!('createdAt' in data) || (data.createdAt is string && data.createdAt.size() <= 100));
+    }
+
+    // User profile and study progress storage
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidId(userId) && isValidUser(incoming());
+      allow update: if isOwner(userId) && isValidId(userId) && isValidUser(incoming()) && incoming().uid == existing().uid;
+      allow delete: if isOwner(userId) && isValidId(userId);
+    }
+
+    // ---------- Parent ↔ student link ----------
+    // A family is addressed by a secret random id (28 chars) that only the student device and the
+    // linked parent accounts know. No listing, so ids cannot be discovered.
+    function isFamilyId(id) {
+      return isValidId(id) && id.size() >= 24 && id.size() <= 64;
+    }
+
+    function isValidFamily(data) {
+      return data.size() <= 14 &&
+        (!('support' in data) || (data.support is map && data.support.size() <= 3)) &&
+        (!('studentName' in data) || (data.studentName is string && data.studentName.size() <= 100)) &&
+        (!('parentUids' in data) || (data.parentUids is list && data.parentUids.size() <= 6)) &&
+        (!('parentNames' in data) || (data.parentNames is list && data.parentNames.size() <= 6)) &&
+        (!('alerts' in data) || (data.alerts is list && data.alerts.size() <= 30)) &&
+        (!('settings' in data) || data.settings is map) &&
+        (!('report' in data) || data.report is map) &&
+        (!('reports' in data) || (data.reports is map && data.reports.size() <= 6)) &&
+        (!('remoteLock' in data) || data.remoteLock is map) &&
+        (!('messages' in data) || (data.messages is list && data.messages.size() <= 20));
+    }
+
+    match /families/{familyId} {
+      allow get: if isFamilyId(familyId);
+      allow create, update: if isFamilyId(familyId) && isValidFamily(incoming());
+      allow list, delete: if false;
+    }
+
+    // 6-digit codes, valid 15 minutes, read only by a signed-in parent while still valid.
+    // A live code cannot be overwritten, so nobody can point it at another family.
+    function isValidLinkCode(code) {
+      return code.matches('^[0-9]{6}$') &&
+        incoming().keys().hasOnly(['familyId', 'studentName', 'expiresAt']) &&
+        isFamilyId(incoming().familyId) && incoming().expiresAt is int &&
+        incoming().expiresAt <= request.time.toMillis() + 960000;
+    }
+
+    match /linkCodes/{code} {
+      allow create: if isValidLinkCode(code);
+      allow update: if isValidLinkCode(code) && existing().expiresAt < request.time.toMillis();
+      allow get: if isSignedIn() && resource.data.expiresAt > request.time.toMillis();
+      allow delete: if isSignedIn();
+      allow list: if false;
+    }
+
+    // Role chosen right after Google sign-in ("student" / "parent") + the child's family id
+    match /accountRoles/{userId} {
+      allow get: if isOwner(userId);
+      allow create, update: if isOwner(userId) && isValidId(userId) &&
+        incoming().keys().hasOnly(['role', 'email', 'displayName', 'familyId', 'updatedAt']) &&
+        (!('role' in incoming()) || incoming().role in ['student', 'parent']);
+      allow list, delete: if false;
+    }
+
+    // Parent invites a child account by email; nothing is linked until the child accepts
+    function myEmail() {
+      return request.auth.token.email.lower();
+    }
+
+    function isValidRequest(data) {
+      return data.keys().hasOnly(['parentUid', 'parentName', 'parentEmail', 'childEmail', 'status', 'createdAt', 'respondedAt', 'familyId', 'studentName']) &&
+        data.parentUid == request.auth.uid &&
+        data.childEmail is string && data.childEmail.size() <= 320 &&
+        data.parentName is string && data.parentName.size() <= 100 &&
+        data.status == 'pending';
+    }
+
+    match /linkRequests/{requestId} {
+      allow create: if isSignedIn() && isValidId(requestId) && isValidRequest(incoming());
+      allow get, list: if isSignedIn() &&
+        (resource.data.parentUid == request.auth.uid || resource.data.childEmail == myEmail());
+      allow update: if isSignedIn() && (
+        // parent sends the invitation again
+        (resource.data.parentUid == request.auth.uid && isValidRequest(incoming())) ||
+        // the child answers
+        (resource.data.childEmail == myEmail() &&
+          incoming().status in ['accepted', 'declined'] &&
+          incoming().diff(existing()).affectedKeys().hasOnly(['status', 'respondedAt', 'familyId', 'studentName']))
+      );
+      allow delete: if isSignedIn() &&
+        (resource.data.parentUid == request.auth.uid || resource.data.childEmail == myEmail());
+    }
+
+    match /parentAccounts/{userId} {
+      allow get, create, update: if isOwner(userId) && isValidId(userId);
+      allow list, delete: if false;
+    }
+
+    // "Chia sẻ nhanh" (Hộp công cụ): a note opened with a 6-character code. Create-only (codes
+    // never change), read one by its code, no listing, so codes cannot be browsed.
+    match /shares/{code} {
+      allow get: if code.matches('^[A-Z0-9]{6}$');
+      allow create: if code.matches('^[A-Z0-9]{6}$') &&
+        incoming().keys().hasOnly(['code', 'title', 'content', 'mode', 'createdAt', 'expiresAt', 'sourceCode']) &&
+        incoming().code == code &&
+        incoming().content is string && incoming().content.size() > 0 && incoming().content.size() <= 50000 &&
+        incoming().title is string && incoming().title.size() <= 120 &&
+        incoming().mode in ['read-only', 'allow-copy'] &&
+        incoming().createdAt is int && incoming().expiresAt is int &&
+        incoming().expiresAt > incoming().createdAt &&
+        incoming().expiresAt - incoming().createdAt <= 604800000 &&
+        (!('sourceCode' in incoming()) || (incoming().sourceCode is string && incoming().sourceCode.size() == 6));
+      allow list, update, delete: if false;
+    }
+
+    // Connectivity verification probe
+    match /test/{docId} {
+      allow read: if true;
+    }
+  }
+}

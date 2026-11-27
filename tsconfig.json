@@ -22,5 +22,6 @@
     },
     "allowImportingTsExtensions": true,
     "noEmit": true
-  }
+  },
+  "exclude": ["node_modules", "dist", "dist-android", "build", "release", "ai-studio-source", "android", "downloads", "ban-luu", "ke-hoach", "công cụ tool", "các file tính năng , game mới mình làm","các file tính năng , game mới mình làm"]
 }

@@ -1,0 +1,16 @@
+@keyframes hm-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.hm-pulse {
+  animation: hm-pulse 1.1s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hm-pulse { animation: none; }
+}
+.hm-map-box {
+  /* keep the whole map on screen: width limited by the visible height (map aspect ≈ 0.835) */
+  max-width: min(100%, calc((100dvh - 190px) * 0.835));
+  margin-left: auto;
+  margin-right: auto;
+}

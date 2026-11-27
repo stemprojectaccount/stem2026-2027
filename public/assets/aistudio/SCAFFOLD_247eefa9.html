@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tên app: hôm nay học gì</title>
+<meta name="theme-color" content="#f6f8fd" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11161f" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231f53b8'/%3E%3Cpath d='M9 16.5l5 5L23 11' fill='none' stroke='%23f5f9fe' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Lexend:wght@600&display=swap" rel="stylesheet">
+<style>
+/* ---------- tokens: hex first (browsers without oklch, e.g. old school-lab PCs), oklch after ---------- */
+:root {
+  color-scheme: light dark;
+  --canvas: #f6f8fd; --surface: #fbfcfe; --surface-2: #eaeff7;
+  --ink: #192437; --ink-muted: #4f5869; --line: #d7deec; --line-strong: #738199;
+  --accent: #1f53b8; --accent-hover: #1043a8; --accent-ink: #f5f9fe; --accent-soft: #dde8fd;
+  --mark: #f9e77b;
+  --correct: #09672e; --correct-soft: #dcf7e1; --wrong: #b02b27; --wrong-soft: #fceae7;
+  --focus: var(--accent);
+
+  --font-text: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Lexend", var(--font-text);
+
+  --text-sm: 0.875rem; --text-base: 1rem; --text-md: 1.125rem; --text-lg: 1.375rem;
+  --text-xl: clamp(1.625rem, 1.4rem + 1vw, 2rem);
+
+  --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
+  --space-5: 1.5rem;  --space-6: 2rem;   --space-7: 3rem;    --space-8: 4rem;
+
+  --gutter: clamp(1rem, 4vw, 2rem);
+  --measure: 65ch;
+  --topbar-h: 3.5rem;
+  --nav-h: 3.75rem;
+  --dock: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px));
+
+  --radius-control: 0.625rem; --radius-panel: 0.875rem; --radius-pill: 999px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 150ms; --dur-base: 250ms;
+
+  --z-sticky: 10;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --canvas: #11161f; --surface: #1a1f2a; --surface-2: #242c39;
+    --ink: #ebeff5; --ink-muted: #a9b2c1; --line: #353d4d; --line-strong: #79879f;
+    --accent: #91b7fe; --accent-hover: #b2cbf9; --accent-ink: #0c1628; --accent-soft: #223251;
+    --mark: #615608;
+    --correct: #75d78d; --correct-soft: #1a3520; --wrong: #fb988d; --wrong-soft: #4a231f;
+  }
+}
+@supports (color: oklch(0 0 0)) {
+  :root {
+    --hue: 262;
+    --canvas: oklch(0.98 0.006 var(--hue)); --surface: oklch(0.99 0.003 var(--hue)); --surface-2: oklch(0.95 0.012 var(--hue));
+    --ink: oklch(0.26 0.04 var(--hue)); --ink-muted: oklch(0.46 0.03 var(--hue));
+    --line: oklch(0.90 0.02 var(--hue)); --line-strong: oklch(0.60 0.04 var(--hue));
+    --accent: oklch(0.47 0.17 var(--hue)); --accent-hover: oklch(0.42 0.17 var(--hue));
+    --accent-ink: oklch(0.98 0.008 var(--hue)); --accent-soft: oklch(0.93 0.03 var(--hue));
+    --mark: oklch(0.92 0.13 100);
+    --correct: oklch(0.45 0.12 150); --correct-soft: oklch(0.95 0.04 150);
+    --wrong: oklch(0.50 0.17 27); --wrong-soft: oklch(0.95 0.02 27);
+    --tag-bg: 0.94 0.025; --tag-ink: 0.36 0.07;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --canvas: oklch(0.20 0.02 var(--hue)); --surface: oklch(0.24 0.022 var(--hue)); --surface-2: oklch(0.29 0.026 var(--hue));
+      --ink: oklch(0.95 0.01 var(--hue)); --ink-muted: oklch(0.76 0.025 var(--hue));
+      --line: oklch(0.36 0.03 var(--hue)); --line-strong: oklch(0.62 0.04 var(--hue));
+      --accent: oklch(0.78 0.11 var(--hue)); --accent-hover: oklch(0.84 0.07 var(--hue));
+      --accent-ink: oklch(0.20 0.04 var(--hue)); --accent-soft: oklch(0.32 0.06 var(--hue));
+      --mark: oklch(0.45 0.09 100);
+      --correct: oklch(0.80 0.14 150); --correct-soft: oklch(0.30 0.05 150);
+      --wrong: oklch(0.78 0.12 27); --wrong-soft: oklch(0.31 0.06 27);
+      --tag-bg: 0.33 0.045; --tag-ink: 0.90 0.05;
+    }
+  }
+}
+
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html {
+  -webkit-text-size-adjust: 100%; scrollbar-color: var(--line-strong) transparent;
+  scroll-padding-block: calc(var(--topbar-h) + var(--space-4)) calc(var(--dock) + 5.5rem);
+}
+body {
+  margin: 0;
+  min-height: 100vh; min-height: 100dvh;
+  background: var(--canvas); color: var(--ink);
+  font: 400 var(--text-base)/1.6 var(--font-text);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2 { margin: 0; font-family: var(--font-display); font-weight: 600; line-height: 1.25; text-wrap: balance; }
+h1 { font-size: var(--text-xl); letter-spacing: -0.01em; }
+h2 { font-size: var(--text-lg); }
+p  { margin: 0; max-width: var(--measure); text-wrap: pretty; }
+ul, dl, dd { margin: 0; padding: 0; list-style: none; }
+fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+legend { padding: 0; }
+a  { color: inherit; text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
+:where(input, select, textarea, button) { font: inherit; color: inherit; }
+input, textarea, select { caret-color: var(--accent); accent-color: var(--accent); }
+::placeholder { color: var(--ink-muted); opacity: 1; }
+::selection { background: var(--mark); color: var(--ink); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+[tabindex="-1"]:focus { outline: none; }
+.num { font-variant-numeric: tabular-nums; }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.skip-link {
+  position: absolute; inset-inline-start: var(--space-4); inset-block-start: -4rem; z-index: calc(var(--z-sticky) + 1);
+  padding: var(--space-3) var(--space-4); background: var(--ink); color: var(--canvas);
+  border-radius: var(--radius-control);
+}
+.skip-link:focus { inset-block-start: var(--space-4); }
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.icon { flex: none; width: 1.5rem; height: 1.5rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.icon--sm { width: 1.125rem; height: 1.125rem; }
+.stack > * + * { margin-block-start: var(--stack, var(--space-4)); }
+
+/* ---------- app shell: top bar, bottom tabs on phones, side rail on wide screens ---------- */
+.topbar {
+  position: sticky; top: 0; z-index: var(--z-sticky);
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+  min-height: var(--topbar-h); padding: env(safe-area-inset-top, 0px) var(--gutter) 0;
+  background: var(--canvas); border-bottom: 1px solid var(--line);
+}
+.brand { display: inline-flex; align-items: center; min-height: 2.75rem; font: 600 var(--text-md)/1.2 var(--font-display); text-decoration: none; }
+.chip { display: inline-flex; align-items: center; min-height: 2rem; padding: 0 var(--space-3); border-radius: var(--radius-pill); background: var(--surface-2); font-size: var(--text-sm); font-weight: 500; }
+.nav {
+  position: fixed; inset-inline: 0; bottom: 0; z-index: var(--z-sticky);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: var(--surface); border-top: 1px solid var(--line);
+}
+.nav ul { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; }
+.nav a {
+  display: grid; justify-items: center; align-content: center; align-items: center; gap: var(--space-1);
+  min-height: var(--nav-h); padding: var(--space-2);
+  color: var(--ink-muted); font-size: var(--text-sm); font-weight: 500; text-decoration: none;
+}
+.nav a span { padding-inline: 0.15em; }
+.nav a[aria-current="page"] { color: var(--ink); font-weight: 600; }
+.nav a[aria-current="page"] span { box-shadow: inset 0 -0.5em 0 var(--mark); }
+main { padding: var(--space-5) var(--gutter) calc(var(--dock) + var(--space-6)); }
+.view { max-width: 44rem; }
+.view:not([hidden]) ~ .view { margin-block-start: var(--space-8); }
+@media (hover: hover) { .nav a:hover { color: var(--ink); } }
+@media (min-width: 60rem) {
+  :root { --dock: 0px; }
+  .app { display: grid; grid-template-columns: 15rem minmax(0, 1fr); align-items: start; }
+  .topbar { grid-column: 1 / -1; }
+  .nav { position: sticky; top: calc(var(--topbar-h) + 1px); inset-inline: auto; bottom: auto; padding: var(--space-5) var(--space-3); background: none; border-top: 0; }
+  .nav ul { grid-auto-flow: row; gap: var(--space-1); }
+  .nav a { grid-auto-flow: column; justify-content: start; gap: var(--space-3); min-height: 2.75rem; padding: var(--space-2) var(--space-3); font-size: var(--text-base); }
+  main { padding: var(--space-6) var(--space-7) var(--space-8); }
+}
+
+/* ---------- controls and content ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  min-height: 3rem; padding: 0 var(--space-5);
+  font-weight: 600; text-decoration: none; cursor: pointer;
+  border: 1px solid var(--line-strong); border-radius: var(--radius-control);
+  background: var(--surface); color: var(--ink);
+  transition: background-color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+.btn--primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+.btn:active { transform: translateY(1px); }
+.btn[disabled], .btn[aria-disabled="true"] { opacity: 0.5; cursor: not-allowed; }
+.btn[aria-busy="true"] { cursor: progress; }
+@media (hover: hover) {
+  .btn:not([disabled]):hover { background: var(--surface-2); }
+  .btn--primary:not([disabled]):hover { background: var(--accent-hover); }
+}
+.actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.panel { padding: var(--space-5); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-panel); }
+.note { color: var(--ink-muted); font-size: var(--text-sm); }
+.tag {
+  --h: var(--hue);
+  display: inline-flex; align-items: center; min-height: 1.5rem; padding: 0 var(--space-2);
+  border-radius: var(--radius-pill); background: var(--surface-2); color: var(--ink);
+  font-size: var(--text-sm); font-weight: 600;
+}
+.tag[data-subj="math"] { --h: 250; }
+.tag[data-subj="english"] { --h: 305; }
+.tag[data-subj="science"] { --h: 160; }
+@supports (color: oklch(0 0 0)) {
+  .tag { background: oklch(var(--tag-bg) var(--h)); color: oklch(var(--tag-ink) var(--h)); }
+}
+.meter { display: grid; gap: var(--space-2); }
+.meter label { color: var(--ink-muted); font-size: var(--text-sm); font-weight: 500; }
+progress {
+  -webkit-appearance: none; appearance: none; display: block; width: 100%; height: 0.625rem;
+  border: 0; border-radius: var(--radius-pill); background: var(--surface-2); color: var(--accent); overflow: hidden;
+}
+progress::-webkit-progress-bar { background: var(--surface-2); }
+progress::-webkit-progress-value { background: var(--accent); border-radius: var(--radius-pill); }
+progress::-moz-progress-bar { background: var(--accent); border-radius: var(--radius-pill); }
+.rows > li {
+  position: relative; display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+  min-height: 4rem; padding-block: var(--space-3); border-top: 1px solid var(--line);
+}
+.rows > li:last-child { border-bottom: 1px solid var(--line); }
+.row-main { min-width: 0; }
+.row-title { font-weight: 500; text-decoration: none; overflow-wrap: anywhere; }
+.row-title::after { content: ""; position: absolute; inset: 0; }
+.row-meta { display: flex; align-items: center; gap: var(--space-2); margin-block-start: var(--space-1); color: var(--ink-muted); font-size: var(--text-sm); }
+.status { display: inline-flex; align-items: center; gap: var(--space-1); color: var(--ink-muted); font-size: var(--text-sm); font-weight: 500; white-space: nowrap; }
+.status[data-done="true"] { color: var(--correct); }
+@media (hover: hover) { .rows > li:hover .row-title { text-decoration: underline; } }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 0 var(--space-5); }
+.stats > div { padding-block: var(--space-4); border-top: 1px solid var(--line); }
+.stats dt { color: var(--ink-muted); font-size: var(--text-sm); }
+.stats dd { font: 600 var(--text-lg)/1.3 var(--font-display); }
+
+/* ---------- question: choose, check, read why, continue ---------- */
+.question legend { margin-block-end: var(--space-4); font-size: var(--text-md); font-weight: 600; line-height: 1.45; }
+.options { display: grid; gap: var(--space-3); }
+.option {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3);
+  min-height: 3.25rem; padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--line-strong); border-radius: var(--radius-control);
+  background: var(--surface); cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+.option input { flex: none; width: 1.25rem; height: 1.25rem; margin: 0; }
+.option-text { flex: 1 1 8rem; min-width: 0; overflow-wrap: anywhere; }
+.option-mark { display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--text-sm); font-weight: 600; white-space: nowrap; }
+.option:not([data-result]):has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.option:has(input:focus-visible) { outline: 2px solid var(--focus); outline-offset: 3px; }
+.option:has(input:focus-visible) input { outline: none; }
+fieldset[disabled] .option { cursor: default; }
+.option[data-result="correct"] { border-color: var(--correct); background: var(--correct-soft); }
+.option[data-result="correct"] .option-mark { color: var(--correct); }
+.option[data-result="wrong"] { border-color: var(--wrong); background: var(--wrong-soft); }
+.option[data-result="wrong"] .option-mark { color: var(--wrong); }
+.field-error { color: var(--wrong); font-size: var(--text-sm); font-weight: 500; }
+.feedback {
+  display: flex; gap: var(--space-3); padding: var(--space-4);
+  border-radius: var(--radius-control); background: var(--correct-soft);
+  animation: fade var(--dur-base) var(--ease-out) both;
+}
+.feedback .icon { color: var(--correct); }
+.feedback[data-state="wrong"] { background: var(--wrong-soft); }
+.feedback[data-state="wrong"] .icon { color: var(--wrong); }
+.feedback-title { font-weight: 600; }
+.action-bar { position: sticky; bottom: var(--dock); display: flex; flex-wrap: wrap; gap: var(--space-3); padding-block: var(--space-3); background: var(--canvas); }
+.action-bar .btn { flex: 1 1 auto; }
+@media (min-width: 40rem) { .action-bar .btn { flex: 0 0 auto; } }
+
+/* the one authored moment: a correct answer gets its tick drawn like a pen stroke */
+.feedback[data-state="correct"] .icon { stroke-dasharray: 24; animation: draw 450ms var(--ease-out) 100ms both; }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes draw { from { stroke-dashoffset: 24; } to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .feedback[data-state="correct"] .icon { animation: none; }
+  .btn:active { transform: none; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Bỏ qua, tới nội dung chính</a>
+
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-today" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20l1-4L16 5l3 3L8 19l-4 1zM14 7l3 3"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M5 20v-8M12 20V5M19 20v-5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+</svg>
+
+<div class="app">
+  <header class="topbar">
+    <a class="brand" href="#home">Tên app</a>
+    <span class="chip">Lớp 6</span>
+  </header>
+
+  <nav class="nav" aria-label="Chính">
+    <ul>
+      <li><a href="#home" aria-current="page"><svg class="icon" aria-hidden="true"><use href="#i-today"/></svg><span>Hôm nay</span></a></li>
+      <li><a href="#practice"><svg class="icon" aria-hidden="true"><use href="#i-pencil"/></svg><span>Luyện tập</span></a></li>
+      <li><a href="#progress"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg><span>Tiến độ</span></a></li>
+    </ul>
+  </nav>
+
+  <main id="main" tabindex="-1">
+    <section class="view stack" id="home" data-view style="--stack: var(--space-6)">
+      <h1 tabindex="-1">Hôm nay</h1>
+      <div class="panel stack">
+        <p><span class="tag" data-subj="math">Toán</span></p>
+        <h2>Ước chung lớn nhất</h2>
+        <div class="meter">
+          <label for="p-lesson">Đã học <span class="num">3/5</span> phần</label>
+          <progress id="p-lesson" value="3" max="5"></progress>
+        </div>
+        <a class="btn btn--primary" href="#practice">Học tiếp <svg class="icon icon--sm" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      </div>
+      <div class="stack">
+        <h2>Việc hôm nay</h2>
+        <ul class="rows">
+          <li>
+            <div class="row-main">
+              <a class="row-title" href="#practice">Luyện tập: ước và bội</a>
+              <p class="row-meta"><span class="tag" data-subj="math">Toán</span><span class="num">8 phút</span></p>
+            </div>
+            <span class="status" data-done="true"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-check"/></svg>Xong</span>
+          </li>
+          <li>
+            <div class="row-main">
+              <a class="row-title" href="#practice">Từ vựng Unit 3: My friends</a>
+              <p class="row-meta"><span class="tag" data-subj="english">Tiếng Anh</span><span class="num">6 phút</span></p>
+            </div>
+            <span class="status">Chưa làm</span>
+          </li>
+          <li>
+            <div class="row-main">
+              <a class="row-title" href="#practice">Mô phỏng: tốc độ chuyển động</a>
+              <p class="row-meta"><span class="tag" data-subj="science">Khoa học tự nhiên</span><span class="num">10 phút</span></p>
+            </div>
+            <span class="status">Chưa làm</span>
+          </li>
+        </ul>
+      </div>
+      <p class="note">Bài học và thời lượng ở trên là dữ liệu mẫu.</p>
+    </section>
+
+    <section class="view stack" id="practice" data-view style="--stack: var(--space-5)">
+      <h1 tabindex="-1">Luyện tập</h1>
+      <noscript><p>Bài luyện tập cần bật JavaScript để chạy.</p></noscript>
+      <div class="stack" id="quiz-root" hidden>
+        <div class="meter">
+          <label for="p-quiz" id="quiz-count">Câu 1/3</label>
+          <progress id="p-quiz" value="0" max="3"></progress>
+        </div>
+        <form class="question stack" id="quiz" novalidate>
+          <fieldset>
+            <legend id="q-prompt"></legend>
+            <div class="options" id="q-options"></div>
+          </fieldset>
+          <p class="field-error" id="q-error" role="alert" hidden>Chọn một đáp án trước đã.</p>
+          <div class="feedback" id="q-feedback" hidden>
+            <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>
+            <div>
+              <p class="feedback-title" id="q-feedback-title"></p>
+              <p id="q-feedback-text"></p>
+            </div>
+          </div>
+          <div class="action-bar"><button class="btn btn--primary" type="submit" id="q-action">Kiểm tra</button></div>
+        </form>
+        <div class="panel stack" id="quiz-result" hidden>
+          <h2 id="result-title" tabindex="-1"></h2>
+          <p id="result-text"></p>
+          <div class="actions">
+            <button class="btn btn--primary" type="button" id="quiz-restart">Làm lại</button>
+            <a class="btn" href="#home">Về Hôm nay</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view stack" id="progress" data-view style="--stack: var(--space-5)">
+      <h1 tabindex="-1">Tiến độ</h1>
+      <div class="stack" id="progress-empty">
+        <h2>Chưa có bài nào được ghi lại</h2>
+        <p>Làm xong một bài luyện tập, kết quả của bạn sẽ hiện ở đây.</p>
+        <a class="btn btn--primary" href="#practice">Làm bài đầu tiên</a>
+      </div>
+      <dl class="stats" id="progress-stats" hidden>
+        <div><dt>Bài đã làm</dt><dd class="num" id="stat-done">0</dd></div>
+        <div><dt>Câu trả lời đúng</dt><dd class="num" id="stat-correct">0/0</dd></div>
+      </dl>
+    </section>
+  </main>
+</div>
+
+<p class="visually-hidden" id="live" role="status"></p>
+
+<template id="tpl-option">
+  <label class="option">
+    <input type="radio" name="answer">
+    <span class="option-text"></span>
+    <span class="option-mark" hidden><svg class="icon icon--sm" aria-hidden="true"><use href="#i-check"/></svg><span></span></span>
+  </label>
+</template>
+
+<script>
+(() => {
+  const $ = (selector) => document.querySelector(selector);
+
+  // one polite live region announces results and new questions
+  const live = $('#live');
+  const announce = (text) => { live.textContent = ''; requestAnimationFrame(() => { live.textContent = text; }); };
+
+  // progress survives reloads when storage is allowed; previews that block it fall back to memory
+  const STORAGE_KEY = 'app.progress.v1';
+  let progress = { done: 0, correct: 0, total: 0 };
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (saved && Number.isInteger(saved.done) && Number.isInteger(saved.correct) && Number.isInteger(saved.total)) progress = saved;
+  } catch { /* keep the in-memory default */ }
+  const saveProgress = () => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(progress)); } catch { /* memory only */ } };
+
+  // views: handled in script because sandboxed previews mis-resolve plain #hash links
+  const views = [...document.querySelectorAll('[data-view]')];
+  const navLinks = [...document.querySelectorAll('.nav a')];
+  function show(id, moveFocus) {
+    const target = views.find((view) => view.id === id) || views[0];
+    views.forEach((view) => { view.hidden = view !== target; });
+    navLinks.forEach((link) => {
+      if (link.getAttribute('href') === '#' + target.id) link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    if (moveFocus) { window.scrollTo(0, 0); target.querySelector('h1').focus(); }
+  }
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest('a[href^="#"]');
+    const target = link && document.getElementById(link.getAttribute('href').slice(1));
+    if (!target) return;
+    event.preventDefault();
+    if (!target.matches('[data-view]')) { target.focus(); return; }
+    show(target.id, true);
+    if (location.hash !== '#' + target.id) {
+      try { history.pushState(null, '', '#' + target.id); } catch { /* previews that refuse URL changes still switch views */ }
+    }
+  });
+  window.addEventListener('popstate', () => show(location.hash.slice(1), true));
+
+  // sample content, shaped like real content data: stable ids, and the answer names an option id, not a position
+  const QUESTIONS = [
+    { id: 'prime-01', prompt: 'Số nào dưới đây là số nguyên tố?', answer: 'c',
+      options: [{ id: 'a', text: '9' }, { id: 'b', text: '15' }, { id: 'c', text: '17' }, { id: 'd', text: '21' }],
+      explanation: '17 chỉ chia hết cho 1 và chính nó. Ba số còn lại đều chia hết cho 3.' },
+    { id: 'gcd-01', prompt: 'ƯCLN(12, 18) bằng bao nhiêu?', answer: 'c',
+      options: [{ id: 'a', text: '2' }, { id: 'b', text: '3' }, { id: 'c', text: '6' }, { id: 'd', text: '9' }],
+      explanation: 'Các ước chung của 12 và 18 là 1, 2, 3, 6. Số lớn nhất trong đó là 6.' },
+    { id: 'integer-add-01', prompt: 'Kết quả của (−3) + 5 là bao nhiêu?', answer: 'c',
+      options: [{ id: 'a', text: '−8' }, { id: 'b', text: '−2' }, { id: 'c', text: '2' }, { id: 'd', text: '8' }],
+      explanation: 'Hai số khác dấu: lấy 5 trừ 3 được 2. Vì 5 lớn hơn 3 nên kết quả mang dấu dương.' }
+  ];
+
+  const quiz = {
+    root: $('#quiz-root'), form: $('#quiz'), fieldset: $('#quiz fieldset'), prompt: $('#q-prompt'), options: $('#q-options'),
+    template: $('#tpl-option'), error: $('#q-error'), action: $('#q-action'),
+    feedback: $('#q-feedback'), feedbackIcon: $('#q-feedback use'), feedbackTitle: $('#q-feedback-title'), feedbackText: $('#q-feedback-text'),
+    count: $('#quiz-count'), bar: $('#p-quiz'),
+    result: $('#quiz-result'), resultTitle: $('#result-title'), resultText: $('#result-text'), restart: $('#quiz-restart')
+  };
+  let index = 0;
+  let correctCount = 0;
+  let checked = false;
+
+  function renderQuestion() {
+    const question = QUESTIONS[index];
+    checked = false;
+    quiz.count.textContent = `Câu ${index + 1}/${QUESTIONS.length}`;
+    quiz.bar.max = QUESTIONS.length;
+    quiz.bar.value = index;
+    quiz.prompt.textContent = question.prompt;
+    quiz.options.replaceChildren(...question.options.map((choice) => {
+      const option = quiz.template.content.cloneNode(true);
+      option.querySelector('input').value = choice.id;
+      option.querySelector('.option-text').textContent = choice.text;
+      return option;
+    }));
+    quiz.fieldset.disabled = false;
+    quiz.error.hidden = true;
+    quiz.feedback.hidden = true;
+    quiz.action.textContent = 'Kiểm tra';
+  }
+
+  function markOption(label, result, text) {
+    const mark = label.querySelector('.option-mark');
+    label.dataset.result = result;
+    mark.querySelector('use').setAttribute('href', result === 'correct' ? '#i-check' : '#i-x');
+    mark.querySelector('span').textContent = text;
+    mark.hidden = false;
+  }
+
+  function checkAnswer(picked) {
+    const question = QUESTIONS[index];
+    const isCorrect = picked === question.answer;
+    const isLast = index + 1 === QUESTIONS.length;
+    checked = true;
+    if (isCorrect) correctCount += 1;
+    quiz.fieldset.disabled = true;
+    quiz.options.querySelectorAll('.option').forEach((label) => {
+      const choiceId = label.querySelector('input').value;
+      if (choiceId === question.answer) markOption(label, 'correct', 'Đáp án đúng');
+      else if (choiceId === picked) markOption(label, 'wrong', 'Bạn chọn');
+    });
+    quiz.feedback.dataset.state = isCorrect ? 'correct' : 'wrong';
+    quiz.feedbackIcon.setAttribute('href', isCorrect ? '#i-check' : '#i-x');
+    quiz.feedbackTitle.textContent = isCorrect ? 'Đúng rồi!' : 'Chưa đúng.';
+    quiz.feedbackText.textContent = question.explanation;
+    quiz.feedback.hidden = false;
+    quiz.feedback.scrollIntoView({ block: 'nearest' });
+    quiz.bar.value = index + 1;
+    quiz.action.textContent = isLast ? 'Xem kết quả' : 'Câu tiếp theo';
+    announce(`${quiz.feedbackTitle.textContent} ${question.explanation}`);
+  }
+
+  function finishQuiz() {
+    progress = { done: progress.done + 1, correct: progress.correct + correctCount, total: progress.total + QUESTIONS.length };
+    saveProgress();
+    renderProgress();
+    quiz.form.hidden = true;
+    quiz.count.textContent = 'Đã xong';
+    quiz.resultTitle.textContent = `Bạn trả lời đúng ${correctCount}/${QUESTIONS.length} câu`;
+    quiz.resultText.textContent = correctCount === QUESTIONS.length
+      ? 'Bạn nắm chắc phần này rồi.'
+      : 'Làm lại một lượt để nhớ kỹ các câu chưa đúng nhé.';
+    quiz.result.hidden = false;
+    quiz.resultTitle.focus();
+  }
+
+  function renderProgress() {
+    const hasData = progress.done > 0;
+    $('#progress-empty').hidden = hasData;
+    $('#progress-stats').hidden = !hasData;
+    $('#stat-done').textContent = String(progress.done);
+    $('#stat-correct').textContent = `${progress.correct}/${progress.total}`;
+  }
+
+  // bound to the button's click, not the form's submit event: sandboxed previews without
+  // allow-forms never fire submit, while Enter still clicks the form's default button
+  quiz.action.addEventListener('click', (event) => {
+    event.preventDefault();
+    if (checked) {
+      if (index + 1 === QUESTIONS.length) { finishQuiz(); return; }
+      index += 1;
+      renderQuestion();
+      quiz.options.querySelector('input').focus();
+      announce(`${quiz.count.textContent}. ${quiz.prompt.textContent}`);
+      return;
+    }
+    const picked = new FormData(quiz.form).get('answer');
+    quiz.error.hidden = picked !== null;
+    if (picked === null) { quiz.options.querySelector('input').focus(); return; }
+    checkAnswer(picked);
+  });
+  quiz.options.addEventListener('change', () => { quiz.error.hidden = true; });
+  quiz.restart.addEventListener('click', () => {
+    index = 0;
+    correctCount = 0;
+    quiz.result.hidden = true;
+    quiz.form.hidden = false;
+    renderQuestion();
+    quiz.options.querySelector('input').focus();
+  });
+
+  renderProgress();
+  renderQuestion();
+  quiz.root.hidden = false;
+  show(location.hash.slice(1), false);
+})();
+</script>
+</body>
+</html>

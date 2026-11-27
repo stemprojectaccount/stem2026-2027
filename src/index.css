@@ -1,26 +1,182 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Fira+Code:wght@400;500&display=swap');
+@import "katex/dist/katex.min.css";
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Space Grotesk", sans-serif;
-  --font-mono: "Fira Code", monospace;
+  /* Be Vietnam Pro: phông do người Việt thiết kế riêng cho dấu tiếng Việt (dấu không chồng, không lệch),
+     chữ rõ ở cỡ nhỏ. Dùng chung cho nội dung và tiêu đề để giao diện gọn, đỡ "kiểu AI". */
+  --font-sans: "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
+  /* 412 font-black + 362 font-extrabold made every label shout; variable fonts let us tone them down in one place */
+  --font-weight-black: 800;
+  --font-weight-extrabold: 700;
+  /* font-mono (227 chỗ: số liệu, thời gian, nhãn) dùng phông chính + số canh đều cột (tabular-nums).
+     JetBrains Mono làm chữ tiếng Việt có dấu trông lệch như lỗi phông. Khối code thật vẫn dùng phông lập trình (bên dưới). */
+  --font-mono: "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
+
+  /* Bảng màu SmartStudy không có tím/chàm (gradient tím là dấu hiệu "giao diện AI"). ~790 class violet/indigo/purple/fuchsia
+     cũ trong code được đổi một lần ở đây sang dải xanh thương hiệu (#2e5cb8 → #243c6e). */
+  --color-indigo-50: #eef4fc; --color-indigo-100: #e3edfa; --color-indigo-200: #c7d9f3; --color-indigo-300: #9dbbe8;
+  --color-indigo-400: #6b95d6; --color-indigo-500: #4675c7; --color-indigo-600: #2e5cb8; --color-indigo-700: #284d9a;
+  --color-indigo-800: #243c6e; --color-indigo-900: #1d3057; --color-indigo-950: #142240;
+  --color-violet-50: #eef4fc; --color-violet-100: #e3edfa; --color-violet-200: #c7d9f3; --color-violet-300: #9dbbe8;
+  --color-violet-400: #6b95d6; --color-violet-500: #4675c7; --color-violet-600: #2e5cb8; --color-violet-700: #284d9a;
+  --color-violet-800: #243c6e; --color-violet-900: #1d3057; --color-violet-950: #142240;
+  --color-purple-50: #eef4fc; --color-purple-100: #e3edfa; --color-purple-200: #c7d9f3; --color-purple-300: #9dbbe8;
+  --color-purple-400: #6b95d6; --color-purple-500: #4675c7; --color-purple-600: #2e5cb8; --color-purple-700: #284d9a;
+  --color-purple-800: #243c6e; --color-purple-900: #1d3057; --color-purple-950: #142240;
+  --color-fuchsia-50: #e6f4f4; --color-fuchsia-100: #cdeaea; --color-fuchsia-200: #9fd6d8; --color-fuchsia-300: #6cbfc3;
+  --color-fuchsia-400: #3aa6ac; --color-fuchsia-500: #1a929a; --color-fuchsia-600: #13808a; --color-fuchsia-700: #0f6a73;
+  --color-fuchsia-800: #0c555c; --color-fuchsia-900: #0a454b; --color-fuchsia-950: #062b2f;
+
+
+  /* Xanh dương và xanh lá cùng một họ: xanh lá ngả về xanh biển (lấy từ #0e8a6a), xanh trời ngả về xanh logo,
+     nên đặt cạnh nhau không bị chỏi như màu mặc định của Tailwind. Chữ màu -600 trên nền trắng đều đạt tương phản ≥ 4.5:1. */
+  --color-blue-50: #eef4fc; --color-blue-100: #e3edfa; --color-blue-200: #c7d9f3; --color-blue-300: #9dbbe8; --color-blue-400: #6b95d6; --color-blue-500: #4675c7; --color-blue-600: #2e5cb8; --color-blue-700: #284d9a; --color-blue-800: #243c6e; --color-blue-900: #1d3057; --color-blue-950: #142240;
+  --color-sky-50: #eef6fc; --color-sky-100: #dcecf8; --color-sky-200: #b9d8f1; --color-sky-300: #8bbde6; --color-sky-400: #5aa0d8; --color-sky-500: #3487c8; --color-sky-600: #2770ad; --color-sky-700: #225b8e; --color-sky-800: #1f4b73; --color-sky-900: #1c3f5f; --color-sky-950: #12283d;
+  --color-emerald-50: #ecf8f3; --color-emerald-100: #d3f0e3; --color-emerald-200: #a8e1c9; --color-emerald-300: #74cba8; --color-emerald-400: #43b086; --color-emerald-500: #179574; --color-emerald-600: #0e7f62; --color-emerald-700: #0d6a53; --color-emerald-800: #0d5543; --color-emerald-900: #0c4638; --color-emerald-950: #062a22;
+  --color-green-50: #ecf8f3; --color-green-100: #d3f0e3; --color-green-200: #a8e1c9; --color-green-300: #74cba8; --color-green-400: #43b086; --color-green-500: #179574; --color-green-600: #0e7f62; --color-green-700: #0d6a53; --color-green-800: #0d5543; --color-green-900: #0c4638; --color-green-950: #062a22;
+  --color-cyan-50: #e9f7f9; --color-cyan-100: #cdeef3; --color-cyan-200: #9fdde7; --color-cyan-300: #69c6d6; --color-cyan-400: #38abc1; --color-cyan-500: #1c93ab; --color-cyan-600: #167a91; --color-cyan-700: #146477; --color-cyan-800: #135161; --color-cyan-900: #124351; --color-cyan-950: #0a2a34;
+  --color-teal-50: #e8f5f5; --color-teal-100: #cdebeb; --color-teal-200: #a0d8d9; --color-teal-300: #6bbfc2; --color-teal-400: #3ba5aa; --color-teal-500: #1d9198; --color-teal-600: #13808a; --color-teal-700: #106b74; --color-teal-800: #0e565d; --color-teal-900: #0c474d; --color-teal-950: #062c30;
+
+  /* Hộp công cụ (src/features/tools): màu dùng chung của các công cụ Rà soát bài viết & Sổ công thức */
+  --color-canvas: #f6f8fb;
+  --color-surface: #ffffff;
+  --color-surface-subtle: #f1f5f9;
+  --color-ink: #0f172a;
+  --color-ink-secondary: #475569;
+  --color-ink-muted: #64748b;
+  --color-line: #e2e8f0;
+  --color-line-strong: #cbd5e1;
+  --color-border: #e2e8f0;
+  --color-border-strong: #cbd5e1;
+  --color-accent: #2e5cb8;
+  --color-accent-hover: #243c6e;
+  --color-accent-soft: #eef4fc;
+  --color-ok: #0e7f62;
+  --color-ok-soft: #ecf8f3;
+  --color-warn: #b45309;
+  --color-warn-soft: #fffbeb;
+  --color-alert: #b91c1c;
+  --color-alert-soft: #fef2f2;
+  --color-priority: #b45309;
+  --color-priority-soft: #fffbeb;
+  --color-priority-border: #fde68a;
+  --color-success: #0e7f62;
+  --color-success-soft: #ecf8f3;
+  --color-danger: #b91c1c;
+  --color-danger-soft: #fef2f2;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+@layer utilities {
+  .font-mono {
+    font-variant-numeric: tabular-nums;
+  }
+  /* Nút chính dùng chung: xanh dương logo -> xanh mòng két (thay các dải tím/chàm lệch tông) */
+  .ss-btn-grad {
+    background-image: linear-gradient(90deg, #2e5cb8 0%, #2a63ab 45%, #13808a 100%);
+    color: #fff;
+  }
+  .ss-btn-grad:hover {
+    background-image: linear-gradient(90deg, #284fa0 0%, #245695 45%, #0f6f78 100%);
+  }
+  .ss-btn-grad:focus-visible {
+    outline: 2px solid #8ee8b4;
+    outline-offset: 2px;
+  }
+  /* Dải màu thương hiệu cho thanh tiến độ, huy hiệu biểu tượng */
+  .ss-grad-brand {
+    background-image: linear-gradient(90deg, #3b82c4 0%, #2e5cb8 45%, #13808a 100%);
+  }
+  .ss-grad-brand-br {
+    background-image: linear-gradient(135deg, #2e5cb8 0%, #13808a 100%);
+  }
 }
-::-webkit-scrollbar-track {
-  background: rgba(241, 245, 249, 0.5);
+@layer base {
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+  }
 }
-::-webkit-scrollbar-thumb {
-  background: rgba(203, 213, 225, 1);
+
+:root {
+  --bg-canvas: #eff7f5;
+  --bg-surface: #ffffff;
+  --bg-subtle: #eef4fc;
+  --text-primary: #0f172a;
+  --text-secondary: #243c6e;
+  --text-muted: #475569;
+  --border-subtle: #d8e5f7;
+  --border-strong: #93b8e8;
+  --accent-primary: #2e5cb8;
+  --accent-primary-hover: #254da0;
+  --accent-amber: #3563b8;
+  --accent-emerald: #2b6cb0;
+  --accent-rose: #243c6e;
+  --radius-control: 0.625rem;
+  --radius-card: 1rem;
+  --radius-modal: 1.25rem;
+}
+
+/* Typography Scale: clear readability for Grade 6 students */
+html {
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-text-size-adjust: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+@media (min-width: 1024px) {
+  html {
+    font-size: 16.5px;
+  }
+}
+
+/* Subtle 6px scrollbars so users can see scroll progress in long lists */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(148, 163, 184, 0.45);
   border-radius: 9999px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 1);
+*::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(100, 116, 139, 0.7);
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html, body, #root, #app_root {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  height: 100vh;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: var(--bg-canvas);
+}
+
+.scrollbar-none {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 @keyframes pulse-slow {
@@ -113,3 +269,2150 @@
   border-color: #e879f9;
   animation: pulse-shadow-mythic 1s infinite ease-in-out;
 }
+
+
+/* Print Styles for Save to PDF */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+  
+  /* Hide UI elements that shouldn't be printed */
+  nav, header, .sidebar, .sidebar-container, .no-print {
+    display: none !important;
+  }
+  
+  /* specifically hide sidebars and extra columns in LessonReader */
+  .grid-cols-12 > .lg\:col-span-4 {
+    display: none !important;
+  }
+  
+  .grid-cols-12 > .lg\:col-span-8 {
+    grid-column: span 12 / span 12 !important;
+    width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+  }
+  
+  #root > div > div:first-child {
+      display: none !important; /* The global sidebar */
+  }
+  
+  /* Hide buttons */
+  button {
+    display: none !important;
+  }
+
+  /* Make typography cleaner for print */
+  .prose-custom {
+    font-size: 12pt;
+    line-height: 1.5;
+  }
+
+  h1 { font-size: 24pt !important; border-bottom: 1pt solid #ccc !important; padding-bottom: 10px !important; }
+  h2 { font-size: 18pt !important; margin-top: 20px !important; }
+  h3 { font-size: 14pt !important; }
+  p, li, td { color: black !important; }
+  
+  /* Force break inside blocks */
+  blockquote, pre, table, figure {
+    page-break-inside: avoid;
+  }
+  
+  /* Add margins */
+  @page {
+    margin: 1.5cm;
+  }
+}
+
+
+/* Smooth View Transitions */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
+}
+
+::view-transition-old(root) {
+  animation-name: fade-out, scale-down;
+}
+
+::view-transition-new(root) {
+  animation-name: fade-in, slide-up;
+}
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes scale-down {
+  from { transform: scale(1); }
+  to { transform: scale(0.98); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(15px); }
+  to { transform: translateY(0); }
+}
+
+/* SMARTSTUDY ACADEMIC EDTECH THEME - CALM, STRUCTURED & EYE-FRIENDLY */
+body {
+  background-color: var(--bg-canvas) !important;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+}
+
+/* Balanced Medium-Blue & Soft Ice-White Academic Canvas */
+.bg-edupia-canvas {
+  background-color: #eff7f5;
+  background-image: radial-gradient(circle at 15% 0%, rgba(191, 219, 254, 0.4) 0%, rgba(239, 247, 245, 0.95) 50%, #ffffff 100%), radial-gradient(circle at 90% 100%, rgba(142, 232, 180, 0.28) 0%, transparent 55%);
+  min-height: 100vh;
+}
+
+/* Crisp White & Soft Blue Card */
+.edu-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 2px 6px 0 rgba(36, 60, 110, 0.04), 0 6px 16px -4px rgba(36, 60, 110, 0.06);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .edu-card:hover {
+    border-color: #93b8e8;
+    box-shadow: 0 8px 24px -4px rgba(46, 92, 184, 0.11), 0 2px 6px -1px rgba(46, 92, 184, 0.05);
+  }
+}
+
+/* Vệt sáng nhạt (Light Sheen / Light Beam) khi bấm vào hoặc chọn mục */
+@keyframes light-sheen-sweep {
+  0% {
+    transform: translateX(-120%) rotate(25deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.7;
+  }
+  80% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateX(250%) rotate(25deg);
+    opacity: 0;
+  }
+}
+
+.sheen-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.sheen-glow::after {
+  content: '';
+  position: absolute;
+  top: -60%;
+  left: -60%;
+  width: 220%;
+  height: 220%;
+  background: linear-gradient(
+    90deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.15) 35%, 
+    rgba(224, 242, 254, 0.6) 50%, 
+    rgba(255, 255, 255, 0.15) 65%, 
+    transparent 100%
+  );
+  transform: rotate(25deg);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.sheen-glow:hover::after,
+.sheen-glow:active::after,
+.sheen-glow.active::after {
+  opacity: 1;
+  animation: light-sheen-sweep 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* Vệt sáng nhạt hiển thị liên tục hoặc khi được chọn */
+.active-item-beam {
+  position: relative;
+  background: linear-gradient(135deg, rgba(240, 249, 255, 0.95) 0%, rgba(224, 242, 254, 0.8) 100%) !important;
+  border-color: rgba(56, 189, 248, 0.7) !important;
+  box-shadow: 0 0 25px -2px rgba(56, 189, 248, 0.35), inset 0 0 15px rgba(255, 255, 255, 0.6) !important;
+}
+
+.active-item-beam::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #38bdf8, #7dd3fc, transparent);
+  border-radius: 9999px;
+}
+
+/* 3D Tilt Hover + 3D Flip Card Animation for Grid View Lesson Cards */
+.flip-card-perspective {
+  perspective: 1100px;
+}
+
+.lesson-tilt-stage {
+  --tilt-rx: 0deg;
+  --tilt-ry: 0deg;
+  --glare-x: 50%;
+  --glare-y: 50%;
+  --tilt-active: 0;
+  perspective: 1100px;
+}
+
+.lesson-tilt-wrapper {
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--tilt-rx, 0deg)) rotateY(var(--tilt-ry, 0deg)) translate3d(0, 0, 0) scale3d(1, 1, 1);
+  transition:
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.22s ease-out;
+  will-change: transform;
+}
+
+#app_root.spotlight-hover-enabled .lesson-tilt-stage:hover .lesson-tilt-wrapper {
+  transform: rotateX(var(--tilt-rx, 0deg)) rotateY(var(--tilt-ry, 0deg)) translate3d(0, -6px, 12px) scale3d(1.018, 1.018, 1);
+  transition: transform 0.08s ease-out;
+}
+
+#app_root.spotlight-hover-enabled .lesson-tilt-stage:hover .flip-card-front {
+  box-shadow:
+    0 18px 34px -10px rgba(30, 58, 138, 0.22),
+    0 0 0 1.5px rgba(56, 189, 248, 0.65),
+    inset 0 1px 1px rgba(255, 255, 255, 0.9);
+}
+
+#app_root.spotlight-hover-enabled .lesson-tilt-stage:hover .lesson-tilt-badge {
+  transform: translateZ(16px) scale(1.06);
+  box-shadow: 0 6px 14px -3px rgba(37, 99, 235, 0.25);
+}
+
+.lesson-tilt-badge {
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease-out;
+}
+
+.lesson-tilt-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: 2rem;
+  background: radial-gradient(
+    320px circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgba(255, 255, 255, 0.65) 0%,
+    rgba(186, 230, 253, 0.22) 42%,
+    transparent 75%
+  );
+  opacity: calc(var(--tilt-active, 0) * 0.85);
+  transition: opacity 0.22s ease-out;
+  z-index: 1;
+}
+
+.fullscreen-dark-mode .lesson-tilt-glare {
+  background: radial-gradient(
+    320px circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgba(56, 189, 248, 0.22) 0%,
+    rgba(37, 99, 235, 0.08) 45%,
+    transparent 75%
+  );
+}
+
+#app_root.spotlight-hover-disabled .lesson-tilt-wrapper {
+  transform: none !important;
+  transition: none !important;
+}
+
+#app_root.spotlight-hover-disabled .lesson-tilt-glare {
+  display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lesson-tilt-wrapper {
+    transform: none !important;
+    transition: none !important;
+  }
+  .lesson-tilt-glare {
+    display: none !important;
+  }
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.34, 1.3, 0.64, 1);
+  transform-style: preserve-3d;
+}
+
+.flip-card.is-flipped .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: 2rem;
+  overflow: hidden;
+  transition: box-shadow 0.22s ease-out, border-color 0.22s ease-out, background-color 0.22s ease-out;
+}
+
+.flip-card-front {
+  position: relative;
+  min-height: 276px;
+  transform: rotateY(0deg);
+  z-index: 2;
+}
+
+.flip-card-back {
+  position: absolute;
+  inset: 0;
+  transform: rotateY(180deg);
+  z-index: 1;
+}
+
+
+/* Print & PDF Export Styles */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide interactive UI elements when printing */
+  header, nav, button, .no-print, [role="dialog"], .fixed {
+    display: none !important;
+  }
+
+  /* Printable container takes full width */
+  .printable-lesson-container {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+  }
+
+  .avoid-break-inside {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .page-break-before {
+    break-before: page !important;
+    page-break-before: always !important;
+  }
+}
+
+/* Audio Recording Soundwave Animation */
+@keyframes soundwave-pulse {
+  0%, 100% {
+    height: 4px;
+    opacity: 0.5;
+  }
+  50% {
+    height: 18px;
+    opacity: 1;
+  }
+}
+
+.soundwave-bar-1 {
+  animation: soundwave-pulse 0.8s ease-in-out infinite;
+}
+.soundwave-bar-2 {
+  animation: soundwave-pulse 0.8s ease-in-out infinite 0.15s;
+}
+.soundwave-bar-3 {
+  animation: soundwave-pulse 0.8s ease-in-out infinite 0.3s;
+}
+.soundwave-bar-4 {
+  animation: soundwave-pulse 0.8s ease-in-out infinite 0.45s;
+}
+.soundwave-bar-5 {
+  animation: soundwave-pulse 0.8s ease-in-out infinite 0.2s;
+}
+
+/* =========================================================================
+   MOTION SYSTEM & PROGRESSIVE DISCLOSURE ARCHITECTURE (Ages 11-15)
+   Easing: cubic-bezier(0.22, 1, 0.36, 1) | Durations: 180ms - 300ms
+   ========================================================================= */
+
+:root {
+  --motion-ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-duration-fast: 180ms;
+  --motion-duration-normal: 240ms;
+  --motion-duration-slow: 300ms;
+}
+
+/* Layer 2: Hover & Intent Reveal (Always visible on touch & mobile so missions/details never hide) */
+.reveal-on-hover {
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+  transition: opacity 180ms var(--motion-ease-spring),
+              transform 180ms var(--motion-ease-spring);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .group:hover .reveal-on-hover,
+  .group:focus-within .reveal-on-hover {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+}
+
+@media (hover: none), (pointer: coarse), (max-width: 768px) {
+  .reveal-on-hover {
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+  }
+}
+
+/* Slim to Expanded Progress Bar Reveal */
+.progress-reveal-bar {
+  transform-origin: left;
+  transition: transform 280ms var(--motion-ease-spring);
+}
+
+/* Smooth Elevation Lift */
+.card-academic-elevate {
+  transition: transform 220ms var(--motion-ease-spring),
+              box-shadow 220ms var(--motion-ease-spring),
+              border-color 220ms var(--motion-ease-spring);
+}
+@media (hover: hover) and (pointer: fine) {
+  .card-academic-elevate:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+  }
+}
+
+/* =========================================================================
+   RESPONSIVE FLUID ADAPTATION (MOBILE, TABLET & DESKTOP)
+   ========================================================================= */
+@media (max-width: 640px) {
+  .responsive-grid-adaptive {
+    grid-template-columns: 1fr !important;
+  }
+  .hide-on-mobile {
+    display: none !important;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .responsive-grid-adaptive {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* Prevent overflow and ensure smooth scaling (R9: never use 100vw) */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Fluid padding and text wrapping for tables and cards */
+.fluid-card-pad {
+  padding: clamp(1rem, 2.5vw, 1.75rem);
+}
+
+/* =========================================================================
+   FULLSCREEN DEEP OBSIDIAN DARK MODE (MOBILE-STYLE FULLSCREEN EXPERIENCE)
+   ========================================================================= */
+.fullscreen-dark-mode {
+  background: #090D16 !important;
+  color: #F8FAFC !important;
+  color-scheme: dark;
+}
+
+.fullscreen-dark-mode > div:not(.auth-portal) > header {
+  background-color: rgba(15, 23, 42, 0.88) !important;
+  border-bottom-color: rgba(148, 163, 184, 0.16) !important;
+  box-shadow: 0 8px 28px -10px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+.fullscreen-dark-mode #main_content_scroll {
+  background: radial-gradient(circle at 20% 10%, #111A2E 0%, #090D16 55%, #070A12 100%);
+}
+
+/* Adapt light surface cards inside main_content_scroll to Deep Obsidian Dark surfaces */
+.fullscreen-dark-mode #main_content_scroll .bg-white,
+.fullscreen-dark-mode #main_content_scroll .bg-white\/90,
+.fullscreen-dark-mode #main_content_scroll .bg-white\/95,
+.fullscreen-dark-mode #main_content_scroll .bg-sky-50,
+.fullscreen-dark-mode #main_content_scroll .bg-sky-50\/70,
+.fullscreen-dark-mode #main_content_scroll .bg-sky-50\/80,
+.fullscreen-dark-mode #main_content_scroll .bg-sky-50\/90,
+.fullscreen-dark-mode #main_content_scroll .bg-sky-100,
+.fullscreen-dark-mode #main_content_scroll .bg-sky-100\/60,
+.fullscreen-dark-mode #main_content_scroll .bg-sky-100\/80,
+.fullscreen-dark-mode #main_content_scroll .bg-sky-100\/90,
+.fullscreen-dark-mode #main_content_scroll .bg-slate-50,
+.fullscreen-dark-mode #main_content_scroll .bg-slate-50\/80,
+.fullscreen-dark-mode #main_content_scroll .bg-\[\#f0f6ff\],
+.fullscreen-dark-mode #main_content_scroll .bg-\[\#eaf2ff\],
+.fullscreen-dark-mode #main_content_scroll .edu-card {
+  background-color: #131B2E !important;
+  border-color: rgba(148, 163, 184, 0.16) !important;
+  color: #F1F5F9 !important;
+  box-shadow: 0 10px 28px -10px rgba(0, 0, 0, 0.55) !important;
+}
+
+.fullscreen-dark-mode #main_content_scroll .bg-slate-100,
+.fullscreen-dark-mode #main_content_scroll .bg-slate-100\/80,
+.fullscreen-dark-mode #main_content_scroll .bg-slate-100\/90,
+.fullscreen-dark-mode #main_content_scroll .bg-blue-50,
+.fullscreen-dark-mode #main_content_scroll .bg-blue-50\/50,
+.fullscreen-dark-mode #main_content_scroll .bg-blue-50\/60,
+.fullscreen-dark-mode #main_content_scroll .bg-blue-50\/80,
+.fullscreen-dark-mode #main_content_scroll .bg-sky-200\/50,
+.fullscreen-dark-mode #main_content_scroll .bg-sky-200\/60,
+.fullscreen-dark-mode #main_content_scroll .bg-sky-200\/70,
+.fullscreen-dark-mode #main_content_scroll .bg-sky-200\/80 {
+  background-color: #1A2540 !important;
+  border-color: rgba(148, 163, 184, 0.2) !important;
+  color: #E2E8F0 !important;
+}
+
+/* Adapt typography colors inside Fullscreen Dark Mode for WCAG AA readability */
+.fullscreen-dark-mode #main_content_scroll .text-slate-900,
+.fullscreen-dark-mode #main_content_scroll .text-slate-950,
+.fullscreen-dark-mode #main_content_scroll .text-sky-950,
+.fullscreen-dark-mode #main_content_scroll .text-sky-900,
+.fullscreen-dark-mode #main_content_scroll .text-blue-950,
+.fullscreen-dark-mode #main_content_scroll .text-blue-900 {
+  color: #F8FAFC !important;
+}
+
+.fullscreen-dark-mode #main_content_scroll .text-slate-800,
+.fullscreen-dark-mode #main_content_scroll .text-slate-700,
+.fullscreen-dark-mode #main_content_scroll .text-sky-800,
+.fullscreen-dark-mode #main_content_scroll .text-blue-800 {
+  color: #E2E8F0 !important;
+}
+
+.fullscreen-dark-mode #main_content_scroll .text-slate-600,
+.fullscreen-dark-mode #main_content_scroll .text-slate-500 {
+  color: #94A3B8 !important;
+}
+
+.fullscreen-dark-mode #main_content_scroll .border-slate-100,
+.fullscreen-dark-mode #main_content_scroll .border-slate-200,
+.fullscreen-dark-mode #main_content_scroll .border-sky-200,
+.fullscreen-dark-mode #main_content_scroll .border-sky-200\/80,
+.fullscreen-dark-mode #main_content_scroll .border-sky-300,
+.fullscreen-dark-mode #main_content_scroll .border-blue-100,
+.fullscreen-dark-mode #main_content_scroll .border-blue-200 {
+  border-color: rgba(148, 163, 184, 0.16) !important;
+}
+
+.fullscreen-dark-mode #main_content_scroll input,
+.fullscreen-dark-mode #main_content_scroll textarea,
+.fullscreen-dark-mode #main_content_scroll select {
+  background-color: #0F172A !important;
+  color: #F8FAFC !important;
+  border-color: rgba(148, 163, 184, 0.25) !important;
+}
+
+/* Dark mode: light tints and pale text that the main list above misses
+   (e.g. Trang chủ › "Chủ đề cần củng cố ngay" cards: bg-slate-50/60, hover:bg-white, text-slate-400) */
+.fullscreen-dark-mode #main_content_scroll .bg-slate-50\/60,
+.fullscreen-dark-mode #main_content_scroll .bg-slate-50\/50,
+.fullscreen-dark-mode #main_content_scroll .bg-slate-50\/90 {
+  background-color: #1A2540 !important;
+  border-color: rgba(148, 163, 184, 0.18) !important;
+}
+.fullscreen-dark-mode #main_content_scroll .hover\:bg-white:hover,
+.fullscreen-dark-mode #main_content_scroll .hover\:bg-slate-50:hover {
+  background-color: #22304F !important;
+}
+.fullscreen-dark-mode #main_content_scroll .text-slate-400 { color: #8B9BB4 !important; }
+.fullscreen-dark-mode #main_content_scroll .text-amber-600 { color: #FBBF24 !important; }
+.fullscreen-dark-mode #main_content_scroll .text-sky-700 { color: #7DD3FC !important; }
+.fullscreen-dark-mode #main_content_scroll .border-slate-200\/60,
+.fullscreen-dark-mode #main_content_scroll .border-slate-200\/80,
+.fullscreen-dark-mode #main_content_scroll .border-slate-200\/90 {
+  border-color: rgba(148, 163, 184, 0.16) !important;
+}
+
+/* Phone sign-in screen: the floating mic sat on the grade buttons; dock it in the header, right of the logo */
+@media (max-width: 767px) {
+  body:has(.auth-portal) [data-voice-panel] {
+    top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
+    bottom: auto;
+    left: 10.5rem;
+  }
+  body:has(.auth-portal) [data-voice-panel][data-open] { left: 0.75rem; }
+}
+
+/* Dark mode: login screen (FullScreenAuthPortal, .auth-portal) */
+html.ss-dark .auth-portal {
+  background-color: #090D16 !important;
+  background-image: radial-gradient(circle at 20% 10%, #111A2E 0%, #090D16 55%, #070A12 100%) !important;
+  color: #E2E8F0;
+}
+html.ss-dark .auth-portal .bg-white,
+html.ss-dark .auth-portal .bg-sky-50\/80,
+html.ss-dark .auth-portal .bg-sky-100 {
+  background-color: #131B2E !important;
+}
+html.ss-dark .auth-portal .bg-gradient-to-br.from-sky-100,
+html.ss-dark .auth-portal .bg-gradient-to-tr.to-sky-200 {
+  background-image: none !important;
+  background-color: #1A2540 !important;
+}
+html.ss-dark .auth-portal .bg-sky-200 { background-color: #1E3A8A !important; }
+html.ss-dark .auth-portal .bg-amber-50 { background-color: #2A2110 !important; }
+html.ss-dark .auth-portal .bg-rose-50 { background-color: #2A1218 !important; }
+html.ss-dark .auth-portal .hover\:bg-sky-50:hover,
+html.ss-dark .auth-portal .hover\:bg-sky-50\/60:hover,
+html.ss-dark .auth-portal .hover\:bg-sky-100:hover,
+html.ss-dark .auth-portal .hover\:bg-sky-200\/80:hover,
+html.ss-dark .auth-portal .hover\:bg-amber-100:hover,
+html.ss-dark .auth-portal .hover\:bg-rose-50:hover {
+  background-color: #23304D !important;
+}
+html.ss-dark .auth-portal .text-sky-950,
+html.ss-dark .auth-portal .text-slate-900,
+html.ss-dark .auth-portal .text-sky-900,
+html.ss-dark .auth-portal .text-amber-950,
+html.ss-dark .auth-portal .text-amber-900 { color: #F8FAFC !important; }
+html.ss-dark .auth-portal .text-slate-800,
+html.ss-dark .auth-portal .text-slate-700,
+html.ss-dark .auth-portal .text-sky-800 { color: #E2E8F0 !important; }
+html.ss-dark .auth-portal .text-slate-600,
+html.ss-dark .auth-portal .text-slate-500 { color: #A5B4C8 !important; }
+html.ss-dark .auth-portal .text-blue-600 { color: #7DD3FC !important; }
+html.ss-dark .auth-portal .text-sky-700,
+html.ss-dark .auth-portal .text-sky-600,
+html.ss-dark .auth-portal .text-indigo-600 { color: #7DD3FC !important; }
+html.ss-dark .auth-portal .text-amber-700,
+html.ss-dark .auth-portal .text-amber-600,
+html.ss-dark .auth-portal .text-orange-600 { color: #FBBF24 !important; }
+html.ss-dark .auth-portal .text-emerald-700,
+html.ss-dark .auth-portal .text-emerald-600 { color: #6EE7B7 !important; }
+html.ss-dark .auth-portal .text-rose-700 { color: #FDA4AF !important; }
+html.ss-dark .auth-portal .border-sky-100,
+html.ss-dark .auth-portal .border-sky-200,
+html.ss-dark .auth-portal .border-sky-300,
+html.ss-dark .auth-portal .border-sky-300\/80,
+html.ss-dark .auth-portal .border-slate-300,
+html.ss-dark .auth-portal .border-amber-300,
+html.ss-dark .auth-portal .border-rose-200,
+html.ss-dark .auth-portal .border-white {
+  border-color: rgba(148, 163, 184, 0.24) !important;
+}
+
+/* Dark mode: phone bottom navigation bar */
+html.ss-dark [data-mobile-bottom-nav="true"] {
+  background-color: #0B1120 !important;
+  border-top-color: rgba(148, 163, 184, 0.18) !important;
+  box-shadow: 0 -6px 24px -6px rgba(0, 0, 0, 0.6) !important;
+}
+html.ss-dark [data-mobile-bottom-nav="true"] .text-slate-700 { color: #CBD5E1 !important; }
+html.ss-dark [data-mobile-bottom-nav="true"] .bg-slate-100 {
+  background-color: #1A2540 !important;
+  border-color: rgba(148, 163, 184, 0.2) !important;
+  color: #BFD4FA !important;
+}
+html.ss-dark [data-mobile-bottom-nav="true"] .active\:bg-slate-100:active,
+html.ss-dark [data-mobile-bottom-nav="true"] .active\:bg-slate-200:active { background-color: #23304D !important; }
+
+/* Dark mode for dialogs portaled into <body> (outside #app_root): Settings.
+   html.ss-dark is set by App.tsx while Fullscreen Dark Mode is on. Toggle knobs (rounded-full
+   bg-white) keep their white so switches still read as switches. */
+html.ss-dark [data-settings-modal="true"] .bg-white\/95 {
+  background-color: rgba(11, 17, 32, 0.97) !important;
+  border-color: rgba(148, 163, 184, 0.2) !important;
+  color: #E2E8F0 !important;
+}
+html.ss-dark [data-settings-modal="true"] .bg-gradient-to-r,
+html.ss-dark [data-settings-modal="true"] .bg-gradient-to-br:not(.from-blue-500) {
+  background-image: none !important;
+  background-color: #131B2E !important;
+}
+html.ss-dark [data-settings-modal="true"] .bg-white:not(.rounded-full),
+html.ss-dark [data-settings-modal="true"] .bg-white\/85,
+html.ss-dark [data-settings-modal="true"] .bg-slate-50,
+html.ss-dark [data-settings-modal="true"] .bg-slate-50\/90,
+html.ss-dark [data-settings-modal="true"] .bg-sky-50,
+html.ss-dark [data-settings-modal="true"] .bg-sky-50\/60,
+html.ss-dark [data-settings-modal="true"] .bg-blue-50,
+html.ss-dark [data-settings-modal="true"] .bg-\[\#eef4fc\],
+html.ss-dark [data-settings-modal="true"] .bg-\[\#f0f6ff\],
+html.ss-dark [data-settings-modal="true"] .bg-\[\#eaf2ff\] {
+  background-color: #131B2E !important;
+}
+html.ss-dark [data-settings-modal="true"] .bg-slate-100,
+html.ss-dark [data-settings-modal="true"] .bg-sky-100,
+html.ss-dark [data-settings-modal="true"] .bg-slate-200 {
+  background-color: #1E293B !important;
+}
+html.ss-dark [data-settings-modal="true"] [role="switch"].bg-slate-200,
+html.ss-dark [data-settings-modal="true"] [role="switch"].bg-slate-300,
+html.ss-dark [data-settings-modal="true"] button.rounded-full.bg-slate-200,
+html.ss-dark [data-settings-modal="true"] button.rounded-full.bg-slate-300 {
+  background-color: #475569 !important; /* "off" switch track stays visible */
+}
+html.ss-dark [data-settings-modal="true"] .hover\:bg-slate-100:hover,
+html.ss-dark [data-settings-modal="true"] .hover\:bg-sky-50:hover,
+html.ss-dark [data-settings-modal="true"] .hover\:bg-rose-50:hover {
+  background-color: #23304D !important;
+}
+html.ss-dark [data-settings-modal="true"] .text-slate-950,
+html.ss-dark [data-settings-modal="true"] .text-slate-900,
+html.ss-dark [data-settings-modal="true"] .text-sky-950,
+html.ss-dark [data-settings-modal="true"] .text-sky-900,
+html.ss-dark [data-settings-modal="true"] .text-blue-900 {
+  color: #F8FAFC !important;
+}
+html.ss-dark [data-settings-modal="true"] .text-slate-800,
+html.ss-dark [data-settings-modal="true"] .text-slate-700,
+html.ss-dark [data-settings-modal="true"] .text-sky-800 {
+  color: #E2E8F0 !important;
+}
+html.ss-dark [data-settings-modal="true"] .text-slate-600,
+html.ss-dark [data-settings-modal="true"] .text-slate-500 {
+  color: #A5B4C8 !important;
+}
+html.ss-dark [data-settings-modal="true"] .text-\[\#2e5cb8\],
+html.ss-dark [data-settings-modal="true"] .text-blue-700,
+html.ss-dark [data-settings-modal="true"] .text-blue-600 {
+  color: #8DB4F5 !important;
+}
+html.ss-dark [data-settings-modal="true"] .rounded-full.bg-white .text-\[\#2e5cb8\] {
+  color: #2e5cb8 !important; /* icon inside the white switch knob */
+}
+html.ss-dark [data-settings-modal="true"] .text-emerald-700 { color: #6EE7B7 !important; }
+html.ss-dark [data-settings-modal="true"] .text-rose-700 { color: #FDA4AF !important; }
+html.ss-dark [data-settings-modal="true"] .text-amber-800 { color: #FCD34D !important; }
+html.ss-dark [data-settings-modal="true"] .border-slate-100,
+html.ss-dark [data-settings-modal="true"] .border-slate-200,
+html.ss-dark [data-settings-modal="true"] .border-slate-200\/80,
+html.ss-dark [data-settings-modal="true"] .border-slate-200\/90,
+html.ss-dark [data-settings-modal="true"] .border-slate-300,
+html.ss-dark [data-settings-modal="true"] .border-sky-200,
+html.ss-dark [data-settings-modal="true"] .border-sky-200\/80,
+html.ss-dark [data-settings-modal="true"] .border-sky-200\/90,
+html.ss-dark [data-settings-modal="true"] .border-sky-300,
+html.ss-dark [data-settings-modal="true"] .border-blue-200\/80,
+html.ss-dark [data-settings-modal="true"] .border-amber-200,
+html.ss-dark [data-settings-modal="true"] .border-\[\#93b8e8\] {
+  border-color: rgba(148, 163, 184, 0.22) !important;
+}
+html.ss-dark [data-settings-modal="true"] input,
+html.ss-dark [data-settings-modal="true"] textarea,
+html.ss-dark [data-settings-modal="true"] select {
+  background-color: #0F172A !important;
+  color: #F8FAFC !important;
+  border-color: rgba(148, 163, 184, 0.3) !important;
+}
+html.ss-dark [data-settings-modal="true"] button.bg-slate-900.hover\:bg-slate-800 {
+  background-color: #2e5cb8 !important; /* "Hoàn tất" would vanish on the dark panel */
+}
+html.ss-dark [data-settings-modal="true"] .bg-slate-900.border-indigo-500\/60 {
+  background-color: #1E1B4B !important; /* the dark-mode card stays visibly distinct */
+}
+
+/* =========================================================================
+   LESSON FOCUS MODE ANIMATION & SMOOTH BACKGROUND OPACITY DIMMING
+   Dims background/peripheral elements when entering a lesson while keeping
+   the main lesson reader (#lesson_reader_main) at full clarity and contrast.
+   ========================================================================= */
+:root {
+  --focus-dim-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --focus-dim-duration: 420ms;
+}
+
+/* Base smooth transition setup for all dimmable regions */
+#app_root > div > header,
+#app_root [data-mobile-bottom-nav="true"],
+#main_content_scroll,
+#main_content_scroll .lesson-focus-dimmable,
+#main_content_scroll .lesson-focus-peripheral {
+  transition:
+    opacity var(--focus-dim-duration) var(--focus-dim-ease),
+    filter var(--focus-dim-duration) var(--focus-dim-ease),
+    transform var(--focus-dim-duration) var(--focus-dim-ease),
+    background-color var(--focus-dim-duration) var(--focus-dim-ease);
+}
+
+/* Ambient focus stage inside #main_content_scroll when a lesson is entered */
+#main_content_scroll.lesson-focus-mode {
+  position: relative;
+  background-color: rgba(15, 23, 42, 0.045);
+}
+
+.fullscreen-dark-mode #main_content_scroll.lesson-focus-mode {
+  background-color: rgba(2, 6, 23, 0.55);
+}
+
+/* Dim top navigation header & mobile bottom bar when entering a lesson,
+   and restore full opacity on hover or keyboard focus */
+#app_root.lesson-focus-mode > div > header {
+  opacity: 0.36;
+  filter: saturate(0.75);
+}
+
+#app_root.lesson-focus-mode > div > header:hover,
+#app_root.lesson-focus-mode > div > header:focus-within,
+#app_root.lesson-focus-mode > div > header:has([role="dialog"]) {
+  opacity: 1;
+  filter: saturate(1);
+}
+
+#app_root.lesson-focus-mode [data-mobile-bottom-nav="true"] {
+  opacity: 0.34;
+  filter: saturate(0.75);
+}
+
+#app_root.lesson-focus-mode [data-mobile-bottom-nav="true"]:hover,
+#app_root.lesson-focus-mode [data-mobile-bottom-nav="true"]:focus-within,
+#app_root.lesson-focus-mode [data-mobile-bottom-nav="true"]:active {
+  opacity: 1;
+  filter: saturate(1);
+}
+
+/* Dim any sibling banners/elements inside #main_content_scroll outside the lesson reader */
+#main_content_scroll.lesson-focus-mode .lesson-focus-dimmable {
+  opacity: 0.25;
+  filter: saturate(0.7);
+}
+
+#main_content_scroll.lesson-focus-mode .lesson-focus-dimmable:hover,
+#main_content_scroll.lesson-focus-mode .lesson-focus-dimmable:focus-within {
+  opacity: 1;
+  filter: saturate(1);
+}
+
+/* Dim peripheral elements inside LessonReader (top toolbar & secondary sidebar)
+   while keeping them interactive on hover/focus-within */
+#main_content_scroll.lesson-focus-mode .lesson-focus-peripheral-toolbar {
+  opacity: 0.55;
+  filter: saturate(0.82);
+}
+
+#main_content_scroll.lesson-focus-mode .lesson-focus-peripheral-toolbar:hover,
+#main_content_scroll.lesson-focus-mode .lesson-focus-peripheral-toolbar:focus-within {
+  opacity: 1;
+  filter: saturate(1);
+}
+
+#main_content_scroll.lesson-focus-mode .lesson-focus-peripheral-sidebar {
+  opacity: 0.32;
+  filter: saturate(0.72);
+  transform: scale(0.985);
+}
+
+#main_content_scroll.lesson-focus-mode .lesson-focus-peripheral-sidebar:hover,
+#main_content_scroll.lesson-focus-mode .lesson-focus-peripheral-sidebar:focus-within {
+  opacity: 1;
+  filter: saturate(1);
+  transform: scale(1);
+}
+
+/* Ambient backdrop layer inside the lesson view */
+.lesson-focus-backdrop {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  background: radial-gradient(
+    circle at 50% 35%,
+    rgba(15, 23, 42, 0.02) 0%,
+    rgba(15, 23, 42, 0.16) 100%
+  );
+  opacity: 0;
+  transition: opacity 480ms var(--focus-dim-ease);
+}
+
+#main_content_scroll.lesson-focus-mode .lesson-focus-backdrop {
+  opacity: 1;
+}
+
+.fullscreen-dark-mode #main_content_scroll.lesson-focus-mode .lesson-focus-backdrop {
+  background: radial-gradient(
+    circle at 50% 35%,
+    rgba(2, 6, 23, 0.12) 0%,
+    rgba(2, 6, 23, 0.52) 100%
+  );
+}
+
+/* Focal Entrance Animation & Spotlight Protection for the Main Lesson Reader */
+@keyframes lessonReaderSpotlightEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.992);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.lesson-reader-main-surface {
+  position: relative;
+  z-index: 20;
+  opacity: 1 !important;
+  filter: none !important;
+  animation: lessonReaderSpotlightEnter 520ms var(--focus-dim-ease) both;
+  transition:
+    box-shadow var(--focus-dim-duration) var(--focus-dim-ease),
+    border-color var(--focus-dim-duration) var(--focus-dim-ease),
+    transform var(--focus-dim-duration) var(--focus-dim-ease);
+}
+
+#main_content_scroll.lesson-focus-mode .lesson-reader-main-surface {
+  box-shadow:
+    0 24px 60px -15px rgba(15, 23, 42, 0.18),
+    0 0 0 2px rgba(14, 165, 233, 0.35),
+    0 0 40px -10px rgba(56, 189, 248, 0.22) !important;
+}
+
+.fullscreen-dark-mode #main_content_scroll.lesson-focus-mode .lesson-reader-main-surface {
+  box-shadow:
+    0 28px 70px -12px rgba(0, 0, 0, 0.78),
+    0 0 0 1.5px rgba(56, 189, 248, 0.38),
+    0 0 48px -12px rgba(59, 130, 246, 0.28) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lesson-reader-main-surface {
+    animation-duration: 200ms;
+    animation-name: fadeIn;
+  }
+  #main_content_scroll.lesson-focus-mode .lesson-focus-peripheral-sidebar {
+    transform: none;
+  }
+}
+
+/* AI Dictionary Popup Mount Animation: Combined Fade-In & Subtle Scale-Up (0.95 -> 1.0, 180ms cubic-bezier) */
+@keyframes aiDictEnterTop {
+  0% {
+    opacity: 0;
+    transform: translateY(4px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes aiDictEnterBottom {
+  0% {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes aiDictContentFade {
+  0% {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.ai-dict-popover-enter-top {
+  transform-origin: bottom center;
+  animation: aiDictEnterTop 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+.ai-dict-popover-enter-bottom {
+  transform-origin: top center;
+  animation: aiDictEnterBottom 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+.ai-dict-body-fade {
+  animation: aiDictContentFade 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-dict-popover-enter-top,
+  .ai-dict-popover-enter-bottom,
+  .ai-dict-body-fade {
+    animation: fade-in 120ms ease-out both !important;
+    transform: none !important;
+  }
+}
+
+/* =========================================================================
+   BALANCED MEDIUM-BLUE & SOFT WHITE THEME NORMALIZATION (.blue-white-theme)
+   Keeps the interface clearly Blue & White, moderately toned (neither neon
+   glaring nor overly dark charcoal).
+   ========================================================================= */
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) {
+  background-color: #eff7f5;
+  color: #0f172a;
+}
+
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll {
+  background: linear-gradient(180deg, #eef5fc 0%, #f8fbfa 45%, #e8f6ef 100%); /* trời nhạt → bạc hà nhạt, theo màu logo */
+}
+
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-white {
+  background-color: #ffffff;
+}
+
+/* Harmonize multi-colored light backgrounds inside main_content_scroll to soft Blue-White tints */
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-slate-50,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-slate-50\/80,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-blue-50,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-sky-50,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-amber-50,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-amber-50\/40,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-amber-50\/55,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-amber-50\/70,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-purple-50,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-indigo-50,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-rose-50,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-orange-50 {
+  background-color: #f3f7fd !important;
+}
+
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-slate-100,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-blue-100,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-sky-100,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-amber-100,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-purple-100,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-indigo-100,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-orange-100 {
+  background-color: #e6effa !important;
+}
+
+/* Harmonize card & container borders into soft medium-blue lines */
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .border-slate-200,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .border-slate-200\/90,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .border-slate-200\/80,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .border-blue-200,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .border-sky-200,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .border-amber-200,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .border-amber-300,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .border-indigo-200,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .border-purple-200 {
+  border-color: #d5e3f5 !important;
+}
+
+/* Harmonize solid blue/indigo buttons & badges to balanced Medium Classic Blue */
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-blue-600,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-indigo-600,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-sky-600 {
+  background-color: #2e5cb8 !important;
+}
+
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-blue-500,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-indigo-500,
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll .bg-sky-500 {
+  background-color: #3563b8 !important;
+}
+
+/* =========================================================================
+   PURE-CSS GPU SPOTLIGHT & SHOW/HIDE TAB HOVER SYSTEM
+   - Controlled by #app_root.spotlight-hover-enabled / #app_root.spotlight-hover-disabled
+   - Runs 100% on the browser compositor (0ms JS state, 0 React re-renders).
+   ========================================================================= */
+
+/* Slide-in-down entrance animation with a soft cubic-bezier landing for #app_root .spotlight-toolbar (initial page load only) */
+@keyframes toolbarSlideInDown {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -100%, 0);
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  72% {
+    opacity: 1;
+    transform: translate3d(0, 2.5px, 0);
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Elevated floating depth for #app_root .spotlight-toolbar (proper flex layout, no containment collapse) */
+#app_root .spotlight-toolbar {
+  --is-loaded: 0;
+  --accent-primary: #2e5cb8;
+  --accent-primary-hover: #2563eb;
+  --text-secondary: #e0f2fe;
+  --accent-contrast-text: #ffffff;
+  display: flex !important;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  width: 100%;
+  opacity: 1;
+  box-shadow: 0 15px 35px -8px rgba(15, 23, 42, 0.35), 0 6px 20px -4px rgba(37, 99, 235, 0.3), inset 0 -1px 0 rgba(147, 184, 232, 0.5);
+  transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease, border-color 0.3s ease;
+  will-change: box-shadow, transform;
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+#app_root .spotlight-toolbar.toolbar-entrance-init {
+  animation-name: toolbarSlideInDown;
+  animation-duration: 0.62s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+#app_root .spotlight-toolbar.is-loaded,
+#app_root .spotlight-toolbar[data-is-loaded="true"],
+#app_root .spotlight-toolbar[style*="--is-loaded: 1"],
+#app_root .spotlight-toolbar[style*="--is-loaded:1"] {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: translate3d(0, 0, 0) !important;
+}
+
+#app_root .spotlight-toolbar.spotlight-toolbar--vibrant-blur {
+  --text-secondary: #e0f2fe;
+  --accent-primary: #3563b8;
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  backdrop-filter: blur(12px) saturate(140%);
+}
+
+#app_root .spotlight-toolbar.spotlight-toolbar--solid-opaque {
+  --text-secondary: #243c6e;
+  --accent-primary: #2e5cb8;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  background-image: none !important;
+  background-color: #ffffff;
+}
+
+#app_root.fullscreen-dark-mode .spotlight-toolbar.spotlight-toolbar--solid-opaque {
+  --text-secondary: #cbd5e1;
+  background-color: #0f172a !important;
+}
+
+#app_root .spotlight-toolbar::before,
+#app_root .spotlight-toolbar::after,
+#app_root .spotlight-toolbar .spotlight-nav-btn::before,
+#app_root .spotlight-toolbar .spotlight-nav-btn::after {
+  content: none !important;
+  display: none !important;
+}
+
+#app_root .spotlight-toolbar:hover {
+  transform: translate3d(0, 0, 0);
+  box-shadow: 0 20px 44px -6px rgba(15, 23, 42, 0.44), 0 10px 28px -3px rgba(37, 99, 235, 0.42), 0 0 22px 0 rgba(56, 189, 248, 0.22), inset 0 -1px 0 rgba(186, 230, 253, 0.72);
+}
+
+#app_root.fullscreen-dark-mode .spotlight-toolbar {
+  box-shadow:
+    0 15px 35px -8px rgba(0, 0, 0, 0.75),
+    0 6px 20px -4px rgba(14, 165, 233, 0.32),
+    inset 0 -1px 0 rgba(148, 163, 184, 0.35);
+  transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+#app_root.fullscreen-dark-mode .spotlight-toolbar:hover {
+  transform: translate3d(0, 0, 0);
+  box-shadow:
+    0 20px 45px -6px rgba(0, 0, 0, 0.85),
+    0 10px 28px -3px rgba(14, 165, 233, 0.45),
+    0 0 24px 0 rgba(56, 189, 248, 0.25),
+    inset 0 -1px 0 rgba(186, 230, 253, 0.55);
+}
+
+/* Isolate main content scroll area so header/sidebar hover states never trigger reflows */
+#main_content_scroll {
+  contain: layout style;
+}
+
+/* Default base state for tab floating tooltips & sidebar hover pills */
+.spotlight-tab-tooltip {
+  will-change: transform, opacity;
+  opacity: 0;
+  transform: translate3d(0, 6px, 0) scale3d(0.96, 0.96, 1);
+  backface-visibility: hidden;
+  transition:
+    transform 0.2s ease-out,
+    opacity 0.2s ease-out;
+}
+
+#spotlight_page_dimmer {
+  will-change: opacity;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+}
+
+/* Base GPU promotion, --text-secondary inactive state, --accent-primary active/primary state, and color-contrast readability */
+#app_root .spotlight-toolbar .spotlight-nav-btn {
+  --mag-x: 0px;
+  --mag-y: 0px;
+  position: relative;
+  color: var(--text-secondary, #243c6e);
+  will-change: transform, opacity, box-shadow;
+  transform: translate3d(var(--mag-x, 0px), var(--mag-y, 0px), 0) scale3d(1, 1, 1);
+  backface-visibility: hidden;
+  transition:
+    transform 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.2s ease-out,
+    box-shadow 0.2s ease-out,
+    background-color 0.2s ease-out,
+    color 0.2s ease-out,
+    border-color 0.2s ease-out;
+}
+
+/* Active & Primary buttons inside #app_root .spotlight-toolbar use --accent-primary and color-contrast logic */
+#app_root .spotlight-toolbar .spotlight-nav-btn[aria-current="page"],
+#app_root .spotlight-toolbar .spotlight-nav-btn[aria-expanded="true"],
+/* nút bật/tắt có nhãn BẬT/TẮT riêng (data-toggle-badge) giữ nền trung tính như các nút bên cạnh */
+#app_root .spotlight-toolbar .spotlight-nav-btn[aria-pressed="true"]:not([data-toggle-badge]),
+#app_root .spotlight-toolbar .spotlight-nav-btn[data-primary="true"] {
+  background-color: var(--accent-primary, #2e5cb8) !important;
+  color: var(--accent-contrast-text, #ffffff) !important;
+  border-color: rgba(186, 230, 253, 0.65) !important;
+}
+
+/* When user turns OFF the effect in Settings (spotlight-hover-disabled) */
+#app_root.spotlight-hover-disabled .spotlight-tab-tooltip,
+#app_root.spotlight-hover-disabled .sidebar-hover-pill,
+#app_root.spotlight-hover-disabled #spotlight_page_dimmer {
+  display: none !important;
+}
+
+#app_root.spotlight-hover-disabled .spotlight-nav-btn,
+#app_root.spotlight-hover-disabled .sidebar-spotlight-btn,
+#app_root.spotlight-hover-disabled .spotlight-menu-row,
+#app_root.spotlight-hover-disabled .edu-card,
+#app_root.spotlight-hover-disabled .game-spotlight-card {
+  will-change: auto !important;
+  transition: none !important;
+  transform: none !important;
+}
+
+/* When user keeps the effect ON in Settings (spotlight-hover-enabled)
+   Strictly gated inside @media (hover: hover) and (pointer: fine) (R3)
+   so touch screens never dim the page or get stuck hover/tooltip states */
+@media (hover: hover) and (pointer: fine) and (min-width: 769px) {
+  /* 1. Top Header Tab Bar (#app_root .spotlight-toolbar) */
+  #app_root.spotlight-hover-enabled .spotlight-toolbar .spotlight-nav-btn {
+    position: relative;
+    will-change: transform, opacity, box-shadow;
+    transform: translate3d(var(--mag-x, 0px), var(--mag-y, 0px), 0) scale3d(1, 1, 1);
+    backface-visibility: hidden;
+    transition:
+      transform 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.2s ease-out,
+      box-shadow 0.2s ease-out,
+      background-color 0.2s ease-out,
+      color 0.2s ease-out;
+  }
+
+  #app_root.spotlight-hover-enabled .spotlight-toolbar:hover .spotlight-nav-btn:not(:hover) {
+    opacity: 0.45;
+    transform: translate3d(0, 0, 0) scale3d(0.97, 0.97, 1);
+  }
+
+  #app_root .spotlight-toolbar .spotlight-nav-btn:hover,
+  #app_root.spotlight-hover-enabled .spotlight-toolbar .spotlight-nav-btn:hover {
+    z-index: 45;
+    opacity: 1 !important;
+    transform: translate3d(var(--mag-x, 0px), calc(var(--mag-y, 0px) - 2.5px), 12px) scale3d(1.045, 1.045, 1);
+    background-color: var(--accent-primary, #2563eb) !important;
+    color: var(--accent-contrast-text, #ffffff) !important;
+    border-color: #e0f2fe !important;
+    box-shadow:
+      0 14px 28px -4px rgba(15, 23, 42, 0.48),
+      0 6px 16px 2px rgba(37, 99, 235, 0.45),
+      0 0 24px 3px rgba(56, 189, 248, 0.62),
+      inset 0 1px 1px rgba(255, 255, 255, 0.65) !important;
+  }
+
+  /* Show/Hide (Ẩn hiện) floating tooltip card when hovering any top bar tab */
+  #app_root.spotlight-hover-enabled .spotlight-toolbar .spotlight-nav-btn:hover > .spotlight-tab-tooltip {
+    opacity: 1 !important;
+    transform: translate3d(0, 0, 0) scale3d(1, 1, 1) !important;
+  }
+
+  /* Smoothly dim the page below when hovering the top bar (0ms pure CSS1 sibling combinator) */
+  #app_root.spotlight-hover-enabled .spotlight-toolbar:hover ~ #spotlight_page_dimmer {
+    opacity: 1;
+  }
+
+  /* 2. Left Sidebar Tab Bar (.sidebar-spotlight-nav) */
+  #app_root.spotlight-hover-enabled .sidebar-spotlight-nav .sidebar-spotlight-btn {
+    transition:
+      transform 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.16s ease-out,
+      background-color 0.16s ease-out,
+      border-color 0.16s ease-out,
+      box-shadow 0.16s ease-out;
+  }
+
+  #app_root.spotlight-hover-enabled .sidebar-spotlight-nav:hover .sidebar-spotlight-btn:not(:hover) {
+    opacity: 0.45;
+    transform: scale(0.98);
+  }
+
+  #app_root.spotlight-hover-enabled .sidebar-spotlight-nav .sidebar-spotlight-btn:hover {
+    position: relative;
+    z-index: 20;
+    opacity: 1 !important;
+    transform: translate3d(4px, 0, 0) scale(1.02);
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+    border-color: rgba(186, 230, 253, 0.85) !important;
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.4), 0 6px 14px rgba(15, 23, 42, 0.28);
+  }
+
+  /* Show/Hide (Ẩn hiện) "Mở" badge on hovered sidebar tab */
+  #app_root.spotlight-hover-enabled .sidebar-spotlight-nav .sidebar-spotlight-btn:hover .sidebar-hover-pill {
+    opacity: 1 !important;
+    transform: translate3d(0, 0, 0) scale(1) !important;
+  }
+
+  /* 3. Vertical "Tiện ích" Dropdown Menu (.spotlight-vertical-menu) */
+  #app_root.spotlight-hover-enabled .spotlight-vertical-menu .spotlight-menu-row {
+    transition:
+      transform 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.16s ease-out,
+      background-color 0.16s ease-out,
+      border-color 0.16s ease-out;
+  }
+
+  #app_root.spotlight-hover-enabled .spotlight-vertical-menu:hover .spotlight-menu-row:not(:hover) {
+    opacity: 0.45;
+  }
+
+  #app_root.spotlight-hover-enabled .spotlight-vertical-menu .spotlight-menu-row:hover {
+    position: relative;
+    z-index: 30;
+    opacity: 1 !important;
+    transform: translate3d(4px, 0, 0);
+    background-color: #2563eb !important;
+    border-color: #bae6fd !important;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.28);
+  }
+
+  /* 4. In-Page Sub-Tab Bars ([role="tablist"]) */
+  #app_root.spotlight-hover-enabled [role="tablist"] > button {
+    transition:
+      transform 0.15s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.15s ease-out,
+      box-shadow 0.15s ease-out;
+  }
+
+  #app_root.spotlight-hover-enabled [role="tablist"]:hover > button:not(:hover) {
+    opacity: 0.52;
+    transform: scale(0.98);
+  }
+
+  #app_root.spotlight-hover-enabled [role="tablist"] > button:hover {
+    opacity: 1 !important;
+    transform: translate3d(0, -1.5px, 0) scale(1.02);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  }
+
+  /* 5. Main Content Cards & Game Cards */
+  #app_root.spotlight-hover-enabled #main_content_scroll .edu-card,
+  #app_root.spotlight-hover-enabled #main_content_scroll .game-spotlight-card {
+    transition:
+      transform 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.16s ease-out,
+      box-shadow 0.16s ease-out;
+  }
+
+  #app_root.spotlight-hover-enabled #main_content_scroll .edu-card:hover,
+  #app_root.spotlight-hover-enabled #main_content_scroll .game-spotlight-card:hover {
+    transform: translate3d(0, -2px, 0);
+    border-color: #7dd3fc !important;
+    box-shadow: 0 10px 22px -6px rgba(30, 58, 138, 0.16) !important;
+  }
+}
+
+/* =========================================================================
+   MOBILE & TOUCH HARDENING (R1–R12)
+   Applies ONLY at <= 768px or coarse touch pointers; Desktop (>= 1024px) untouched
+   ========================================================================= */
+
+/* R3: Touch devices never dim the page, never show sticky hover tooltips, and never show ALT+ shortcuts */
+@media (hover: none), (pointer: coarse), (max-width: 768px) {
+  #spotlight_page_dimmer,
+  .spotlight-tab-tooltip,
+  .sidebar-hover-pill,
+  [data-shortcut-badge],
+  kbd {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  /* R6: Library lesson cards hug their content (height: auto) with zero empty space */
+  .lesson-tilt-stage,
+  .lesson-tilt-wrapper,
+  .flip-card,
+  .flip-card-inner {
+    height: auto !important;
+    min-height: 0 !important;
+    transform: none !important;
+    perspective: none !important;
+  }
+
+  .flip-card-front,
+  .flip-card-back {
+    position: relative !important;
+    inset: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    transform: none !important;
+    backface-visibility: visible !important;
+    -webkit-backface-visibility: visible !important;
+  }
+
+  .flip-card:not(.is-flipped) .flip-card-back {
+    display: none !important;
+  }
+
+  .flip-card.is-flipped .flip-card-front {
+    display: none !important;
+  }
+
+  .lesson-tilt-glare {
+    display: none !important;
+  }
+
+  /* R3: Lesson focus dimming relies on hover to restore chrome; touch has no hover,
+     so the header, bottom tab bar and reader toolbar stay fully visible */
+  #app_root.lesson-focus-mode > div > header,
+  #app_root.lesson-focus-mode [data-mobile-bottom-nav="true"],
+  #main_content_scroll.lesson-focus-mode .lesson-focus-peripheral-toolbar {
+    opacity: 1 !important;
+    filter: none !important;
+  }
+}
+
+/* R7/R8: Lesson reader tools become one swipeable row on phones so the lesson text
+   is visible on the first screen; each control keeps a 44px touch target */
+@media (max-width: 768px) {
+  .reader-toolbar-actions {
+    flex-wrap: nowrap !important;
+    width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .reader-toolbar-actions::-webkit-scrollbar {
+    display: none;
+  }
+  .reader-toolbar-actions > * {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    white-space: nowrap;
+  }
+  .reader-toolbar-actions button {
+    min-height: 44px;
+    min-width: 44px;
+    justify-content: center;
+  }
+  .reader-toolbar-actions input[type="range"] {
+    height: 24px;
+  }
+
+  /* R6: Lesson card header on phones: badge + actions on one line, chips get a full-width row */
+  .lesson-card-head {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+  .lesson-card-head > .lesson-card-lead {
+    display: contents;
+  }
+  .lesson-card-head .lesson-card-actions {
+    order: 2;
+    margin-left: auto;
+  }
+  .lesson-card-head .lesson-card-chips {
+    order: 3;
+    flex-basis: 100%;
+  }
+}
+
+/* R11: Low-end Android & Reduced Motion performance hardening */
+@media (max-width: 768px), (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  #app_root .spotlight-toolbar.spotlight-toolbar--vibrant-blur {
+    background: linear-gradient(to right, #1f4068, #1e4c66, #1b5a57) !important;
+  }
+
+  .animate-pulse-slow,
+  .animate-spin-slow,
+  .animate-bounce,
+  .rarity-border[data-rarity],
+  .soundwave-bar-1,
+  .soundwave-bar-2,
+  .soundwave-bar-3,
+  .soundwave-bar-4,
+  .soundwave-bar-5 {
+    animation: none !important;
+  }
+}
+
+/* R1, R2, R4, R6, R8, R9, R12: Narrow screen (<= 768px) layout, fluid typography, and 44x44px primary touch targets */
+@media (max-width: 768px) {
+  /* R12: Prevent Android/iOS browser auto-zoom on input focus */
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  /* R8: Body copy >= 16px, fluid scaling across zoom levels */
+  #main_content_scroll p,
+  #main_content_scroll li,
+  #main_content_scroll .prose-custom {
+    font-size: clamp(0.9375rem, 3.6vw, 1rem) !important;
+    line-height: 1.55 !important;
+  }
+
+  #app_root .text-\[8px\],
+  #app_root .text-\[9px\],
+  #app_root .text-\[10px\],
+  #app_root .text-\[11px\],
+  #app_root .text-xs,
+  [role="dialog"] .text-\[8px\],
+  [role="dialog"] .text-\[9px\],
+  [role="dialog"] .text-\[10px\],
+  [role="dialog"] .text-\[11px\],
+  [role="dialog"] .text-xs,
+  [role="menu"] .text-\[8px\],
+  [role="menu"] .text-\[9px\],
+  [role="menu"] .text-\[10px\],
+  [role="menu"] .text-\[11px\],
+  [role="menu"] .text-xs {
+    font-size: 0.875rem !important;
+    line-height: 1.38 !important;
+  }
+
+  /* R8: Primary navigation, tabs, menus, and dialog action buttons >= 44x44px */
+  #app_root header .spotlight-nav-btn,
+  #app_root [data-mobile-bottom-nav] button,
+  #app_root [role="tab"],
+  #app_root [role="menuitem"],
+  #app_root select,
+  [role="dialog"] button,
+  [role="menu"] button {
+    min-height: 44px;
+  }
+
+  /* R8: Allow headings and breadcrumbs to wrap naturally instead of truncating ("Lộ t...", "Thư viện củ...") */
+  #main_content_scroll h1,
+  #main_content_scroll h2,
+  #main_content_scroll h3,
+  #main_content_scroll h4,
+  #main_content_scroll .breadcrumb-wrap {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+  }
+
+  /* R4: A transform on the toolbar would become the containing block of its fixed
+     children, pinning the "Tiện ích" sheet inside the header instead of the screen */
+  #app_root .spotlight-toolbar,
+  #app_root .spotlight-toolbar.is-loaded,
+  #app_root .spotlight-toolbar.toolbar-entrance-init {
+    animation: none !important;
+    transform: none !important;
+    will-change: auto !important;
+    opacity: 1 !important;
+  }
+
+  /* R4: While a header sheet is open, lift the header above the bottom tab bar so the sheet is not covered */
+  #app_root .spotlight-toolbar:has(.spotlight-vertical-menu) {
+    z-index: 120 !important;
+  }
+
+  /* R4: Mobile Bottom Sheet layout for menus & popups (full width, max-height 85dvh, single scroll area) */
+  #app_root .spotlight-toolbar .spotlight-vertical-menu {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    top: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 85dvh !important;
+    margin: 0 !important;
+    border-radius: 1.5rem 1.5rem 0 0 !important;
+    padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom, 0px)) 1rem !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    background-color: #16274c !important;
+    /* Phải cao hơn lớp nền tối z-[105] trong App.tsx, nếu không bấm mục nào cũng chỉ đóng menu. [Claude Code 2] */
+    z-index: 110 !important;
+  }
+
+  /* R9: Charts, images, and SVGs scale within viewport width without horizontal scroll */
+  img,
+  svg:not(.recharts-surface),
+  canvas,
+  video {
+    max-width: 100% !important;
+  }
+  /* Recharts sizes its wrapper inside a 0-width box; a % max-width there collapses the chart to 0 */
+}
+
+/* Phone polish: cards breathe less so text gets the width; separators that end up
+   dangling at line ends after wrapping are dropped (row gaps already separate items) */
+@media (max-width: 640px) {
+  #main_content_scroll :is(.p-5, .p-6, .p-7, .p-8, .p-10) {
+    padding: 1rem !important;
+  }
+  #main_content_scroll :is(.px-5, .px-6, .px-7, .px-8) {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  #main_content_scroll span[aria-hidden="true"]:is(.text-slate-300, .text-slate-400) {
+    display: none !important;
+  }
+  #main_content_scroll .uppercase:is(.tracking-wider, .tracking-widest) {
+    letter-spacing: 0.02em !important;
+  }
+  #main_content_scroll :is(h1, h2, h3) {
+    text-wrap: balance;
+  }
+
+  /* Segmented tab bars: one swipeable row of single-line tabs instead of 3-line wrapped labels */
+  #main_content_scroll .mobile-tab-scroll {
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    max-width: 100%;
+  }
+  #main_content_scroll .mobile-tab-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  #main_content_scroll .mobile-tab-scroll > button {
+    flex: 0 0 auto !important;
+    white-space: nowrap;
+    min-height: 44px;
+    scroll-snap-align: start;
+  }
+}
+
+/* R9: Fluid horizontal padding on compact screens */
+@media (max-width: 600px) {
+  #main_content_scroll {
+    padding-left: clamp(10px, 3.2vw, 16px) !important;
+    padding-right: clamp(10px, 3.2vw, 16px) !important;
+  }
+}
+
+
+
+/* =========================================================================
+   GAME MODE: arcade games fill the whole screen like a mobile game
+   (src/lib/gameMode.ts toggles html.game-mode-active)
+   ========================================================================= */
+html.game-mode-active,
+html.game-mode-active body {
+  overflow: hidden !important;
+  overscroll-behavior: none;
+}
+html.game-mode-active [data-mobile-bottom-nav],
+html.game-mode-active #app_root .spotlight-toolbar {
+  display: none !important;
+}
+.game-mode-stage {
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.game-mode-stage iframe {
+  touch-action: none;
+}
+.game-mode-hud {
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 25;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  padding: max(8px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) 0 max(10px, env(safe-area-inset-left));
+  pointer-events: none;
+}
+.game-mode-hud__info {
+  max-width: 45%;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(2, 6, 23, 0.55);
+  color: #fde68a;
+  font: 700 12px/1.2 "JetBrains Mono", ui-monospace, monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.game-mode-hud__actions {
+  display: flex;
+  gap: 8px;
+  pointer-events: auto;
+}
+.game-mode-hud__btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #e2e8f0;
+  background: rgba(15, 23, 42, 0.62);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  cursor: pointer;
+  transition: background-color 150ms ease, transform 120ms ease;
+}
+.game-mode-hud__btn:active {
+  transform: scale(0.94);
+}
+.game-mode-hud__btn:focus-visible {
+  outline: 2px solid #fbbf24;
+  outline-offset: 2px;
+}
+.game-mode-hud__btn--shop {
+  color: #0f172a;
+  background: rgba(251, 191, 36, 0.92);
+  border-color: rgba(253, 230, 138, 0.9);
+}
+.game-mode-hud__btn--play {
+  color: #fff;
+  background: rgba(5, 150, 105, 0.9);
+  border-color: rgba(110, 231, 183, 0.7);
+}
+.game-mode-hud__btn--exit {
+  color: #fff;
+  background: rgba(225, 29, 72, 0.88);
+  border-color: rgba(253, 164, 175, 0.7);
+}
+@media (hover: hover) and (pointer: fine) {
+  .game-mode-hud__btn:hover {
+    background: rgba(30, 41, 59, 0.85);
+  }
+  .game-mode-hud__btn--shop:hover { background: #fbbf24; }
+  .game-mode-hud__btn--play:hover { background: #0e7f62; }
+  .game-mode-hud__btn--exit:hover { background: #e11d48; }
+}
+/* In portrait on a phone the native shell rotates the screen; in a browser without
+   orientation lock, ask the player to turn the phone */
+@media (orientation: portrait) and (pointer: coarse) {
+  html.game-mode-active:not(.game-mode-native) .game-mode-stage::after {
+    content: "Xoay ngang điện thoại để chơi rộng hơn";
+    position: absolute;
+    left: 50%;
+    bottom: max(16px, env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(2, 6, 23, 0.7);
+    color: #e2e8f0;
+    font: 600 14px/1.3 "Be Vietnam Pro", system-ui, sans-serif;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 26;
+  }
+}
+/* Landscape phones: the game draws its own score in the top-left, keep only the buttons */
+@media (max-height: 500px) {
+  .game-mode-hud__info {
+    display: none;
+  }
+  .game-mode-hud {
+    justify-content: flex-end;
+  }
+}
+
+/* ---------- Sidebar menu: thin visible scrollbar so long menus are discoverable ---------- */
+.sidebar-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(46, 92, 184, 0.25) transparent;
+}
+.sidebar-scroll::-webkit-scrollbar { width: 6px; }
+.sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(46, 92, 184, 0.25); border-radius: 999px; }
+.sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+
+/* ---------- Windows app: Chrome-style window (no separate title bar) ----------
+   The minimise / maximise / close buttons are drawn over the right end of the header,
+   so the header is the drag area and leaves room for them. */
+html.is-desktop-app header.spotlight-toolbar {
+  -webkit-app-region: drag;
+  app-region: drag;
+  padding-right: max(150px, calc(100vw - env(titlebar-area-x, 0px) - env(titlebar-area-width, 100vw) + 12px)) !important;
+}
+html.is-desktop-app header.spotlight-toolbar :is(button, a, input, select, textarea, label, [role="button"], [role="menu"], [role="menuitem"], [role="dialog"], [role="tooltip"]) {
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
+/* Vibrant header becomes opaque in the app so it matches the window buttons exactly */
+html.is-desktop-app header.spotlight-toolbar--vibrant-blur {
+  background-image: linear-gradient(to right, #1f4068, #1e4c66, #1b5a57) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+/* The sidebar logo area also drags the window, like Chrome's empty tab strip */
+html.is-desktop-app .sidebar-brand-row { -webkit-app-region: drag; app-region: drag; }
+html.is-desktop-app .sidebar-brand-row button { -webkit-app-region: no-drag; app-region: no-drag; }
+/* Floating "show toolbar" pill must not sit under the window buttons */
+html.is-desktop-app .header-restore-pill { right: 150px; }
+
+/* Shared game frame (src/games/shared/GameShell.tsx) in full-screen game mode: light background,
+   room for the notch, and vertical scrolling for long explanations (quiz games need it). */
+html.game-mode-active .game-shell-stage {
+  background: #f1f5f9;
+  height: 100%;
+  overflow-y: auto;
+  padding: max(8px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+}
+.game-shell-stage.game-mode-stage { touch-action: pan-y; -webkit-user-select: none; user-select: none; }
+.game-shell-stage:fullscreen { background: #f1f5f9; }
+
+/* ---------- Windows app window buttons (src/components/DesktopWindowControls.tsx) ---------- */
+.wc-root {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 250; /* above the app, below the study gate (z 300) */
+  display: flex;
+  height: var(--wc-h, 36px);
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+  color: #1e293b;
+}
+html.wc-on-dark .wc-root { color: #ffffff; }
+.wc-btn {
+  width: 46px;
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: default;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+.wc-btn:hover { background: rgba(15, 23, 42, 0.08); }
+html.wc-on-dark .wc-btn:hover { background: rgba(255, 255, 255, 0.14); }
+.wc-btn:active { background: rgba(15, 23, 42, 0.14); }
+html.wc-on-dark .wc-btn:active { background: rgba(255, 255, 255, 0.22); }
+html .wc-root .wc-btn.wc-close:hover { background: #e81123; color: #ffffff; }
+html .wc-root .wc-btn.wc-close:active { background: #f1707a; color: #ffffff; }
+.wc-btn:focus-visible { outline: 2px solid #60a5fa; outline-offset: -2px; }
+/* Screens without the app header: slim strip that drags the window; the page starts below it */
+.wc-drag-strip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 36px;
+  z-index: 249;
+  display: flex;
+  align-items: center;
+  padding-left: 14px;
+  background: rgba(240, 247, 255, 0.92);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+  -webkit-app-region: drag;
+  app-region: drag;
+}
+.wc-strip-title { font-size: 12px; font-weight: 700; color: #334155; letter-spacing: 0.01em; }
+html.ss-dark .wc-drag-strip { background: rgba(9, 13, 22, 0.96); border-bottom-color: rgba(148, 163, 184, 0.16); }
+html.ss-dark .wc-strip-title { color: #CBD5E1; }
+html.has-window-controls.no-app-header body { padding-top: 36px; }
+html.has-window-controls.no-app-header #root > * { --desktop-top-offset: 36px; }
+/* Full-screen games and the study lock own the whole screen */
+html.game-mode-active .wc-root,
+html.game-mode-active .wc-drag-strip { display: none; }
+html.has-window-controls.game-mode-active.no-app-header body { padding-top: 0; }
+/* The header keeps room for the three buttons (3 × 46 px) */
+html.has-window-controls header.spotlight-toolbar { padding-right: 150px !important; }
+
+/* Full-screen overlays (login…) start below the window-button strip in the Windows app */
+html.has-window-controls.no-app-header .desktop-safe-top { top: 36px; }
+
+/* Tra nhanh (D5): reading areas stay selectable although #app_root is select-none */
+[data-quick-lookup],
+[data-quick-lookup] * {
+  -webkit-user-select: text;
+  user-select: text;
+}
+[data-quick-lookup] button,
+[data-quick-lookup] button * {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* =========================================================================
+   "Hỗ trợ học tập" (src/lib/support/profile.ts): classes on <html>, all off by default.
+   ========================================================================= */
+
+/* Cỡ chữ: scales every rem-based size; breakpoints stay where they are */
+html.ss-text-scaled {
+  font-size: calc(16px * var(--ss-text-scale, 1));
+}
+@media (min-width: 1024px) {
+  html.ss-text-scaled {
+    font-size: calc(16.5px * var(--ss-text-scale, 1));
+  }
+}
+html.ss-text-scaled input,
+html.ss-text-scaled select,
+html.ss-text-scaled textarea {
+  font-size: max(1rem, 16px) !important;
+}
+/* The app frame (top bar, bottom bar, left menu) and dialog headers/footers marked
+   data-ss-fixed-size keep their normal size so their buttons never collide or fill the screen:
+   Tailwind v4 sizes come from these theme variables, re-pinned here in px. */
+html.ss-text-scaled :is(header.spotlight-toolbar, nav[data-mobile-bottom-nav], aside[aria-label="Thanh điều hướng SmartStudy"], [data-ss-fixed-size]) {
+  --spacing: 4px;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 24px;
+}
+/* the readability rule above lifts small text to 0.875rem (which scales); keep it in px here */
+html.ss-text-scaled [data-ss-fixed-size] :is(.text-\[8px\], .text-\[9px\], .text-\[10px\], .text-\[11px\], .text-xs) {
+  font-size: 14px !important;
+  line-height: 1.38 !important;
+}
+/* long words must wrap instead of pushing the page sideways */
+html.ss-text-scaled #main_content_scroll {
+  overflow-wrap: anywhere;
+}
+/* with big text, wrapping is better than a sideways page: let flex/grid children shrink and
+   allow "nowrap" labels to wrap (horizontal chip rows that scroll keep their own overflow) */
+html.ss-text-scaled #main_content_scroll :is(.flex, .grid, .inline-flex) > * {
+  min-width: 0;
+}
+/* ...but min-width: 0 alone lets a text column next to an icon or a wide block be squeezed to ~0 px
+   (one letter per line). Rows wrap instead, so the text moves to its own line at full width.
+   Column flexboxes and sideways-scrolling rows are left alone. */
+html.ss-text-scaled #main_content_scroll :is(.flex, .inline-flex):not([class*="flex-col"], .flex-nowrap, .overflow-x-auto) {
+  flex-wrap: wrap;
+}
+/* flex-1 starts from 0 px, so it would never wrap and only get the leftover space; start from its content */
+html.ss-text-scaled #main_content_scroll :is(.flex, .inline-flex):not([class*="flex-col"], .flex-nowrap, .overflow-x-auto) > .flex-1 {
+  flex-basis: auto;
+}
+@media (width >= 40rem) { html.ss-text-scaled #main_content_scroll .sm\:flex-row:not(.overflow-x-auto) { flex-wrap: wrap; } }
+@media (width >= 48rem) { html.ss-text-scaled #main_content_scroll .md\:flex-row:not(.overflow-x-auto) { flex-wrap: wrap; } }
+@media (width >= 64rem) { html.ss-text-scaled #main_content_scroll .lg\:flex-row:not(.overflow-x-auto) { flex-wrap: wrap; } }
+@media (width >= 80rem) { html.ss-text-scaled #main_content_scroll .xl\:flex-row:not(.overflow-x-auto) { flex-wrap: wrap; } }
+html.ss-text-scaled #main_content_scroll .whitespace-nowrap:not(:is(.overflow-x-auto, .overflow-x-auto *)) {
+  white-space: normal;
+}
+html.ss-text-scaled #main_content_scroll :is(input, select, textarea) {
+  max-width: 100%;
+}
+
+/* Tương phản cao: only the light content area and dialogs (the dark sidebar/header already pass) */
+html.ss-high-contrast #main_content_scroll :is(.text-slate-300, .text-slate-400, .text-slate-500, .text-gray-400, .text-gray-500, .text-zinc-400, .text-zinc-500) {
+  color: #334155 !important;
+}
+html.ss-high-contrast #main_content_scroll :is(.text-slate-600, .text-gray-600) {
+  color: #1e293b !important;
+}
+html.ss-high-contrast #main_content_scroll :is(.border-slate-100, .border-slate-200, .border-gray-100, .border-gray-200) {
+  border-color: #64748b !important;
+}
+html.ss-high-contrast #main_content_scroll ::placeholder {
+  color: #475569 !important;
+  opacity: 1;
+}
+/* Keyboard / switch users always see where focus is (WCAG 2.4.7); mouse and touch never trigger :focus-visible on buttons */
+:focus-visible {
+  outline: 3px solid #2e5cb8 !important;
+  outline-offset: 2px !important;
+}
+#main_content_scroll:focus-visible { outline: none !important; } /* the skip link's landing spot, not a control */
+.ss-skip-link {
+  position: fixed; left: 12px; top: max(12px, env(safe-area-inset-top)); z-index: 1000;
+  padding: 10px 16px; border-radius: 12px;
+  background: #243c6e; color: #fff; font-weight: 800;
+  transform: translateY(calc(-100% - 40px)); /* hidden at any text size until focused */
+}
+.ss-skip-link:focus { transform: none; }
+html.ss-high-contrast :focus-visible {
+  outline: 3px solid #1d4ed8 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 5px #ffffff !important;
+}
+html.ss-high-contrast #main_content_scroll a {
+  text-decoration: underline;
+}
+
+/* Giãn chữ (WCAG 1.4.12): only the reading areas, so buttons and the app frame keep their size */
+html.ss-wide-spacing #main_content_scroll :is(p, li, td, dd, blockquote, label, h1, h2, h3, h4, .prose *) {
+  letter-spacing: 0.12em !important;
+  word-spacing: 0.16em !important;
+  line-height: 1.6 !important;
+}
+
+/* Bớt hiệu ứng chuyển động */
+html.ss-reduce-motion *,
+html.ss-reduce-motion *::before,
+html.ss-reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+html.ss-reduce-motion canvas[style*="pointer-events: none"][style*="position: fixed"] {
+  display: none !important; /* canvas-confetti overlay */
+}
+
+/* "Nền dịu mắt": cream page and cards instead of bright white (dyslexia style guides: dark text on a light,
+   not white, background). Text colours stay the same, so contrast only goes up slightly. */
+html.ss-soft-bg body,
+html.ss-soft-bg #main_content_scroll {
+  background-color: #f6efdf;
+}
+html.ss-soft-bg :is(.bg-white, .edu-card, .bg-slate-50, .bg-\[\#f6f9fe\]) {
+  background-color: #fdf8ec !important;
+}
+
+/* Sidebar is light by default (1.6.19); keep it dark when the user turns on dark mode */
+html.ss-dark aside[aria-label="Thanh điều hướng SmartStudy"] { background: #0f172a !important; border-color: #1e293b !important; }
+html.ss-dark aside[aria-label="Thanh điều hướng SmartStudy"] :is(.bg-white\/55, .bg-white\/40, .bg-white\/75, .bg-white:not(.text-\[\#0e5e66\]), .bg-\[\#f4faf7\]) { background-color: #0f172a !important; border-color: #1e293b !important; }
+html.ss-dark aside[aria-label="Thanh điều hướng SmartStudy"] :is(.bg-\[\#e3edfa\], .bg-\[\#eef4fc\], .bg-\[\#e6f6ef\]) { background-color: #1e293b !important; border-color: #334155 !important; }
+html.ss-dark aside[aria-label="Thanh điều hướng SmartStudy"] :is(.text-slate-900, .text-\[\#243c6e\], .text-\[\#0e5e4a\]) { color: #e2e8f0 !important; }
+html.ss-dark aside[aria-label="Thanh điều hướng SmartStudy"] :is(.text-\[\#2e5cb8\], .text-\[\#13808a\], .text-slate-500) { color: #7dd3fc !important; }
+html.ss-dark #main_content_scroll section.bg-\[\#eef4fc\] { background-color: #111c33 !important; border-color: #1e293b !important; }
+
+/* ---------- 1.6.21: blue → green look (light mode only) ---------- */
+/* page: soft sky blue fading into mint, so white cards stand out */
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) {
+  background-color: #e4f0fb;
+}
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll {
+  background: linear-gradient(135deg, #dcebfd 0%, #e3f2f7 45%, #d8f3e4 100%);
+}
+/* primary buttons follow the same blue → green brand gradient */
+#app_root:not(.fullscreen-dark-mode) :is(button, a, [role="button"]):is(.bg-\[\#2e5cb8\], .bg-blue-600, .bg-sky-600) {
+  background-image: linear-gradient(135deg, #2e5cb8 0%, #1f74a6 50%, #0e8a6a 100%);
+  border-color: transparent;
+}
+#app_root:not(.fullscreen-dark-mode) :is(button, a, [role="button"]):is(.bg-\[\#2e5cb8\], .bg-blue-600, .bg-sky-600):hover {
+  filter: brightness(1.07);
+}
+/* top bar: the active / open button uses the gradient too */
+#app_root:not(.fullscreen-dark-mode) .spotlight-toolbar .spotlight-nav-btn:is([aria-current="page"], [aria-expanded="true"], [data-primary="true"]),
+#app_root:not(.fullscreen-dark-mode) .spotlight-toolbar .spotlight-nav-btn[aria-pressed="true"]:not([data-toggle-badge]) {
+  background-image: linear-gradient(135deg, #2e5cb8 0%, #0e8a6a 100%);
+}
+#app_root:not(.fullscreen-dark-mode) .spotlight-toolbar.spotlight-toolbar--solid-opaque {
+  background-color: #e6f0fc;
+  background-image: linear-gradient(90deg, #e3eefc 0%, #e4f3f3 55%, #dff4e8 100%) !important;
+  border-bottom-color: #c3dcef;
+}
+
+/* 1.6.23: calmer, chat-app-like surfaces in the logo's blue and green: flat top bar, light canvas,
+   hairline borders and soft shadows instead of heavy drop shadows */
+#app_root:not(.fullscreen-dark-mode) .spotlight-toolbar.spotlight-toolbar--solid-opaque {
+  background-color: rgba(244, 249, 254, 0.88);
+  background-image: none !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  backdrop-filter: blur(12px) !important;
+  box-shadow: none;
+  border-bottom: 1px solid #dce7f3;
+}
+#app_root.blue-white-theme:not(.fullscreen-dark-mode) #main_content_scroll {
+  background: linear-gradient(160deg, #f2f7fe 0%, #eef6f9 50%, #ebf7f0 100%);
+}
+#app_root:not(.fullscreen-dark-mode) #main_content_scroll :is(section, article, div).bg-white:is(.rounded-2xl, .rounded-3xl, [class*="rounded-[2"], [class*="rounded-[3"]) {
+  border-color: #e1eaf4;
+  box-shadow: 0 1px 2px rgba(20, 50, 90, 0.04), 0 6px 20px -10px rgba(20, 50, 90, 0.12);
+}
+
+/* 1.6.24: back to the 1.6.16 look the student liked (blue top bar, navy → teal sidebar), a touch brighter */
+html:not(.ss-dark) aside[aria-label="Thanh điều hướng SmartStudy"] {
+  background-image: linear-gradient(180deg, #2b5a96 0%, #25648a 55%, #1f7470 100%);
+  border-right-color: rgba(255, 255, 255, 0.14);
+  color: #eef5ff;
+}
+html:not(.ss-dark) aside[aria-label="Thanh điều hướng SmartStudy"] :is(.text-slate-900, .text-slate-700, .text-slate-600, .text-\[\#243c6e\]) { color: #f1f6ff; }
+html:not(.ss-dark) aside[aria-label="Thanh điều hướng SmartStudy"] :is(.text-\[\#2e5cb8\], .text-\[\#13808a\], .text-slate-500) { color: #a8e4ff; }
+html:not(.ss-dark) aside[aria-label="Thanh điều hướng SmartStudy"] .text-\[\#0e5e4a\] { color: #c6f6dc; }
+html:not(.ss-dark) aside[aria-label="Thanh điều hướng SmartStudy"] :is(.bg-white\/55, .bg-white\/40) {
+  background-color: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+html:not(.ss-dark) aside[aria-label="Thanh điều hướng SmartStudy"] :is(.bg-white\/75, .bg-white:not(.text-\[\#0e5e66\]), .bg-\[\#eef4fc\], .bg-\[\#e3edfa\], .bg-slate-50) {
+  background-color: rgba(255, 255, 255, 0.13);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+html:not(.ss-dark) aside[aria-label="Thanh điều hướng SmartStudy"] .bg-\[\#e6f6ef\] {
+  background-color: rgba(142, 232, 180, 0.18);
+  border-color: rgba(142, 232, 180, 0.38);
+}
+html:not(.ss-dark) aside[aria-label="Thanh điều hướng SmartStudy"] :is(.border-slate-200, .border-\[\#d8e5f7\], .border-\[\#c9ddef\], .border-\[\#c9dcf4\]) {
+  border-color: rgba(255, 255, 255, 0.16);
+}
+html:not(.ss-dark) aside[aria-label="Thanh điều hướng SmartStudy"] :is(button, a):hover:not([aria-current="page"]) {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* dark mode: top-bar buttons kept their light fill while the text turned pale, so they were unreadable */
+html.ss-dark header.spotlight-toolbar .spotlight-nav-btn:not([aria-current="page"]):not([aria-expanded="true"]):not([data-primary="true"]) {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+}
+html.ss-dark header.spotlight-toolbar .spotlight-nav-btn svg { color: #cbd5e1; }

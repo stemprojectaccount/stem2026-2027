@@ -1,0 +1,973 @@
+/* =========================================================================
+   ASCII LAYER — ADDITIVE MOTION SYSTEM, HARMONIZED SYSTEM THEME TOKENS & SHOP
+   Safe Additive Layer: Strictly isolated outside #root flow so it never
+   pushes layout or intercepts clicks when closed.
+   Harmonized with the Blue-White System Architecture: each theme customizes
+   the toolbar, every tab button, sidebar, dropdown, and primary system buttons
+   via CSS variables on #app_root without breaking light academic readability.
+   ========================================================================= */
+
+:root {
+  /* 1.2 CSS Motion Tokens */
+  --dur-instant:  80ms;
+  --dur-fast:     150ms;
+  --dur-normal:   280ms;
+  --dur-slow:     450ms;
+  --dur-scenic:   700ms;
+
+  /* Easing */
+  --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out:      cubic-bezier(0.0, 0.0, 0.2, 1);
+  --ease-in:       cubic-bezier(0.4, 0.0, 1.0, 1);
+  --ease-in-out:   cubic-bezier(0.4, 0.0, 0.2, 1);
+  --ease-snap:     cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-glitch:   steps(4, end);
+
+  /* Scale factors */
+  --scale-press:  0.96;
+  --scale-hover:  1.02;
+  --scale-pop:    1.08;
+
+  /* Scoped ASCII Theme Variables */
+  --ascii-dur-fast:    150ms;
+  --ascii-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ascii-accent:      #38bdf8;
+  --ascii-accent-rgb:  56, 189, 248;
+  --accent-color:      #38bdf8;
+  --accent-rgb:        56, 189, 248;
+  --box-shadow-hover:  0 14px 32px -6px rgba(56, 189, 248, 0.28);
+}
+
+/* =========================================================================
+   MAIN BACKGROUND CANVAS LAYER (Scoped away from main app so UI stays clean)
+   The user explicitly requested ASCII themes & animated canvas to live
+   inside the AI Studio Chatbox, NOT covering the main academic workspace.
+   ========================================================================= */
+#ascii-canvas-layer {
+  display: none !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+#ascii-bg-canvas {
+  display: none !important;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+/* =========================================================================
+   MAIN APP CLEAN BLUE-WHITE WORKSPACE PRESERVATION
+   The rest of the website keeps its stable academic blue-white colors.
+   Only the AI Chatbot window morphs with the selected ASCII theme.
+   ========================================================================= */
+html[data-ascii-theme] body,
+html[data-ascii-theme] #root {
+  background-color: #f8fafc;
+}
+
+#app_root[data-ascii-theme] {
+  background-color: #f8fafc;
+}
+
+#app_root[data-ascii-theme] #main_content_scroll {
+  background-color: #f8fafc;
+}
+
+/* 1. Top Spotlight Toolbar (#app_root .spotlight-toolbar) */
+#app_root[data-ascii-theme] .spotlight-toolbar,
+html[data-ascii-theme] #app_root .spotlight-toolbar {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-shrink: 0 !important;
+  width: 100% !important;
+  background: var(--theme-toolbar-bg, linear-gradient(135deg, rgba(16, 58, 128, 0.95) 0%, rgba(26, 86, 176, 0.92) 55%, rgba(14, 116, 178, 0.94) 100%)) !important;
+  border-bottom: 1px solid var(--theme-toolbar-border, rgba(56, 189, 248, 0.45)) !important;
+  box-shadow: var(--theme-toolbar-shadow, 0 14px 32px -8px rgba(12, 42, 96, 0.36), 0 4px 16px -2px rgba(56, 189, 248, 0.22)) !important;
+  color: #ffffff !important;
+}
+
+/* 2. Every Toolbar Tab & System Button (.spotlight-nav-btn) — Default / Inactive State uses --text-secondary */
+#app_root[data-ascii-theme] .spotlight-toolbar .spotlight-nav-btn,
+html[data-ascii-theme] #app_root .spotlight-toolbar .spotlight-nav-btn {
+  background: var(--theme-tab-bg, rgba(12, 44, 98, 0.56)) !important;
+  color: var(--text-secondary, var(--theme-tab-text, #f0f9ff)) !important;
+  border-color: var(--theme-tab-border, rgba(125, 211, 252, 0.36)) !important;
+  transition:
+    background    0.22s var(--ease-out),
+    color         0.18s var(--ease-out),
+    border-color  0.22s var(--ease-out),
+    box-shadow    0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    transform     0.22s var(--ease-spring) !important;
+}
+
+/* 3. Toolbar Tab & System Button — Active / Primary State uses --accent-primary and color-contrast logic */
+#app_root[data-ascii-theme] .spotlight-toolbar .spotlight-nav-btn[aria-current="page"],
+#app_root[data-ascii-theme] .spotlight-toolbar .spotlight-nav-btn[aria-expanded="true"],
+#app_root[data-ascii-theme] .spotlight-toolbar .spotlight-nav-btn[aria-pressed="true"],
+#app_root[data-ascii-theme] .spotlight-toolbar .spotlight-nav-btn[data-primary="true"],
+html[data-ascii-theme] #app_root .spotlight-toolbar .spotlight-nav-btn[aria-current="page"],
+html[data-ascii-theme] #app_root .spotlight-toolbar .spotlight-nav-btn[aria-expanded="true"],
+html[data-ascii-theme] #app_root .spotlight-toolbar .spotlight-nav-btn[aria-pressed="true"],
+html[data-ascii-theme] #app_root .spotlight-toolbar .spotlight-nav-btn[data-primary="true"] {
+  background-color: var(--accent-primary, #2e5cb8) !important;
+  background-image: var(--theme-tab-active-bg, linear-gradient(135deg, #0284c7 0%, #2563eb 100%)) !important;
+  color: var(--accent-contrast-text, var(--theme-tab-active-text, #ffffff)) !important;
+  color: color-contrast(var(--accent-primary, #2e5cb8) vs #ffffff, #0f172a) !important;
+  border-color: var(--theme-tab-active-border, #bae6fd) !important;
+  box-shadow: var(--theme-tab-active-shadow, 0 6px 18px -3px rgba(2, 132, 199, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.45)) !important;
+}
+
+/* 4. Toolbar Tab & System Button — Hover State (3D Depth + Theme Pop + color-contrast) */
+#app_root[data-ascii-theme] .spotlight-toolbar .spotlight-nav-btn:hover,
+html[data-ascii-theme] #app_root .spotlight-toolbar .spotlight-nav-btn:hover {
+  background-color: var(--accent-primary, #2563eb) !important;
+  background-image: var(--theme-tab-hover-bg, linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%)) !important;
+  color: var(--accent-contrast-text, #ffffff) !important;
+  color: color-contrast(var(--accent-primary, #2563eb) vs #ffffff, #0f172a) !important;
+  border-color: var(--theme-tab-hover-border, #ffffff) !important;
+  box-shadow: var(--theme-tab-hover-shadow, 0 14px 28px -4px rgba(8, 35, 85, 0.52), 0 6px 18px 2px rgba(56, 189, 248, 0.48), 0 0 22px 2px rgba(125, 211, 252, 0.42), inset 0 1.5px 1px rgba(255, 255, 255, 0.65)) !important;
+}
+
+/* 5. Vertical "Tiện ích" Dropdown Menu (.spotlight-vertical-menu, .spotlight-menu-row) */
+#app_root[data-ascii-theme] .spotlight-vertical-menu,
+html[data-ascii-theme] #app_root .spotlight-vertical-menu {
+  background: var(--theme-dropdown-bg, linear-gradient(180deg, rgba(16, 58, 128, 0.97) 0%, rgba(12, 42, 96, 0.98) 100%)) !important;
+  border-color: var(--theme-dropdown-border, rgba(125, 211, 252, 0.45)) !important;
+}
+
+#app_root[data-ascii-theme] .spotlight-vertical-menu .spotlight-menu-row[aria-current="page"],
+html[data-ascii-theme] #app_root .spotlight-vertical-menu .spotlight-menu-row[aria-current="page"] {
+  background: var(--theme-tab-active-bg, linear-gradient(135deg, #0284c7 0%, #2563eb 100%)) !important;
+  border-color: var(--theme-tab-active-border, #bae6fd) !important;
+  color: #ffffff !important;
+}
+
+#app_root[data-ascii-theme] .spotlight-vertical-menu .spotlight-menu-row:hover,
+html[data-ascii-theme] #app_root .spotlight-vertical-menu .spotlight-menu-row:hover {
+  background: var(--theme-tab-hover-bg, linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%)) !important;
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+}
+
+/* 6. Left Sidebar (#app_root aside), Sidebar Header, CTA & Navigation Tabs */
+#app_root[data-ascii-theme] aside,
+html[data-ascii-theme] #app_root aside {
+  background: var(--theme-sidebar-bg, rgba(242, 248, 255, 0.94)) !important;
+  border-right-color: var(--theme-sidebar-border, rgba(56, 189, 248, 0.32)) !important;
+  transition: background 0.3s var(--ease-out), border-color 0.3s var(--ease-out);
+}
+
+#app_root[data-ascii-theme] aside > div:first-child {
+  background: var(--theme-sidebar-header-bg, rgba(235, 245, 255, 0.92)) !important;
+  border-bottom-color: var(--theme-sidebar-border, rgba(56, 189, 248, 0.28)) !important;
+}
+
+#app_root[data-ascii-theme] aside > div:last-child {
+  background: var(--theme-sidebar-footer-bg, rgba(232, 244, 255, 0.9)) !important;
+  border-top-color: var(--theme-sidebar-border, rgba(56, 189, 248, 0.28)) !important;
+}
+
+/* Sidebar Top Primary CTA Button ("Luyện Tập & Giải Đề") */
+#app_root[data-ascii-theme] aside > div.px-4.pt-3.pb-1 > button {
+  background: var(--theme-sidebar-cta-bg, linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%)) !important;
+  border-color: var(--theme-sidebar-cta-border, #7dd3fc) !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 20px -4px rgba(var(--ascii-accent-rgb), 0.38) !important;
+}
+
+/* Sidebar Navigation Tab Buttons (.sidebar-spotlight-btn) */
+#app_root[data-ascii-theme] aside .sidebar-spotlight-btn {
+  transition:
+    background    0.2s var(--ease-out),
+    color         0.18s var(--ease-out),
+    border-color  0.2s var(--ease-out),
+    box-shadow    0.22s var(--ease-out),
+    transform     0.2s var(--ease-spring) !important;
+}
+
+/* Active Sidebar Tab Button (has text-white class from React) */
+#app_root[data-ascii-theme] aside .sidebar-spotlight-btn.text-white {
+  background: var(--theme-sidebar-tab-active-bg, linear-gradient(135deg, #1e40af 0%, #0284c7 100%)) !important;
+  border-color: var(--theme-sidebar-cta-border, #7dd3fc) !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 18px -4px rgba(var(--ascii-accent-rgb), 0.35) !important;
+}
+
+#app_root[data-ascii-theme] aside .sidebar-spotlight-btn.text-white span:last-child {
+  background: var(--theme-sidebar-badge-bg, #0369a1) !important;
+  color: #ffffff !important;
+}
+
+/* Hover on Sidebar Tab Button */
+#app_root[data-ascii-theme] aside .sidebar-spotlight-btn:hover {
+  background: var(--theme-sidebar-tab-hover-bg, linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%)) !important;
+  border-color: var(--theme-tab-active-border, #bae6fd) !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 22px -4px rgba(var(--ascii-accent-rgb), 0.35) !important;
+}
+
+/* Sidebar Bottom Mascot Card */
+#app_root[data-ascii-theme] aside > div:last-child > div {
+  background: var(--theme-mascot-card-bg, linear-gradient(135deg, #1e40af 0%, #0369a1 100%)) !important;
+  border-color: var(--theme-sidebar-cta-border, #7dd3fc) !important;
+}
+
+/* 7. Main Content Cards, Sub-Tabs & System Action Buttons */
+#app_root[data-ascii-theme] #main_content_scroll .edu-card,
+#app_root[data-ascii-theme] #main_content_scroll .bg-white {
+  background-color: var(--theme-card-bg, rgba(255, 255, 255, 0.94)) !important;
+  border-color: var(--theme-card-border, rgba(56, 189, 248, 0.28)) !important;
+}
+
+#app_root[data-ascii-theme] #main_content_scroll .edu-card:hover {
+  border-color: var(--theme-card-hover-border, rgba(2, 132, 199, 0.55)) !important;
+}
+
+/* In-page Tablist Buttons ([role="tablist"] > button) */
+#app_root[data-ascii-theme] #main_content_scroll [role="tablist"] > button[aria-selected="true"],
+#app_root[data-ascii-theme] #main_content_scroll [role="tablist"] > button.bg-white,
+#app_root[data-ascii-theme] #main_content_scroll [role="tablist"] > button.bg-blue-600,
+#app_root[data-ascii-theme] #main_content_scroll [role="tablist"] > button.bg-indigo-600 {
+  background: var(--theme-primary-btn-bg, linear-gradient(135deg, #0284c7 0%, #2563eb 100%)) !important;
+  color: #ffffff !important;
+  border-color: var(--theme-tab-active-border, #bae6fd) !important;
+  box-shadow: 0 4px 12px -2px rgba(var(--ascii-accent-rgb), 0.32) !important;
+}
+
+/* Primary Action Buttons across all views */
+#app_root[data-ascii-theme] #main_content_scroll button.bg-blue-600,
+#app_root[data-ascii-theme] #main_content_scroll button.bg-indigo-600,
+#app_root[data-ascii-theme] #main_content_scroll button.bg-sky-600,
+#app_root[data-ascii-theme] #main_content_scroll button.bg-\[\#2e5cb8\],
+#app_root[data-ascii-theme] #main_content_scroll button.bg-\[\#3563b8\],
+#app_root[data-ascii-theme] #main_content_scroll a.bg-blue-600,
+#app_root[data-ascii-theme] #main_content_scroll a.bg-indigo-600 {
+  background: var(--theme-primary-btn-bg, linear-gradient(135deg, #0284c7 0%, #2563eb 100%)) !important;
+  color: #ffffff !important;
+  border-color: var(--theme-tab-active-border, rgba(255, 255, 255, 0.35)) !important;
+  box-shadow: 0 6px 16px -3px rgba(var(--ascii-accent-rgb), 0.32) !important;
+  transition: transform 0.18s var(--ease-spring), filter 0.18s ease, box-shadow 0.2s ease !important;
+}
+
+#app_root[data-ascii-theme] #main_content_scroll button.bg-blue-600:hover,
+#app_root[data-ascii-theme] #main_content_scroll button.bg-indigo-600:hover,
+#app_root[data-ascii-theme] #main_content_scroll button.bg-sky-600:hover,
+#app_root[data-ascii-theme] #main_content_scroll button.bg-\[\#2e5cb8\]:hover,
+#app_root[data-ascii-theme] #main_content_scroll button.bg-\[\#3563b8\]:hover {
+  background: var(--theme-primary-btn-hover, linear-gradient(135deg, #0369a1 0%, #1d4ed8 100%)) !important;
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+/* =========================================================================
+   1.4 INPUT BOX & SEND BUTTON MICRO-INTERACTIONS
+   ========================================================================= */
+.box,
+.ascii-enhanced.box {
+  transition:
+    transform        var(--dur-fast)   var(--ease-spring),
+    box-shadow       var(--dur-normal) var(--ease-out),
+    border-color     var(--dur-normal) var(--ease-out),
+    background-color var(--dur-slow)   var(--ease-out);
+}
+.box:hover,
+.ascii-enhanced.box:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--box-shadow-hover);
+}
+.box:focus-within,
+.ascii-enhanced.box:focus-within {
+  transform: translateY(-3px) scale(1.004);
+  border-color: var(--accent-color);
+}
+
+.send,
+.ascii-enhanced.send {
+  position: relative;
+  transition:
+    transform    var(--dur-fast)    var(--ease-spring),
+    background   var(--dur-fast)    var(--ease-out),
+    box-shadow   var(--dur-normal)  var(--ease-out);
+}
+
+/* Send button -> ASCII point earned animation */
+.send.earned::after,
+.ascii-enhanced.send.earned::after {
+  content: '+10 pts';
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(0);
+  animation: asciiFloatUp 0.9s var(--ease-out) forwards;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-color);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 9999;
+}
+
+@keyframes asciiFloatUp {
+  0%   { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-22px) scale(0.85); }
+}
+
+/* =========================================================================
+   1.5 SPOTLIGHT TOOLBAR CURSOR GLOW VARIABLES (No DOM mutation inside React)
+   ========================================================================= */
+#app_root .spotlight-toolbar {
+  --glow-x: 50%;
+  --glow-y: 50%;
+  --accent-rgb: var(--ascii-accent-rgb, 56, 189, 248);
+}
+
+/* =========================================================================
+   3.5 BALANCE DISPLAY WIDGET (#ascii-pts-widget, .pts-badge)
+   ========================================================================= */
+#ascii-pts-widget {
+  position: fixed;
+  bottom: 18px;
+  left: 18px;
+  z-index: 9990;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+@media (max-width: 768px) {
+  #ascii-pts-widget {
+    bottom: 76px;
+    left: 12px;
+  }
+}
+
+.pts-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 13px 6px 10px;
+  background: var(--theme-toolbar-bg, rgba(16, 58, 128, 0.94));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(var(--accent-rgb), 0.65);
+  border-radius: 100px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.28), 0 0 16px rgba(var(--accent-rgb), 0.22);
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background   var(--dur-fast) var(--ease-out),
+    transform    var(--dur-fast) var(--ease-spring),
+    box-shadow   var(--dur-normal) var(--ease-out),
+    border-color var(--dur-normal) var(--ease-out);
+}
+.pts-badge:hover {
+  transform: scale(1.05) translateY(-1px);
+  border-color: #ffffff;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.36), 0 0 22px rgba(var(--accent-rgb), 0.42);
+}
+.pts-badge:active {
+  transform: scale(0.96);
+}
+
+.pts-icon {
+  color: #ffffff;
+  font-size: 13px;
+}
+
+.pts-count {
+  color: #ffffff;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.pts-shop-hint {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  letter-spacing: 0.04em;
+}
+
+.pts-count.bump {
+  display: inline-block;
+  animation: ptsBump 0.35s var(--ease-spring);
+}
+
+@keyframes ptsBump {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.28); color: var(--accent-color); }
+  100% { transform: scale(1); }
+}
+
+/* =========================================================================
+   3.3 POINT TOAST NOTIFICATION (.point-toast)
+   ========================================================================= */
+.point-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 15px;
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(var(--accent-rgb), 0.55);
+  border-radius: 99px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 12px;
+  color: #ffffff;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  transform: translateY(12px) scale(0.94);
+  transition:
+    opacity   0.25s var(--ease-out),
+    transform 0.25s var(--ease-spring);
+  pointer-events: none;
+}
+
+.point-toast.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.point-toast .pts-plus {
+  font-weight: 800;
+  color: var(--accent-color);
+}
+
+.point-toast .pts-label {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+/* =========================================================================
+   THEME SHOP PORTAL & MODAL (#ascii-shop-portal, .shop-overlay)
+   ========================================================================= */
+#ascii-shop-portal {
+  position: fixed;
+  inset: 0;
+  z-index: 99995;
+  pointer-events: none;
+}
+
+.shop-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99995;
+  background: rgba(15, 23, 42, 0.62);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity    0.25s var(--ease-out),
+    visibility 0.25s var(--ease-out);
+  font-family: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+}
+
+.shop-overlay.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.shop-panel {
+  width: min(880px, 95vw);
+  max-height: 86vh;
+  background: linear-gradient(180deg, #0f172a 0%, #111c35 100%);
+  border: 1px solid rgba(var(--accent-rgb), 0.42);
+  border-radius: 20px;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  overflow-y: auto;
+  color: #f8fafc;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.65), 0 0 40px rgba(var(--accent-rgb), 0.16);
+  transform: translateY(20px) scale(0.96);
+  transition: transform 0.32s var(--ease-spring);
+}
+
+.shop-overlay.open .shop-panel {
+  transform: translateY(0) scale(1);
+}
+
+.shop-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.shop-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+}
+
+.shop-icon {
+  color: var(--accent-color);
+  font-size: 18px;
+}
+
+.shop-balance-wrap {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.shop-balance {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 99px;
+  background: rgba(var(--accent-rgb), 0.16);
+  border: 1px solid rgba(var(--accent-rgb), 0.48);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.shop-close {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  color: #cbd5e1;
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s var(--ease-spring);
+}
+
+.shop-close:hover {
+  background: rgba(244, 63, 94, 0.22);
+  border-color: rgba(244, 63, 94, 0.55);
+  color: #fda4af;
+  transform: scale(1.06);
+}
+
+.shop-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.shop-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.filter-btn {
+  padding: 6px 12px;
+  border-radius: 99px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.72);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s var(--ease-out);
+}
+
+.filter-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.filter-btn.active {
+  background: rgba(var(--accent-rgb), 0.22);
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+.shop-sort-select {
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: #111827;
+  color: #f8fafc;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 11.5px;
+  cursor: pointer;
+}
+
+/* =========================================================================
+   THEME GRID & THEME CARDS (.theme-grid, .theme-card)
+   ========================================================================= */
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.theme-card {
+  --card-accent: #38bdf8;
+  --card-accent-rgb: 56, 189, 248;
+  position: relative;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(17, 24, 39, 0.82);
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition:
+    transform    0.22s var(--ease-spring),
+    border-color 0.2s ease,
+    box-shadow   0.22s ease;
+}
+
+.theme-card:hover {
+  transform: translateY(-4px) scale(1.015);
+  border-color: rgba(var(--card-accent-rgb), 0.6);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45);
+}
+
+.theme-card.active {
+  border-color: var(--card-accent);
+  box-shadow: 0 0 0 1px var(--card-accent), 0 0 24px rgba(var(--card-accent-rgb), 0.3);
+}
+
+.card-preview {
+  position: relative;
+  height: 130px;
+  overflow: hidden;
+}
+
+.theme-preview-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.active-indicator {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 3px 8px;
+  border-radius: 99px;
+  background: rgba(10, 14, 26, 0.88);
+  border: 1px solid var(--card-accent);
+  color: var(--card-accent);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.lock-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 7, 16, 0.56);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.2s ease;
+}
+
+.theme-card:hover .lock-overlay {
+  background: rgba(4, 7, 16, 0.38);
+}
+
+.lock-icon {
+  font-size: 20px;
+}
+
+.unlock-btn {
+  padding: 6px 14px;
+  border-radius: 99px;
+  background: rgba(var(--card-accent-rgb), 0.24);
+  border: 1px solid var(--card-accent);
+  color: #ffffff;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s var(--ease-spring), background 0.15s ease;
+}
+
+.unlock-btn:hover:not(.disabled) {
+  background: var(--card-accent);
+  color: #060911;
+  transform: scale(1.06);
+}
+
+.unlock-btn.disabled {
+  opacity: 0.55;
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(15, 23, 42, 0.8);
+}
+
+.card-info {
+  padding: 10px 12px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.card-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.card-badge {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 11px;
+}
+
+.badge-active {
+  color: #4ade80;
+  font-weight: 700;
+}
+
+.badge-unlocked {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.badge-cost {
+  color: var(--card-accent);
+  font-weight: 700;
+}
+
+.card-meta {
+  padding: 0 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.card-mood {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 10px;
+  color: var(--card-accent);
+  opacity: 0.9;
+}
+
+.card-desc {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.4;
+  flex: 1;
+}
+
+.use-btn {
+  margin-top: 4px;
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(var(--card-accent-rgb), 0.45);
+  background: rgba(var(--card-accent-rgb), 0.16);
+  color: var(--card-accent);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.use-btn:hover:not(:disabled) {
+  background: var(--card-accent);
+  color: #060911;
+}
+
+.use-btn.active-btn {
+  background: rgba(74, 222, 128, 0.16);
+  border-color: rgba(74, 222, 128, 0.45);
+  color: #4ade80;
+  cursor: default;
+}
+
+/* Shake on insufficient points */
+.theme-card.shake {
+  animation: cardShake 0.42s var(--ease-snap);
+}
+
+@keyframes cardShake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-6px); }
+  40%      { transform: translateX(6px); }
+  60%      { transform: translateX(-4px); }
+  80%      { transform: translateX(4px); }
+}
+
+/* Unlock celebration ring */
+.theme-card.just-unlocked {
+  animation: unlockCelebrate 0.65s var(--ease-spring);
+}
+
+@keyframes unlockCelebrate {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.06); box-shadow: 0 0 36px rgba(var(--card-accent-rgb), 0.65); }
+  100% { transform: scale(1); }
+}
+
+/* =========================================================================
+   HOW TO EARN POINTS SECTION (.earn-guide)
+   ========================================================================= */
+.earn-guide {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 14px;
+}
+
+.earn-title {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 10px;
+}
+
+.earn-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+  gap: 8px;
+}
+
+.earn-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.82);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.earn-item:hover {
+  background: rgba(var(--accent-rgb), 0.14);
+  border-color: rgba(var(--accent-rgb), 0.45);
+  transform: translateY(-1px);
+}
+
+.earn-item span:last-child {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-weight: 700;
+  color: var(--accent-color);
+}
+
+/* =========================================================================
+   CONFIRMATION MODAL FOR >= 5000 PTS THEMES
+   ========================================================================= */
+.ascii-confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100001;
+  background: rgba(2, 6, 23, 0.78);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  pointer-events: auto;
+}
+
+.ascii-confirm-modal {
+  width: min(390px, 94vw);
+  background: #0f172a;
+  border: 1px solid rgba(var(--accent-rgb), 0.5);
+  border-radius: 18px;
+  padding: 22px;
+  color: #f8fafc;
+  box-shadow: 0 24px 54px rgba(0, 0, 0, 0.7);
+  text-align: center;
+}
+
+.ascii-confirm-modal h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.ascii-confirm-modal p {
+  margin: 0 0 18px;
+  font-size: 13px;
+  color: #cbd5e1;
+  line-height: 1.5;
+}
+
+.ascii-confirm-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.ascii-confirm-btn {
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+  color: #f8fafc;
+}
+
+.ascii-confirm-btn.confirm {
+  background: var(--accent-color);
+  color: #060911;
+  border-color: transparent;
+}
+
+/* =========================================================================
+   1.7 ACCESSIBILITY — REDUCED MOTION
+   ========================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .theme-card,
+  .pts-badge,
+  .point-toast,
+  .shop-panel {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

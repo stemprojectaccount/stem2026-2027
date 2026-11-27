@@ -3,7 +3,7 @@ import { Lesson, Question, MagicCard, FusionRecipe } from "./types";
 export const SAMPLE_LESSONS: Lesson[] = [
   {
     id: "sample-1",
-    title: "🌌 Khám Phá Bí Mật Vũ Trụ Số Tự Nhiên",
+    title: "Khám phá bí mật vũ trụ số tự nhiên",
     bookName: "Toán Học 6",
     grade: "Lớp 6",
     curriculum: "Kết nối tri thức",
@@ -11,114 +11,231 @@ export const SAMPLE_LESSONS: Lesson[] = [
     topic: "Tập hợp các số tự nhiên",
     notes: "Số tự nhiên N bắt đầu từ 0. N* là không có số 0!",
     completed: true,
-    content: `# 🌌 Khám Phá Bí Mật Vũ Trụ Số Tự Nhiên
+    content: `# 🌌 Khám Phá Tập Hợp Các Số Tự Nhiên
 
 ---
 
-## ⚡ TikTok Hook (Khởi động cực cuốn)
-> "Bạn có biết người cổ đại đếm cừu thế nào không? Không có điện thoại, không có máy tính... Họ dùng sỏi! Nhưng làm sao từ những viên sỏi thô sơ lại sinh ra cả một **Đế chế Số học** khổng lồ đang vận hành thế giới hôm nay? Khám phá ngay chỉ trong 3 phút!" 🚀
+## Đặt vấn đề (Khởi động bài học)
+> "Từ thời cổ đại, con người đã có nhu cầu đếm số lượng gia súc, hoa màu hay ngày tháng. Từ những phương pháp đếm thô sơ bằng que tính hay sỏi đá, loài người đã xây dựng nên **Tập hợp số tự nhiên** - nền tảng của toán học hiện đại. Cùng tìm hiểu cấu trúc và quy tắc của hệ thống số này!"
 
 ---
 
-## 📖 Kiến Thức Cốt Lõi (Core Knowledge)
+## Kiến thức trọng tâm
 
-### 1. Tập hợp $N$ và $N^*$ là cái chi chi?
-Hãy tưởng tượng bạn đang chơi game Minecraft.
-*   **Tập hợp N** giống như thế giới sinh tồn thường, nơi mọi tài nguyên bắt đầu từ số $0$ (bạn tay trắng!).
-    $$N = \\{0, 1, 2, 3, 4, ...\\}$$
-*   **Tập hợp N*** giống như chế độ đặc biệt, nơi bạn **không bao giờ chấp nhận số không**. Bạn phải có ít nhất 1 khối đất!
-    $$N^* = \\{1, 2, 3, 4, 5, ...\\}$$
+### 1. Tập hợp $\\mathbb{N}$ và $\\mathbb{N}^*$
+*   **Tập hợp $\\mathbb{N}$**: Là tập hợp các số tự nhiên, bắt đầu từ số $0$.
+    $$\\mathbb{N} = \\{0, 1, 2, 3, 4, ...\\}$$
+*   **Tập hợp $\\mathbb{N}^*$**: Là tập hợp các số tự nhiên khác $0$.
+    $$\\mathbb{N}^* = \\{1, 2, 3, 4, 5, ...\\}$$
 
-| Đặc trưng | Tập hợp $N$ | Tập hợp $N^*$ |
+| Đặc trưng | Tập hợp $\\mathbb{N}$ | Tập hợp $\\mathbb{N}^*$ |
 | :--- | :--- | :--- |
-| **Số bắt đầu** | $0$ | $1$ |
-| **Ý nghĩa** | Đếm từ hư vô | Đếm từ thực thể |
+| **Số nhỏ nhất** | $0$ | $1$ |
+| **Biểu diễn** | $\\{0, 1, 2, 3, ...\\}$ | $\\{1, 2, 3, ...\\}$ |
 
-### 2. Biểu diễn số trên tia số (Thước đo vũ trụ)
-Hãy vẽ một mũi tên bay từ trái sang phải:
+### 2. Biểu diễn số trên tia số
+Một tia số có gốc là điểm $0$, chiều từ trái sang phải là chiều tăng dần:
 \`\`\`
-  [0]-----[1]-----[2]-----[3]-----[4]-----> Chiều tăng dần!
+  [0]-----[1]-----[2]-----[3]-----[4]-----> Chiều tăng dần
 \`\`\`
-*   Mỗi số là một trạm dừng chân của phi thuyền.
-*   Số nằm bên trái luôn **nhỏ hơn** số nằm bên phải. Dễ như ăn kẹo phải không? 🍭
+*   Mỗi số tự nhiên được biểu diễn bởi một điểm trên tia số.
+*   Điểm nằm bên trái biểu diễn số nhỏ hơn điểm nằm bên phải. Nếu $a < b$ thì điểm $a$ nằm bên trái điểm $b$.
 
 ---
 
-## 💡 Hộp Thông Tin Siêu Thú Trị (Did you know?)
-> **Số 0 đã từng bị 'Cấm cửa'!**
-> Người Hy Lạp cổ đại cực kỳ ghét số $0$ vì họ cho rằng "không có gì" thì làm sao biểu diễn được. Phải mất hàng trăm năm, các nhà toán học Ấn Độ mới 'minh oan' và đưa số $0$ lên ngai vàng của toán học hiện đại! 👑
+## Góc kiến thức bổ ích
+> **Lịch sử số 0:**
+> Trong hệ thống số của nhiều nền văn minh cổ đại (như La Mã), số $0$ chưa từng xuất hiện. Phải đến khi các nhà toán học Ấn Độ phát minh ra ký hiệu số $0$ và định nghĩa các quy tắc số học cho nó vào thế kỷ thứ 7, hệ thống đếm thập phân hoàn chỉnh mới được định hình.
 
 ---
 
-## 🧠 Thử Thách Siêu Tốc (Quick Challenges)
-1.  **Câu đố 1**: Tập hợp các số tự nhiên nhỏ hơn 5 có bao nhiêu phần tử?
-    *(Đáp án: Có 5 phần tử là {0, 1, 2, 3, 4})*
-2.  **Câu đố 2**: Số tự nhiên nhỏ nhất thuộc tập hợp $N^*$ là số mấy?
-    *(Đáp án: Là số 1)*
+## Bài tập củng cố
+1.  **Câu hỏi 1**: Tập hợp các số tự nhiên $x$ thỏa mãn $x \\le 4$ có bao nhiêu phần tử?
+    *(Đáp số: Có 5 phần tử là $\\{0, 1, 2, 3, 4\\}$)*
+2.  **Câu hỏi 2**: Số tự nhiên nhỏ nhất thuộc tập hợp $\\mathbb{N}^*$ là số nào?
+    *(Đáp số: Là số 1)*
 
 ---
 
-## 🎯 Bản Đồ Tóm Tắt (TikTok Summary)
-*   🟢 **N**: Có số 0 tròn trĩnh.
-*   🔴 **N***: Đuổi cổ số 0 ra ngoài!
-*   📈 **Tia số**: Đi từ trái sang phải là đi lên đỉnh vinh quang!`
+## Tóm tắt ghi nhớ
+*   $\\mathbb{N} = \\{0, 1, 2, 3, ...\\}$ (có số $0$).
+*   $\\mathbb{N}^* = \\{1, 2, 3, ...\\}$ (không có số $0$).
+*   Trên tia số, chiều mũi tên từ trái sang phải là chiều tăng dần.`
   },
   {
     id: "sample-2",
-    title: "💧 Cuộc Du Ngoạn Kỳ Thú Của Giọt Nước",
-    bookName: "Khoa Học Tự Nhiên 6",
+    title: "Chu trình nước trong tự nhiên",
+    bookName: "Khoa học tự nhiên 6",
     grade: "Lớp 6",
     curriculum: "Cánh diều",
     createdAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
     topic: "Chu trình nước trong tự nhiên",
     notes: "Nước bay hơi thành hơi nước, ngưng tụ thành mây, mưa rơi xuống.",
     completed: false,
-    content: `# 💧 Cuộc Du Ngoạn Kỳ Thú Của Giọt Nước
+    content: `# Chu trình nước trong tự nhiên
 
 ---
 
-## ⚡ TikTok Hook (Khởi động cực cuốn)
-> "Nước bạn đang uống hôm nay có thể chính là nước mà... một con khủng long T-Rex đã uống từ 65 triệu năm trước! 🦖 Làm sao nước có thể 'trường sinh bất tử' qua hàng triệu năm như vậy? Hãy cùng phiêu lưu theo vòng tuần hoàn ma thuật của nước nhé!"
+## Khởi động và đặt vấn đề
+> "Nước bao phủ hơn 70% bề mặt Trái Đất và là điều kiện tiên quyết cho sự sống. Hàng ngày, hàng tỷ mét khối nước di chuyển liên tục giữa đại dương, khí quyển và lục địa. Chu trình tuần hoàn này diễn ra như thế nào?"
 
 ---
 
-## 📖 Kiến Thức Cốt Lõi (Core Knowledge)
+## Kiến thức trọng tâm
 
-### 1. Cuộc đào tẩu vĩ đại (Bay hơi & Thăng hoa)
-Dưới ánh nắng rực rỡ của Đại vương Mặt Trời ☀️, nước ở sông hồ nóng lên, các phân tử nước rung động cực mạnh và bay thẳng lên không trung.
-*   **Bay hơi (Evaporation)**: Nước lỏng chuyển thành hơi nước vô hình.
-*   **Thoát hơi nước (Transpiration)**: Cây cối cũng 'đổ mồ hôi', giải phóng hơi nước qua kẽ lá.
+### 1. Quá trình bay hơi và thoát hơi nước
+Dưới tác dụng của bức xạ nhiệt từ Mặt Trời:
+*   **Bay hơi (Evaporation)**: Nước ở sông ngòi, ao hồ, biển nóng lên và chuyển từ thể lỏng sang thể khí (hơi nước) bốc lên cao.
+*   **Thoát hơi nước (Transpiration)**: Thực vật hấp thụ nước từ rễ và thoát hơi nước qua khí khổng ở lá cây vào khí quyển.
 
-### 2. Sự tụ họp kỳ diệu (Ngưng tụ)
-Lên cao gặp lạnh, các giọt hơi nước cô đơn bắt đầu xích lại gần nhau, ôm chặt lấy nhau tạo thành những đám mây bồng bềnh mềm mại ☁️.
-*   **Ngưng tụ (Condensation)**: Hơi nước hóa lỏng thành các hạt nước li ti.
+### 2. Quá trình ngưng tụ
+Khi hơi nước bốc lên cao gặp nhiệt độ thấp:
+*   **Ngưng tụ (Condensation)**: Hơi nước ngưng tụ lại thành các hạt nước li ti tạo thành mây và sương mù.
 
-### 3. Trở lại quê hương (Mưa rơi)
-Khi mây quá nặng, gió thổi mạnh, nước rơi xuống đất tạo thành mưa, tuyết hoặc mưa đá.
-\`\`\`
-   [Mặt trời] -> Bay hơi -> [Mây] -> Nặng quá -> [Mưa] -> Sông/Hồ
-\`\`\`
+### 3. Quá trình tạo mưa và dòng chảy
+*   Khi các giọt nước trong mây kết hợp lại đủ lớn và nặng, trọng lực kéo chúng rơi xuống mặt đất tạo thành mưa, tuyết hoặc mưa đá.
+*   Nước mưa thấm xuống lòng đất thành mạch nước ngầm hoặc đổ vào sông suối rồi chảy về đại dương, tiếp tục vòng tuần hoàn mới.
 
 ---
 
-## 💡 Hộp Thông Tin Siêu Thú Trị (Did you know?)
-> **Trái Đất là một chiếc bình kín khổng lồ!**
-> Lượng nước trên hành tinh của chúng ta không hề tăng lên hay giảm đi. Nó chỉ liên tục thay đổi trạng thái và di chuyển vòng quanh. Nước bạn tắm hôm nay ngày mai có thể đang ở trên đỉnh núi Everest! 🏔️
+## Thông tin khoa học
+> **Định luật bảo toàn lượng nước:**
+> Tổng lượng nước trên Trái Đất về cơ bản là không đổi qua hàng triệu năm. Nước chỉ luân chuyển giữa ba thể (rắn, lỏng, khí) thông qua các quá trình vật lý tự nhiên.
 
 ---
 
-## 🧠 Thử Thách Siêu Tốc (Quick Challenges)
-1.  **Câu đố 1**: Động lực chính thúc đẩy vòng tuần hoàn nước là gì?
-    *(Đáp án: Năng lượng từ Mặt Trời và trọng lực)*
-2.  **Câu đố 2**: Quá trình mây biến thành mưa gọi là gì?
-    *(Đáp án: Sự ngưng kết / Mưa)*
+## Bài tập tự luyện
+1.  **Câu hỏi 1**: Nguồn năng lượng chủ yếu thúc đẩy chu trình nước trên Trái Đất là gì?
+    *(Đáp án: Năng lượng bức xạ nhiệt từ Mặt Trời)*
+2.  **Câu hỏi 2**: Quá trình chuyển từ hơi nước thành hạt nước lỏng gọi là gì?
+    *(Đáp án: Quá trình ngưng tụ)*
 
 ---
 
-## 🎯 Bản Đồ Tóm Tắt (TikTok Summary)
-*   ☀️ **Nóng**: Bay hơi lên trời.
-*   ❄️ **Lạnh**: Ngưng tụ thành mây.
-*   🌧️ **Nặng**: Mưa rơi trở lại đất mẹ!`
+## Tóm tắt bài học
+*   **Bốc hơi**: Nước lỏng $\\rightarrow$ hơi nước.
+*   **Ngưng tụ**: Hơi nước gặp lạnh $\\rightarrow$ tạo mây.
+*   **Mưa rơi**: Nước từ khí quyển rơi trở lại mặt đất và đại dương.`
+  },
+  {
+    id: "sample-3",
+    title: "Phân biệt thì hiện tại đơn và hiện tại tiếp diễn",
+    bookName: "Tiếng Anh 7",
+    grade: "Lớp 7",
+    curriculum: "Global Success",
+    createdAt: new Date(Date.now() - 48 * 3600 * 1000).toISOString(),
+    topic: "Present Simple vs Present Continuous",
+    notes: "Dấu hiệu HTĐ: always, usually, every day. HTTD: now, at the moment, look!",
+    completed: true,
+    pinned: true,
+    content: `# Phân biệt thì hiện tại đơn và hiện tại tiếp diễn
+
+---
+
+## Đặt vấn đề
+> "Hiểu và phân biệt rõ cách dùng của thì Hiện tại đơn (Present Simple) và Hiện tại tiếp diễn (Present Continuous) là nền tảng cốt lõi giúp học sinh diễn đạt chính xác hành động và tránh các lỗi ngữ pháp thường gặp trong các bài kiểm tra."
+
+---
+
+## Kiến thức trọng tâm
+
+### 1. Thì Hiện Tại Đơn (Present Simple)
+* **Cách dùng**: Diễn tả thói quen, hành động lặp đi lặp lại hoặc sự thật hiển nhiên.
+* **Cấu trúc khẳng định**: $S + V(s/es)$ (với động từ thường) hoặc $S + am/is/are$ (với to be).
+* **Dấu hiệu nhận biết**: *always, usually, often, sometimes, rarely, every day, once a week...*
+
+### 2. Thì Hiện Tại Tiếp Diễn (Present Continuous)
+* **Cách dùng**: Diễn tả hành động đang xảy ra tại thời điểm nói hoặc xung quanh thời điểm nói.
+* **Cấu trúc khẳng định**: $S + am/is/are + V\\text{-ing}$
+* **Dấu hiệu nhận biết**: *now, right now, at the moment, at present, Look!, Listen!...*
+
+---
+
+## Bảng so sánh chi tiết
+| Tiêu chí | Thì Hiện Tại Đơn | Thì Hiện Tại Tiếp Diễn |
+| :--- | :--- | :--- |
+| **Bản chất** | Tính chất quy luật, lâu dài | Tính chất tạm thời, đang diễn ra |
+| **Ví dụ 1** | *He walks to school every morning.* | *He is walking to school right now.* |
+| **Ví dụ 2** | *Water boils at $100^\\circ\\text{C}$.* | *The kettle is boiling in the kitchen.* |`
+  },
+  {
+    id: "sample-5",
+    title: "Bảy hằng đẳng thức đáng nhớ",
+    bookName: "Toán Học 8",
+    grade: "Lớp 8",
+    curriculum: "Chân trời sáng tạo",
+    createdAt: new Date(Date.now() - 96 * 3600 * 1000).toISOString(),
+    topic: "Bảy hằng đẳng thức đáng nhớ",
+    notes: "(a+b)^2 = a^2 + 2ab + b^2. Luôn nhớ dấu trừ ở đẳng thức 2!",
+    completed: true,
+    content: `# Bảy hằng đẳng thức đáng nhớ
+
+---
+
+## Mục tiêu bài học
+> Nắm vững công thức của 7 hằng đẳng thức cơ bản trong đại số và biết cách vận dụng để khai triển, rút gọn biểu thức và phân tích đa thức thành nhân tử.
+
+---
+
+## Bảng hệ thống công thức
+1. **Bình phương của một tổng**:
+   $$(a + b)^2 = a^2 + 2ab + b^2$$
+2. **Bình phương của một hiệu**:
+   $$(a - b)^2 = a^2 - 2ab + b^2$$
+3. **Hiệu hai bình phương**:
+   $$a^2 - b^2 = (a - b)(a + b)$$
+4. **Lập phương của một tổng**:
+   $$(a + b)^3 = a^3 + 3a^2b + 3ab^2 + b^3$$
+5. **Lập phương của một hiệu**:
+   $$(a - b)^3 = a^3 - 3a^2b + 3ab^2 - b^3$$
+6. **Tổng hai lập phương**:
+   $$a^3 + b^3 = (a + b)(a^2 - ab + b^2)$$
+7. **Hiệu hai lập phương**:
+   $$a^3 - b^3 = (a - b)(a^2 + ab + b^2)$$
+
+---
+
+## Ví dụ minh họa
+* **Ví dụ 1**: Khai triển $(x + 2)^2$
+  $$= x^2 + 2 \\cdot x \\cdot 2 + 2^2 = x^2 + 4x + 4$$
+* **Ví dụ 2**: Rút gọn biểu thức $x^2 - 9$
+  $$= x^2 - 3^2 = (x - 3)(x + 3)$$`
+  },
+  {
+    id: "sample-6",
+    title: "Câu điều kiện loại 1 và loại 2",
+    bookName: "Tiếng Anh 9",
+    grade: "Lớp 9",
+    curriculum: "Global Success",
+    createdAt: new Date(Date.now() - 120 * 3600 * 1000).toISOString(),
+    topic: "Conditional Sentences Type 1 & Type 2",
+    notes: "Type 1: If + HTĐ, S + will + V. Type 2: If + QKĐ, S + would + V.",
+    completed: false,
+    content: `# Câu điều kiện loại 1 và loại 2
+
+---
+
+## Cốt lõi ngữ pháp
+* **Loại 1 (Có thật ở hiện tại/tương lai)**: If it rains tomorrow, we will stay at home.
+* **Loại 2 (Giả định trái thực tế ở hiện tại)**: If I were a billionaire, I would travel around the world.`
+  },
+  {
+    id: "sample-7",
+    title: "Rừng mưa nhiệt đới Amazon và đới nóng",
+    bookName: "Lịch sử và Địa lý 7",
+    grade: "Lớp 7",
+    curriculum: "Cánh diều",
+    createdAt: new Date(Date.now() - 140 * 3600 * 1000).toISOString(),
+    topic: "Đặc điểm môi trường xích đạo ẩm và rừng Amazon",
+    notes: "Rừng Amazon là lá phổi xanh của Trái Đất, cung cấp 20% lượng oxy toàn cầu.",
+    completed: true,
+    content: `# Rừng mưa nhiệt đới Amazon và đới nóng
+
+---
+
+## Đặc trưng môi trường
+* Khí hậu nóng ẩm quanh năm, mưa nhiều.
+* Rừng rậm rạp nhiều tầng tán lá, hệ sinh thái động thực vật phong phú nhất hành tinh.`
   }
 ];
 
@@ -143,7 +260,7 @@ export const SAMPLE_QUIZ: Question[] = [
       "9999"
     ],
     correctIndex: 1,
-    explanation: "Đúng rồi! Muốn tìm số liền sau của một số tự nhiên, ta chỉ việc cộng thêm 1 đơn vị. 999 + 1 = 1000. Dễ như ăn bánh! 🍰"
+    explanation: "Đúng rồi! Muốn tìm số liền sau của một số tự nhiên, ta chỉ việc cộng thêm 1 đơn vị. 999 + 1 = 1000. Dễ như ăn bánh!"
   },
   {
     question: "Trong vòng tuần hoàn nước, quá trình nước chuyển từ thể lỏng sang thể hơi được gọi là gì?",
@@ -154,7 +271,7 @@ export const SAMPLE_QUIZ: Question[] = [
       "Nóng chảy"
     ],
     correctIndex: 2,
-    explanation: "Hoàn hảo! Dưới nhiệt độ mặt trời, nước lỏng sẽ biến thành hơi nước bay lên không trung, gọi là sự bay hơi! ☀️💧"
+    explanation: "Hoàn hảo! Dưới nhiệt độ mặt trời, nước lỏng sẽ biến thành hơi nước bay lên không trung, gọi là sự bay hơi!"
   },
   {
     question: "Đâu là động lực chính thúc đẩy vòng tuần hoàn của nước trong tự nhiên?",
@@ -165,7 +282,7 @@ export const SAMPLE_QUIZ: Question[] = [
       "Sự di cư của các loài cá"
     ],
     correctIndex: 2,
-    explanation: "Đúng thế! Mặt trời làm nước bốc hơi, còn trọng lực kéo nước mưa rơi ngược trở lại Trái Đất. Sự kết hợp hoàn hảo! 🌍☀️"
+    explanation: "Đúng thế! Mặt trời làm nước bốc hơi, còn trọng lực kéo nước mưa rơi ngược trở lại Trái Đất. Sự kết hợp hoàn hảo!"
   },
   {
     question: "Số tự nhiên nhỏ nhất thuộc cả tập hợp N và N* là số mấy?",
@@ -176,7 +293,7 @@ export const SAMPLE_QUIZ: Question[] = [
       "2"
     ],
     correctIndex: 1,
-    explanation: "Rất giỏi! Tập hợp N bắt đầu từ 0, còn N* bắt đầu từ 1. Nên số nhỏ nhất chung của cả hai chính là số 1! 🌟"
+    explanation: "Rất giỏi! Tập hợp N bắt đầu từ 0, còn N* bắt đầu từ 1. Nên số nhỏ nhất chung của cả hai chính là số 1!"
   }
 ];
 

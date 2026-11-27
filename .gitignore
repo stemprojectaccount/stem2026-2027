@@ -6,3 +6,12 @@ coverage/
 *.log
 .env*
 !.env.example
+release/
+ai-studio-source/
+api-keys.env
+dist-android/
+android/keystore.properties
+*.jks
+
+api-keys/keys.env
+api-keys/user-keys.json

@@ -1,39 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { 
-  Zap, 
-  Trophy, 
-  Shield, 
-  Crown, 
-  User, 
-  Clock, 
-  Sword, 
-  X, 
-  Play, 
-  ChevronRight, 
-  Sparkles, 
-  RotateCcw, 
-  Award, 
-  Users, 
-  Check, 
-  Flame, 
-  Volume2, 
-  VolumeX, 
-  ArrowLeft,
-  ChevronUp,
-  Brain,
-  BookOpen,
-  Snowflake,
-  EyeOff,
-  Wind,
-  AlertTriangle,
-  Eye,
-  HelpCircle
-} from "lucide-react";
-import { UserProgress, Question, Lesson, MagicCard } from "../types";
+import { Zap, Trophy, Shield, Crown, Clock, Sword, ChevronRight, RotateCcw, Award, Check, Flame, Volume2, VolumeX, Brain, BookOpen, Snowflake, EyeOff, Wind, Lightbulb, Layers } from "lucide-react";
+import { UserProgress, Question, Lesson } from "../types";
 import { MAGIC_CARDS } from "../data";
 import { getAvatarAtLevel } from "../lib/avatarEvolution";
 import ConfettiCelebration from "./ConfettiCelebration";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
+import { WisdomCoinIcon } from "./CustomMascots";
 
 interface PKArenaProps {
   progress: UserProgress;
@@ -89,7 +61,7 @@ const PK_QUESTION_POOL: (Question & { subject: string; difficulty: "easy" | "med
     explanation: "Rất chuẩn! Khí Nitơ chiếm khoảng 78% thể tích không khí, trong khi Oxy chỉ chiếm khoảng 21%."
   },
   {
-    subject: "IQ & Logic",
+    subject: "IQ và Logic",
     difficulty: "medium",
     question: "Nếu 1 = 5, 2 = 10, 3 = 15, 4 = 20 thì 5 bằng bao nhiêu?",
     options: ["25", "1", "30", "50"],
@@ -157,7 +129,7 @@ const PK_QUESTION_POOL: (Question & { subject: string; difficulty: "easy" | "med
 // Special pool of extremely hard questions for Thách Thức Vô Song card
 const SUPER_HARD_QUESTION_POOL: (Question & { subject: string; difficulty: "legendary" })[] = [
   {
-    subject: "Bác Học Vô Song (Toán & IQ)",
+    subject: "Bác Học Vô Song (Toán và IQ)",
     difficulty: "legendary",
     question: "Số tự nhiên nhỏ nhất chia hết cho tất cả các số nguyên từ 1 đến 10 là số nào?",
     options: ["2520", "5040", "1260", "10080"],
@@ -182,20 +154,26 @@ const SUPER_HARD_QUESTION_POOL: (Question & { subject: string; difficulty: "lege
   }
 ];
 
-const BOT_POOL = [
-  { name: "Phan Anh Đức", avatarEmoji: "🦊", level: 6, title: "Cáo Học Thuật", winRate: 68 },
-  { name: "Lê Mỹ Linh", avatarEmoji: "🐼", level: 4, title: "Gấu Cần Mẫn", winRate: 52 },
-  { name: "Trương Quốc Bảo", avatarEmoji: "🦁", level: 8, title: "Sư Tử Bách Khoa", winRate: 75 },
-  { name: "Nguyễn Hà My", avatarEmoji: "🐰", level: 3, title: "Thỏ Thông Thái", winRate: 48 },
-  { name: "Đặng Tiến Dũng", avatarEmoji: "🦅", level: 7, title: "Đại Bàng Độc Lập", winRate: 71 },
-  { name: "Hoàng Minh Tuấn", avatarEmoji: "🐸", level: 5, title: "Ếch Khoa Học", winRate: 58 }
+const BOT_POOL: Array<{
+  name: string;
+  avatarEmoji: string;
+  level: number;
+  title: string;
+  winRate: number;
+  role: "BOSS" | "BOT";
+}> = [
+  { name: "Boss Sư Tử Bách Khoa Ω", avatarEmoji: "🦁", level: 8, title: "Boss Thủ Lĩnh Tri Thức", winRate: 78, role: "BOSS" },
+  { name: "Boss Đại Bàng Tinh Anh", avatarEmoji: "🦅", level: 7, title: "Boss Hộ Pháp Tốc Độ", winRate: 72, role: "BOSS" },
+  { name: "Boss Cáo Học Thuật", avatarEmoji: "🦊", level: 6, title: "Boss Chiến Thuật", winRate: 68, role: "BOSS" },
+  { name: "Bot Rồng Cơ Học", avatarEmoji: "🐉", level: 5, title: "Bot Huấn Luyện Nâng Cao", winRate: 58, role: "BOT" },
+  { name: "Bot Gấu Trúc Cần Mẫn", avatarEmoji: "🐼", level: 4, title: "Bot Huấn Luyện Trung Cấp", winRate: 52, role: "BOT" },
+  { name: "Bot Thỏ Tia Chớp", avatarEmoji: "🐰", level: 3, title: "Bot Huấn Luyện Khởi Đầu", winRate: 48, role: "BOT" }
 ];
-
 
 export default function PKArena({ progress, selectedAvatarIdx, updateProgress, triggerSuccessMessage, lessons = [] }: PKArenaProps) {
   const [pkTab, setPkTab] = useState<"lobby" | "leaderboard" | "matchmaking" | "battle" | "results">("lobby");
   
-  // Get categories from past lessons
+  // Get categories from past lessons (Preserves exact data structure & logic)
   const availableCategories = React.useMemo(() => {
     const defaultCategories = [
       { id: "toan", name: "Toán Học", subject: "Toán Học", icon: "📐" },
@@ -389,8 +367,8 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
         gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
       } else if (type === "correct") {
         osc.type = "sine";
-        osc.frequency.setValueAtTime(659.25, ctx.currentTime); // E5
-        osc.frequency.setValueAtTime(987.77, ctx.currentTime + 0.1); // B5
+        osc.frequency.setValueAtTime(659.25, ctx.currentTime);
+        osc.frequency.setValueAtTime(987.77, ctx.currentTime + 0.1);
         gain.gain.setValueAtTime(0.15, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
       } else if (type === "wrong") {
@@ -401,10 +379,10 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
         gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
       } else if (type === "victory") {
         osc.type = "triangle";
-        osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
-        osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.12); // E5
-        osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.24); // G5
-        osc.frequency.setValueAtTime(1046.50, ctx.currentTime + 0.36); // C6
+        osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+        osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.12);
+        osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.24);
+        osc.frequency.setValueAtTime(1046.50, ctx.currentTime + 0.36);
         gain.gain.setValueAtTime(0.2, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
       } else if (type === "defeat") {
@@ -424,10 +402,11 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
     }
   };
 
-  // Generate / Load PK Leaderboard
+  // Generate / Load PK Leaderboard (Boss & Bot AI only when no other real players have joined)
   useEffect(() => {
     try {
-      const savedLeaderboard = localStorage.getItem("smart_study_pk_leaderboard_v2");
+      localStorage.removeItem("smart_study_pk_leaderboard_v2");
+      const savedLeaderboard = localStorage.getItem("smart_study_pk_leaderboard_v3_bots");
       let board: PKCompetitor[] = [];
 
       if (savedLeaderboard) {
@@ -444,7 +423,10 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
         }));
       }
 
-      const userAvatar = getAvatarAtLevel(selectedAvatarIdx, progress.level);
+      const effectiveMascotIdx = progress.avatarUrl && progress.avatarUrl.startsWith("mascot:")
+        ? (parseInt(progress.avatarUrl.replace("mascot:", ""), 10) || 0)
+        : selectedAvatarIdx;
+      const userAvatar = getAvatarAtLevel(effectiveMascotIdx, progress.level);
       const userInBoard: PKCompetitor = {
         id: "pk-user",
         name: localStorage.getItem("smart_study_nickname_v2") || "Học Viên Ưu Tú",
@@ -461,7 +443,7 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
 
       const sorted = filtered.sort((a, b) => b.pkWins - a.pkWins);
       setPkLeaderboard(sorted);
-      localStorage.setItem("smart_study_pk_leaderboard_v2", JSON.stringify(sorted));
+      localStorage.setItem("smart_study_pk_leaderboard_v3_bots", JSON.stringify(sorted));
     } catch (e) {
       console.error("Leaderboard init error:", e);
     }
@@ -479,11 +461,10 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
   const startMatchmaking = () => {
     setPkTab("matchmaking");
     setSearchingTimer(0);
-    const opponentName = selectedOpponent ? selectedOpponent.name : "đối thủ";
-    setSearchingStatus(`Đang thiết lập phòng đấu với ${opponentName}...`);
+    const opponentName = selectedOpponent ? selectedOpponent.name : "Boss / Bot AI";
+    setSearchingStatus(`Đang khởi tạo đấu trường với ${opponentName}...`);
     playPkSound("match");
 
-    // Load fresh magic card inventory
     try {
       const saved = localStorage.getItem("smart_study_magic_cards_v2");
       if (saved) {
@@ -515,9 +496,9 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
       setSearchingTimer(elapsed);
 
       if (elapsed === 1) {
-        setSearchingStatus("Đang kiểm tra tín hiệu đấu trường...");
+        setSearchingStatus("Đang kích hoạt hệ thống Boss và Bot AI...");
       } else if (elapsed === 2) {
-        setSearchingStatus(`Đang mời ${opponentName} vào phòng thi...`);
+        setSearchingStatus(`Đang triệu hồi ${opponentName} vào đấu trường...`);
       } else if (elapsed === 3) {
         const chosenOpp = selectedOpponent || BOT_POOL[Math.floor(Math.random() * BOT_POOL.length)];
         setOpponent({
@@ -529,52 +510,54 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
           answered: false,
           choice: null
         });
-        setSearchingStatus(`🔥 ĐỐI THỦ ĐÃ CHẤP NHẬN: Lên đài nghênh chiến!`);
+        setSearchingStatus(`${chosenOpp.name} đã xuất hiện: chuẩn bị vào trận!`);
       } else if (elapsed === 4) {
-        setSearchingStatus(`📚 Đang tải kho đề: chủ đề "${selectedCategory?.name || "Tổng Hợp"}"...`);
+        setSearchingStatus(`Đang tải bộ câu hỏi chủ đề "${selectedCategory?.name || "Tổng Hợp"}"...`);
       } else if (elapsed === 5) {
         clearInterval(matchmakingRef.current!);
+        setSearchingStatus("Đang mở cổng khiêu chiến Boss AI...");
         
-        let pool = PK_QUESTION_POOL;
-        
-        if (selectedCategory) {
-          const categorySubject = selectedCategory.subject;
-          const filteredBySubject = PK_QUESTION_POOL.filter(
-            q => q.subject.toLowerCase().includes(categorySubject.toLowerCase()) || 
-                 categorySubject.toLowerCase().includes(q.subject.toLowerCase())
-          );
-          if (filteredBySubject.length > 0) {
-            pool = filteredBySubject;
-          }
-        }
+        fetch("/api/generate-pk", { method: "POST" })
+          .then(res => res.json())
+          .then(data => {
+            let pool = PK_QUESTION_POOL;
+            if (data.success && data.questions && data.questions.length > 0) {
+               pool = data.questions;
+            }
+            if (selectedCategory) {
+              const categorySubject = selectedCategory.subject;
+              const filteredBySubject = pool.filter(
+                q => q.subject.toLowerCase().includes(categorySubject.toLowerCase()) || 
+                      categorySubject.toLowerCase().includes(q.subject.toLowerCase())
+              );
+              if (filteredBySubject.length > 0) {
+                pool = filteredBySubject;
+              }
+            }
 
-        if (difficulty === "easy") {
-          pool = pool.filter(q => q.difficulty === "easy" || q.difficulty === "medium");
-        } else if (difficulty === "hard") {
-          pool = pool.filter(q => q.difficulty === "hard" || q.difficulty === "medium");
-        }
-
-        if (pool.length < 3) {
-          let fallbackPool = PK_QUESTION_POOL;
-          if (difficulty === "easy") {
-            fallbackPool = PK_QUESTION_POOL.filter(q => q.difficulty === "easy" || q.difficulty === "medium");
-          } else if (difficulty === "hard") {
-            fallbackPool = PK_QUESTION_POOL.filter(q => q.difficulty === "hard" || q.difficulty === "medium");
-          }
-          pool = [...pool, ...fallbackPool.filter(fq => !pool.some(pq => pq.question === fq.question))];
-        }
-        
-        const shuffled = [...pool].sort(() => 0.5 - Math.random()).slice(0, 3);
-        
-        setRoundQuestions(shuffled);
-        setCurrentRound(1);
-        setUserScore(0);
-        setUserChoice(null);
-        setRoundRevealed(false);
-        setRoundTimeLeft(10);
-        setPkTab("battle");
-        
-        startRoundTimer(shuffled, 1);
+            const shuffled = [...pool].sort(() => 0.5 - Math.random()).slice(0, 3);
+            setRoundQuestions(shuffled);
+            setCurrentRound(1);
+            setUserScore(0);
+            setUserChoice(null);
+            setRoundRevealed(false);
+            setRoundTimeLeft(10);
+            setPkTab("battle");
+            startRoundTimer(shuffled, 1);
+          })
+          .catch(err => {
+            console.error(err);
+            let pool = PK_QUESTION_POOL;
+            const shuffled = [...pool].sort(() => 0.5 - Math.random()).slice(0, 3);
+            setRoundQuestions(shuffled);
+            setCurrentRound(1);
+            setUserScore(0);
+            setUserChoice(null);
+            setRoundRevealed(false);
+            setRoundTimeLeft(10);
+            setPkTab("battle");
+            startRoundTimer(shuffled, 1);
+          });
       }
     }, 1000);
   };
@@ -583,15 +566,12 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
     if (timerRef.current) clearInterval(timerRef.current);
     setRoundTimeLeft(10);
 
-    // Dynamic opponent answer delay
     const botAnswerDelay = Math.floor(Math.random() * 4) + (difficulty === "easy" ? 4 : difficulty === "medium" ? 3 : 2);
     
-    // Opponent counter-attack logic!
-    // At round 2 or 3, there's a 30% chance the bot plays "Lá Che Màn Hình" against us at the very start!
     const isBotCounterAttack = (roundNum === 2 || roundNum === 3) && Math.random() < 0.3;
     if (isBotCounterAttack) {
       setPlayerBlindedTime(5);
-      triggerSuccessMessage(`⚠️ Đối thủ ${opponent?.name || "đối thủ"} đã sử dụng "Lá Che Màn Hình" lên em! Màn hình bị tối đen 5 giây!`);
+      triggerSuccessMessage(`Đối thủ ${opponent?.name || "đối thủ"} đã sử dụng "Lá Che Màn Hình" lên em! Màn hình bị tối 5 giây!`);
       
       let sec = 5;
       const bInt = setInterval(() => {
@@ -626,12 +606,11 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
       if (!prev) return null;
       if (prev.answered) return prev;
 
-      // Bot frozen effect
       if (isBotFrozen) {
         return {
           ...prev,
           answered: true,
-          choice: -1 // failed/no score choice
+          choice: -1
         };
       }
 
@@ -643,12 +622,10 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
       if (difficulty === "medium") targetAccuracy = 65;
       if (difficulty === "hard") targetAccuracy = 90;
 
-      // Sabotage card penalty
       if (isOpponentSabotaged) {
         targetAccuracy = 15;
       }
 
-      // Blind card penalty
       if (isOpponentBlinded) {
         targetAccuracy = 10;
       }
@@ -694,9 +671,9 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
       setIsTimeWarpActive(false);
       setUserChoice(null);
       setRoundRevealed(false);
-      setRoundTimeLeft(12); // Give them 12 seconds to choose again
-      triggerSuccessMessage("🌀 Vòng Lặp Thời Gian kích hoạt! Thời gian quay ngược, em được cứu sống, hãy chọn lại!");
-      setActiveCardNotification("🌀 Vòng Lặp Thời Gian: Hãy chọn phương án chính xác!");
+      setRoundTimeLeft(12);
+      triggerSuccessMessage("Vòng Lặp Thời Gian kích hoạt! Thời gian quay ngược, em được chọn lại!");
+      setActiveCardNotification("Vòng Lặp Thời Gian: Hãy chọn phương án chính xác!");
       startRoundTimer(questionsList, roundNum);
       return;
     }
@@ -726,22 +703,20 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
     }
 
     let botCorrect = updatedOpponent ? updatedOpponent.choice === activeQuestion.correctIndex : false;
-
-    // Base point calculations
     let baseRoundPoints = difficulty === "easy" ? 10 : difficulty === "medium" ? 20 : 40;
 
     if (isMindSwapActive) {
       if (!userCorrect && botCorrect) {
         setUserScore(prev => prev + baseRoundPoints);
-        triggerSuccessMessage("🎭 Thoán Đoạt Tư Duy: Đã hoán đổi tư duy! Em nhận +100% điểm đối thủ, đối thủ 0đ vòng này!");
+        triggerSuccessMessage("Thoán Đoạt Tư Duy: Em nhận +100% điểm đối thủ, đối thủ 0đ vòng này!");
       } else if (userCorrect) {
         let addedScore = Math.round(baseRoundPoints * scoreMultiplier);
         if (isDoubleTimeActive && userAnsweringTime !== null && userAnsweringTime >= 12) {
           addedScore += baseRoundPoints;
-          triggerSuccessMessage("🏃⚡ Tốc Độ Kép: Em đã trả lời đúng thần tốc dưới 3 giây! Cộng thêm +100% điểm gốc!");
+          triggerSuccessMessage("Tốc Độ Kép: Em đã trả lời đúng dưới 3 giây! Cộng thêm +100% điểm gốc!");
         }
         setUserScore(prev => prev + addedScore);
-        triggerSuccessMessage("🎭 Thoán Đoạt Tư Duy: Em trả lời chính xác và giữ nguyên điểm số!");
+        triggerSuccessMessage("Thoán Đoạt Tư Duy: Em trả lời chính xác và giữ nguyên điểm số!");
       }
       playPkSound(userCorrect ? "correct" : "wrong");
     } else {
@@ -749,12 +724,12 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
         let addedScore = Math.round(baseRoundPoints * scoreMultiplier);
         if (isDoubleTimeActive && userAnsweringTime !== null && userAnsweringTime >= 12) {
           addedScore += baseRoundPoints;
-          triggerSuccessMessage("🏃⚡ Tốc Độ Kép: Em đã trả lời đúng thần tốc dưới 3 giây! Cộng thêm +100% điểm gốc!");
+          triggerSuccessMessage("Tốc Độ Kép: Em đã trả lời đúng dưới 3 giây! Cộng thêm +100% điểm gốc!");
         }
         if (isDoubleStrikeActive) {
           addedScore += 100;
           setOpponent(prev => prev ? { ...prev, score: Math.max(0, prev.score - 100) } : null);
-          triggerSuccessMessage("⚔️ Song Kích Trí Tuệ: Đối thủ bị trừ 100đ, em được cộng thêm +100đ!");
+          triggerSuccessMessage("Song Kích Trí Tuệ: Đối thủ bị trừ 100đ, em được cộng thêm +100đ!");
           setIsDoubleStrikeActive(false);
         }
         setUserScore(prev => prev + addedScore);
@@ -769,13 +744,12 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
 
     if (botCorrect && updatedOpponent && !isBotFrozen) {
       if (isMindSwapActive && !userCorrect) {
-        // Opponent gets nothing because we swapped and took their points
+        // Opponent gets nothing
       } else if (isShieldDrainActive) {
         setUserScore(prev => prev + baseRoundPoints);
-        triggerSuccessMessage("🛡️⚡ Giáp Hấp Thụ: Hấp thụ trọn vẹn điểm số đối thủ! Đối thủ 0đ, em được +100% điểm hấp thụ!");
+        triggerSuccessMessage("Giáp Hấp Thụ: Hấp thụ trọn vẹn điểm số đối thủ! Đối thủ 0đ, em được +100% điểm!");
       } else if (isShieldActive) {
-        // Chặn điểm đối thủ
-        triggerSuccessMessage("🛡️ Khiên Học Thuật đã ngăn chặn đối thủ cộng điểm lượt này!");
+        triggerSuccessMessage("Khiên Học Thuật đã ngăn chặn đối thủ cộng điểm lượt này!");
       } else {
         setOpponent(prev => prev ? { ...prev, score: prev.score + baseRoundPoints } : null);
       }
@@ -783,11 +757,10 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
       if (isStealActive && (!isMindSwapActive || userCorrect)) {
         const stolenPoints = Math.round(baseRoundPoints * 0.5);
         setUserScore(prev => prev + stolenPoints);
-        triggerSuccessMessage(`🦊 Tinh Linh Trộm Điểm mang về cho em +${stolenPoints} điểm từ đối thủ!`);
+        triggerSuccessMessage(`Tinh Linh Trộm Điểm mang về cho em +${stolenPoints} điểm từ đối thủ!`);
       }
     }
 
-    // Always clear mind swap trigger status after evaluation
     if (isMindSwapActive) {
       setIsMindSwapActive(false);
     }
@@ -800,7 +773,6 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
       setUserChoice(null);
       setRoundRevealed(false);
       
-      // Update cooldowns
       setCardCooldowns(prev => {
         const next = { ...prev };
         Object.keys(next).forEach(key => {
@@ -811,7 +783,6 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
         return next;
       });
 
-      // Reset card triggers for new round
       setCardUsedThisRound(false);
       setDisabledOptionIndices([]);
       setIsBotFrozen(false);
@@ -827,14 +798,12 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
       setIsShieldDrainActive(false);
       setIsMirrorForceActive(false);
       
-      // Clear nextRoundHint if we are moving past the hinted round
       if (hintRound && nextRnd > hintRound) {
         setNextRoundHint(null);
         setHintRound(null);
       }
 
       setActiveCardNotification(null);
-
       setOpponent(prev => prev ? { ...prev, answered: false, choice: null } : null);
       startRoundTimer(roundQuestions, nextRnd);
     } else {
@@ -866,10 +835,10 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
 
       setTriggerConfetti(true);
       playPkSound("victory");
-      triggerSuccessMessage(`👑 CHIẾN THẮNG! Em nhận được +${xpAward} XP và +${coinAward} Xu thưởng!`);
+      triggerSuccessMessage(`Chiến thắng! Em nhận được +${xpAward} XP và +${coinAward} Xu thưởng!`);
 
     } else if (isDraw) {
-      triggerSuccessMessage("🤝 Hòa nhau rồi! Hai bên ngang sức ngang tài!");
+      triggerSuccessMessage("Hòa nhau rồi! Hai bên ngang sức ngang tài!");
       playPkSound("correct");
     } else {
       const nextLosses = userPkLosses + 1;
@@ -884,7 +853,7 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
       });
 
       playPkSound("defeat");
-      triggerSuccessMessage("😢 Tiếc quá! Cố gắng luyện tập thêm để chiến thắng lần sau nhé. Nhận +5 XP an ủi.");
+      triggerSuccessMessage("Cố gắng luyện tập thêm để chiến thắng lần sau nhé. Nhận +5 XP khuyến khích.");
     }
   };
 
@@ -900,11 +869,10 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
     if (cardUsedThisRound || roundRevealed) return;
     if ((magicCards[cardId] || 0) <= 0) return;
     if ((cardCooldowns[cardId] || 0) > 0) {
-      triggerSuccessMessage("⏳ Thẻ bài này đang trong thời gian hồi chiêu!");
+      triggerSuccessMessage("Thẻ bài này đang trong thời gian hồi chiêu!");
       return;
     }
 
-    // Deduct and save
     const nextInventory = { ...magicCards, [cardId]: magicCards[cardId] - 1 };
     setMagicCards(nextInventory);
     localStorage.setItem("smart_study_magic_cards_v2", JSON.stringify(nextInventory));
@@ -915,89 +883,85 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
       setCardCooldowns(prev => ({ ...prev, [cardId]: cardDef.cooldownRounds }));
     }
 
-    // Apply card specific logic
     if (cardId === "hint") {
       const activeQuestion = roundQuestions[currentRound - 1];
       if (activeQuestion) {
         const correctIdx = activeQuestion.correctIndex;
         const wrongIndices = [0, 1, 2, 3].filter(idx => idx !== correctIdx);
         const shuffledWrongs = [...wrongIndices].sort(() => 0.5 - Math.random());
-        // Disable 2 wrong answers
         setDisabledOptionIndices(shuffledWrongs.slice(0, 2));
-        setActiveCardNotification("💡 Gợi Ý Tri Thức: Loại bỏ 2 phương án sai lệch thành công!");
-        triggerSuccessMessage("💡 Đã loại bỏ 2 đáp án sai!");
+        setActiveCardNotification("Gợi Ý Tri Thức: Đã loại bỏ 2 phương án sai!");
+        triggerSuccessMessage("Đã loại bỏ 2 đáp án sai!");
       }
     } 
     else if (cardId === "freeze") {
       setIsBotFrozen(true);
       setIsFreezeUsedThisMatch(true);
       setOpponent(prev => prev ? { ...prev, answered: true, choice: -1 } : null);
-      setActiveCardNotification("❄️ Đóng Băng Đối Thủ: Băng phong ý chí đối thủ! Đối thủ không trả lời được lượt này.");
-      triggerSuccessMessage("❄️ Đã đóng băng đối thủ thành công!");
+      setActiveCardNotification("Đóng Băng Đối Thủ: Đối thủ không trả lời được lượt này.");
+      triggerSuccessMessage("Đã đóng băng đối thủ thành công!");
     } 
     else if (cardId === "blind") {
       setIsOpponentBlinded(true);
-      setActiveCardNotification("🌫️ Sương Mù Che Màn: Giảm tỷ lệ đúng của bot xuống 10% ở lượt này!");
-      triggerSuccessMessage("🌫️ Đối thủ bị sương mù che mắt thành công!");
+      setActiveCardNotification("Sương Mù Che Màn: Giảm tỷ lệ đúng của đối thủ xuống 10% ở lượt này!");
+      triggerSuccessMessage("Đối thủ bị sương mù che mắt thành công!");
     } 
     else if (cardId === "timeslow") {
       setRoundTimeLeft(prev => prev + 10);
-      setActiveCardNotification("⏳ Ngưng Đọng Thời Gian: Cộng 10 giây suy nghĩ cho câu hỏi hiện tại!");
-      triggerSuccessMessage("⏳ Cộng thêm 10 giây suy nghĩ thành công!");
+      setActiveCardNotification("Ngưng Đọng Thời Gian: Cộng thêm 10 giây suy nghĩ cho câu hỏi hiện tại!");
+      triggerSuccessMessage("Cộng thêm 10 giây suy nghĩ thành công!");
     }
     else if (cardId === "shield") {
       setIsShieldActive(true);
-      setActiveCardNotification("🛡️ Khiên Học Thuật: Lá chắn bảo vệ! Chặn đối thủ cộng điểm ở lượt này nếu họ trả lời đúng.");
-      triggerSuccessMessage("🛡️ Đã dựng Khiên Học Thuật bảo vệ!");
+      setActiveCardNotification("Khiên Học Thuật: Chặn đối thủ cộng điểm ở lượt này nếu họ trả lời đúng.");
+      triggerSuccessMessage("Đã dựng Khiên Học Thuật bảo vệ!");
     }
     else if (cardId === "steal") {
       setIsStealActive(true);
-      setActiveCardNotification("🦊 Tinh Linh Trộm Điểm: Kích hoạt bùa trộm! Nhận ngay 50% số điểm của đối thủ nếu họ trả lời đúng.");
-      triggerSuccessMessage("🦊 Đã thả Tinh Linh Trộm Điểm rình rập đối thủ!");
+      setActiveCardNotification("Tinh Linh Trộm Điểm: Nhận ngay 50% số điểm của đối thủ nếu họ trả lời đúng.");
+      triggerSuccessMessage("Đã kích hoạt Tinh Linh Trộm Điểm!");
     }
     else if (cardId === "sabotage") {
       setIsOpponentSabotaged(true);
-      setActiveCardNotification("🌪️ Cuồng Phong Gây Khó: Thay đổi độ khó câu hỏi đối thủ xuống 15% đúng!");
-      triggerSuccessMessage("🌪️ Đã làm nhiễu loạn câu hỏi đối thủ!");
+      setActiveCardNotification("Cuồng Phong Gây Khó: Giảm tỷ lệ đúng của đối thủ xuống 15%!");
+      triggerSuccessMessage("Đã làm nhiễu loạn câu hỏi đối thủ!");
     } 
     else if (cardId === "mult15") {
       setScoreMultiplier(1.5);
-      setActiveCardNotification("⚡ Sấm Sét Tri Thức: Nhận x1.5 điểm số nếu em trả lời đúng!");
-      triggerSuccessMessage("⚡ Kích hoạt x1.5 điểm thành công!");
+      setActiveCardNotification("Sấm Sét Tri Thức: Nhận x1.5 điểm số nếu em trả lời đúng!");
+      triggerSuccessMessage("Kích hoạt x1.5 điểm thành công!");
     } 
     else if (cardId === "luck") {
       const multipliers = [1.5, 2, 3];
       const selectedMult = multipliers[Math.floor(Math.random() * multipliers.length)];
       setScoreMultiplier(selectedMult);
-      setActiveCardNotification(`🎲 Xúc Xắc Trí Tuệ: Nhận ngẫu nhiên x${selectedMult} lần điểm số nếu em trả lời chính xác lượt này!`);
-      triggerSuccessMessage(`🎲 Thả xúc xắc nhận hệ số x${selectedMult} điểm!`);
+      setActiveCardNotification(`Xúc Xắc Trí Tuệ: Nhận ngẫu nhiên x${selectedMult} lần điểm số nếu em trả lời chính xác!`);
+      triggerSuccessMessage(`Thả xúc xắc nhận hệ số x${selectedMult} điểm!`);
     }
     else if (cardId === "mult2") {
       setScoreMultiplier(2);
-      setActiveCardNotification("🔥 Lửa Trí Tuệ: Nhận x2 điểm số nếu em trả lời đúng!");
-      triggerSuccessMessage("🔥 Kích hoạt x2 điểm thành công!");
+      setActiveCardNotification("Lửa Trí Tuệ: Nhận x2 điểm số nếu em trả lời đúng!");
+      triggerSuccessMessage("Kích hoạt x2 điểm thành công!");
     } 
     else if (cardId === "divine") {
       const activeQuestion = roundQuestions[currentRound - 1];
       if (activeQuestion) {
         handleUserAnswer(activeQuestion.correctIndex);
-        setActiveCardNotification("👁️ Thần Nhãn Học Đường: Thần thông dẫn lối! Đã tự động chọn chính xác câu trả lời.");
-        triggerSuccessMessage("👁️ Thần Nhãn đã chọn đáp án đúng cho em!");
+        setActiveCardNotification("Thần Nhãn Học Đường: Đã tự động chọn chính xác câu trả lời.");
+        triggerSuccessMessage("Thần Nhãn đã chọn đáp án đúng cho em!");
       }
     }
     else if (cardId === "challenge") {
-      // Swap current round question with an extremely difficult one
       const randomLegendary = SUPER_HARD_QUESTION_POOL[Math.floor(Math.random() * SUPER_HARD_QUESTION_POOL.length)];
       const nextQuestions = [...roundQuestions];
       nextQuestions[currentRound - 1] = randomLegendary;
       setRoundQuestions(nextQuestions);
 
-      // Random multiplier x2 or x3
       const randMult = Math.random() < 0.5 ? 2 : 3;
       setScoreMultiplier(randMult);
       
-      setActiveCardNotification(`🌌 Thách Thức Vô Song: Đổi câu siêu khó, nhận ngay x${randMult} điểm khi trả lời đúng!`);
-      triggerSuccessMessage(`🌌 Đã nâng cấp lên câu hỏi Vô Song x${randMult} điểm!`);
+      setActiveCardNotification(`Thách Thức Vô Song: Đổi câu siêu khó, nhận ngay x${randMult} điểm khi trả lời đúng!`);
+      triggerSuccessMessage(`Đã nâng cấp lên câu hỏi Vô Song x${randMult} điểm!`);
     }
     else if (cardId === "omega") {
       setIsBotFrozen(true);
@@ -1007,47 +971,46 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
       if (activeQuestion) {
         handleUserAnswer(activeQuestion.correctIndex);
       }
-      setActiveCardNotification("🪐 Ma Pháp Omega: Sức mạnh tối thượng tụ hội! Tự chọn đúng, x2 điểm, đóng băng đối thủ!");
-      triggerSuccessMessage("🪐 Kích hoạt bùa chú tối thượng OMEGA thành công!");
+      setActiveCardNotification("Ma Pháp Omega: Tự chọn đúng, x2 điểm, đóng băng đối thủ!");
+      triggerSuccessMessage("Kích hoạt thẻ tối thượng OMEGA thành công!");
     }
     else if (cardId === "time_warp") {
       setIsTimeWarpActive(true);
-      setActiveCardNotification("🌀 Vòng Lặp Thời Gian: Nếu trả lời sai vòng này, thời gian quay ngược giúp em hồi sinh và chọn lại!");
-      triggerSuccessMessage("🌀 Bùa chú uốn cong thời gian bảo hộ thành công!");
+      setActiveCardNotification("Vòng Lặp Thời Gian: Nếu trả lời sai vòng này, thời gian quay ngược giúp em chọn lại!");
+      triggerSuccessMessage("Đã kích hoạt Vòng Lặp Thời Gian!");
     }
     else if (cardId === "double_strike") {
       setIsDoubleStrikeActive(true);
-      setActiveCardNotification("⚔️ Song Kích Trí Tuệ: Trả lời đúng vòng này sẽ trừ 100 điểm của đối thủ và cộng thẳng vào điểm của em!");
-      triggerSuccessMessage("⚔️ Đòn đánh song kích đã nạp năng lượng!");
+      setActiveCardNotification("Song Kích Trí Tuệ: Trả lời đúng vòng này sẽ trừ 100 điểm của đối thủ và cộng vào điểm của em!");
+      triggerSuccessMessage("Đòn đánh Song Kích đã nạp năng lượng!");
     }
     else if (cardId === "double_time") {
       setIsDoubleTimeActive(true);
-      setActiveCardNotification("🏃⚡ Tốc Độ Kép: Nhận thêm +100% điểm gốc nếu trả lời đúng trong vòng 3 giây đầu tiên!");
-      triggerSuccessMessage("🏃⚡ Đã kích hoạt Tốc Độ Kép thần tốc!");
+      setActiveCardNotification("Tốc Độ Kép: Nhận thêm +100% điểm gốc nếu trả lời đúng trong vòng 3 giây đầu tiên!");
+      triggerSuccessMessage("Đã kích hoạt Tốc Độ Kép!");
     }
     else if (cardId === "intel_link") {
-      const nextQ = roundQuestions[currentRound]; // currentRound is 1-indexed, so index currentRound is the next round
+      const nextQ = roundQuestions[currentRound];
       if (nextQ) {
         setNextRoundHint(`Câu ${currentRound + 1}: "${nextQ.question.substring(0, 45)}..." - Đáp án đúng: [${nextQ.options[nextQ.correctIndex]}]`);
         setHintRound(currentRound + 1);
-        setActiveCardNotification(`🧠 Thấu Thị Thần Truyền: Đã kết nối tâm trí và biết trước đáp án câu hỏi tiếp theo!`);
-        triggerSuccessMessage("🧠 Đã liên kết tâm trí và phát hiện tương lai!");
+        setActiveCardNotification("Thấu Thị Thần Truyền: Đã mở gợi ý đáp án câu hỏi tiếp theo!");
+        triggerSuccessMessage("Đã mở gợi ý câu hỏi tiếp theo!");
       } else {
         setNextRoundHint("Không còn câu hỏi tiếp theo (Đang ở vòng cuối cùng)!");
         setHintRound(currentRound);
-        setActiveCardNotification(`🧠 Thấu Thị Thần Truyền: Không có câu tiếp theo vì đây là vòng cuối!`);
-        triggerSuccessMessage("🧠 Đây đã là vòng cuối cùng, không thể thấu thị!");
+        setActiveCardNotification("Thấu Thị Thần Truyền: Đây là vòng cuối cùng của trận đấu!");
       }
     }
     else if (cardId === "shield_drain") {
       setIsShieldDrainActive(true);
-      setActiveCardNotification("🛡️⚡ Giáp Hấp Thụ: Nếu đối thủ đúng vòng này, họ nhận 0đ và em hấp thụ trọn vẹn số điểm đó!");
-      triggerSuccessMessage("🛡️⚡ Đã dựng Giáp Hấp Thụ thành công!");
+      setActiveCardNotification("Giáp Hấp Thụ: Nếu đối thủ đúng vòng này, họ nhận 0đ và em hấp thụ trọn vẹn số điểm đó!");
+      triggerSuccessMessage("Đã dựng Giáp Hấp Thụ thành công!");
     }
     else if (cardId === "mind_swap") {
       setIsMindSwapActive(true);
-      setActiveCardNotification("🎭 Thoán Đoạt Tư Duy: Nếu em sai và đối thủ đúng vòng này, hoán đổi may rủi và nhận trọn điểm đối thủ!");
-      triggerSuccessMessage("🎭 Đã kích hoạt hoán đổi tư duy kỳ bí!");
+      setActiveCardNotification("Thoán Đoạt Tư Duy: Nếu em sai và đối thủ đúng vòng này, hoán đổi điểm với đối thủ!");
+      triggerSuccessMessage("Đã kích hoạt Thoán Đoạt Tư Duy!");
     }
     else if (cardId === "mirror_force") {
       setIsMirrorForceActive(true);
@@ -1055,11 +1018,11 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
         setPlayerBlindedTime(0);
         setIsOpponentBlinded(true);
         setOpponent(prev => prev ? { ...prev, score: Math.max(0, prev.score - 50) } : null);
-        triggerSuccessMessage("🪞 Gương Phản Chiếu: Phản pháo thành công! Giải mù màn hình, làm mù đối thủ và trừ 50 điểm của họ!");
+        triggerSuccessMessage("Gương Phản Chiếu: Giải mù màn hình, làm mù đối thủ và trừ 50 điểm của họ!");
       } else {
-        triggerSuccessMessage("🪞 Gương Phản Chiếu: Đã kích hoạt! Sẵn sàng phản lại mọi luồng năng lượng xấu.");
+        triggerSuccessMessage("Gương Phản Chiếu: Đã kích hoạt! Sẵn sàng phản lại hiệu ứng bất lợi.");
       }
-      setActiveCardNotification("🪞 Gương Phản Chiếu: Sẵn sàng phản lại bùa chú từ đối thủ và trừ của họ 50đ!");
+      setActiveCardNotification("Gương Phản Chiếu: Sẵn sàng phản lại hiệu ứng từ đối thủ và trừ 50đ!");
     }
     else if (cardId === "super_nova") {
       setScoreMultiplier(3);
@@ -1067,11 +1030,10 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
       if (activeQuestion) {
         handleUserAnswer(activeQuestion.correctIndex);
       }
-      setActiveCardNotification("💥 Vũ Trụ Siêu Tân Tinh: Tự động chọn đúng, nhân gấp 3 lần (x3.0) điểm số vòng này!");
-      triggerSuccessMessage("💥 Đã kích hoạt vụ nổ tri thức Siêu Tân Tinh!");
+      setActiveCardNotification("Vũ Trụ Siêu Tân Tinh: Tự động chọn đúng, nhân gấp 3 lần (x3.0) điểm số vòng này!");
+      triggerSuccessMessage("Đã kích hoạt Siêu Tân Tinh!");
     }
 
-    // Play visual cue audio
     try {
       const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
       if (AudioContext) {
@@ -1093,229 +1055,283 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
 
   const totalMatches = userPkWins + userPkLosses;
   const userWinRate = totalMatches > 0 ? Math.round((userPkWins / totalMatches) * 100) : 0;
-  const userAvatarObj = getAvatarAtLevel(selectedAvatarIdx, progress.level);
+  const effectiveMascotIdx = React.useMemo(() => {
+    if (progress.avatarUrl && progress.avatarUrl.startsWith("mascot:")) {
+      const idx = parseInt(progress.avatarUrl.replace("mascot:", ""), 10);
+      if (!isNaN(idx) && idx >= 0 && idx < 6) return idx;
+    }
+    return selectedAvatarIdx >= 0 && selectedAvatarIdx < 6 ? selectedAvatarIdx : 0;
+  }, [progress.avatarUrl, selectedAvatarIdx]);
+
+  const userAvatarObj = getAvatarAtLevel(effectiveMascotIdx, progress.level);
+
+  // Clean display helper for category icon (avoids broken "GB" flag glyph on Windows while keeping data intact)
+  const renderCategoryBadge = (cat: { icon: string; subject: string }) => {
+    if (cat.icon === "🇬🇧") return "EN";
+    return cat.icon;
+  };
 
   return (
-    <div className="space-y-8 animate-fade-in max-w-4xl mx-auto pb-12 relative">
+    <div className="space-y-6 animate-fade-in max-w-5xl mx-auto pb-12 relative">
       {triggerConfetti && <ConfettiCelebration />}
 
-      {/* header hero banner */}
-      <div className="bg-gradient-to-tr from-rose-950 via-red-900 to-amber-900 rounded-[2.5rem] p-6 md:p-8 text-white shadow-2xl shadow-red-950/20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.1),transparent_50%)]" />
-        <div className="absolute -right-12 -bottom-12 w-48 h-48 bg-amber-600 rounded-full blur-3xl opacity-30 animate-pulse-slow" />
+      {/* 1. Header Banner */}
+      <div className="bg-slate-900 rounded-2xl p-6 md:p-7 text-white shadow-sm relative overflow-hidden border border-slate-800">
+        <div className="absolute -right-12 -bottom-12 w-48 h-48 bg-blue-500 rounded-full blur-3xl opacity-15 animate-pulse-slow pointer-events-none" />
 
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
-          <div className="space-y-3 text-center md:text-left">
-            <span className="text-[10px] font-black uppercase tracking-widest bg-red-500/30 text-red-200 px-3.5 py-1 rounded-full border border-red-500/20 inline-block animate-pulse">
-              Đấu Trường Khốc Liệt ⚔️
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-5 relative z-10">
+          <div className="space-y-2">
+            <span className="text-xs font-semibold bg-blue-500/20 text-blue-200 px-3 py-1 rounded-md border border-blue-400/30 inline-flex items-center gap-1.5 animate-pulse">
+              <Sword className="w-3.5 h-3.5" />
+              <span>Đấu trường Boss và Bot AI THCS</span>
             </span>
-            <h2 className="font-display font-black text-3xl md:text-4xl tracking-tight leading-tight flex items-center justify-center md:justify-start gap-2">
-              <span>ĐẤU PK TRÍ TUỆ</span>
-              <Zap className="w-8 h-8 text-amber-400 fill-amber-300 animate-bounce" />
-            </h2>
-            <p className="text-xs text-red-100/90 max-w-md leading-relaxed">
-              Cọ sát đối kháng với các học viên tài năng. Hãy bóc các gói thẻ phép thuật ma thuật tại Cửa Hàng để kích hoạt lật ngược thế cờ cực kỳ gay cấn!
+            <h1 className="font-display font-bold text-2xl md:text-3xl tracking-tight leading-tight flex items-center gap-2">
+              <span>Khiêu chiến Boss và Bot Trí Tuệ</span>
+              <Zap className="w-6 h-6 text-amber-400 fill-amber-300 animate-bounce shrink-0" />
+            </h1>
+            <p className="text-xs md:text-sm text-slate-300 max-w-xl leading-relaxed">
+              So tài trả lời nhanh 3 vòng câu hỏi với hệ thống Boss và Bot AI đa cấp độ. Sử dụng thẻ bổ trợ hợp lý để hạ gục Boss và tích lũy XP.
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 self-stretch md:self-auto justify-between md:justify-end">
             <button
+              type="button"
               onClick={() => setIsSoundOn(!isSoundOn)}
-              className="p-3 bg-white/10 hover:bg-white/20 border border-white/10 rounded-2xl transition-all cursor-pointer"
+              className="p-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl transition-all cursor-pointer"
               title={isSoundOn ? "Tắt âm thanh" : "Bật âm thanh"}
+              aria-label={isSoundOn ? "Tắt âm thanh" : "Bật âm thanh"}
             >
-              {isSoundOn ? <Volume2 className="w-5 h-5 text-white" /> : <VolumeX className="w-5 h-5 text-red-300" />}
+              {isSoundOn ? <Volume2 className="w-5 h-5 text-white" /> : <VolumeX className="w-5 h-5 text-slate-400" />}
             </button>
-            <div className="bg-white/10 backdrop-blur-md border border-white/10 rounded-3xl p-4 flex items-center gap-3 min-w-[160px]">
-              <Flame className="w-8 h-8 text-amber-400 fill-amber-300 animate-pulse" />
+            <div className="bg-slate-800/90 border border-slate-700 rounded-xl px-4 py-2.5 flex items-center gap-3 min-w-[150px]">
+              <Flame className="w-6 h-6 text-amber-400 fill-amber-400 animate-pulse shrink-0" />
               <div>
-                <p className="text-[9px] font-bold text-red-200 uppercase">Chuỗi thắng</p>
-                <p className="text-xl font-black text-white">{pkStreak} Trận</p>
+                <p className="text-xs font-medium text-slate-400">Chuỗi thắng Boss</p>
+                <p className="text-lg font-mono font-bold text-white tabular-nums">{pkStreak} trận</p>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Tab bar selection (Lobby / Leaderboard) */}
+      {/* 2. Mode Switcher (Lobby / PK Leaderboard) */}
       {pkTab !== "matchmaking" && pkTab !== "battle" && pkTab !== "results" && (
-        <div className="flex gap-2.5 bg-slate-100 p-1 rounded-2xl border border-slate-200/50">
+        <div className="flex gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
           <button
+            type="button"
             onClick={() => setPkTab("lobby")}
-            className={`flex-1 py-3 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${
-              pkTab === "lobby" ? "bg-white text-slate-850 shadow-md" : "text-slate-500 hover:text-slate-800"
+            className={`flex-1 py-2.5 text-xs md:text-sm font-semibold rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
+              pkTab === "lobby" ? "bg-white text-blue-700 shadow-2xs" : "text-slate-600 hover:text-slate-900"
             }`}
           >
             <Sword className="w-4 h-4" />
-            <span>Đấu trường & Thách đấu</span>
+            <span className="sm:hidden">Sảnh khiêu chiến</span>
+            <span className="hidden sm:inline">Sảnh khiêu chiến Boss và Chọn môn</span>
           </button>
           <button
+            type="button"
             onClick={() => setPkTab("leaderboard")}
-            className={`flex-1 py-3 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${
-              pkTab === "leaderboard" ? "bg-white text-slate-850 shadow-md" : "text-slate-500 hover:text-slate-800"
+            className={`flex-1 py-2.5 text-xs md:text-sm font-semibold rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
+              pkTab === "leaderboard" ? "bg-white text-blue-700 shadow-2xs" : "text-slate-600 hover:text-slate-900"
             }`}
           >
             <Trophy className="w-4 h-4 text-amber-500" />
-            <span>Bảng Xếp Hạng PK 🏆</span>
+            <span className="sm:hidden">Bảng xếp hạng</span>
+            <span className="hidden sm:inline">Bảng xếp hạng Đấu Boss và Bot</span>
           </button>
         </div>
       )}
 
-      {/* LOBBY INTERFACE */}
+      {/* 3. LOBBY INTERFACE */}
       {pkTab === "lobby" && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
-          {/* Left profile overview */}
-          <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 shadow-sm space-y-6 text-center">
-            <span className="text-xs font-black text-slate-400 uppercase tracking-widest block">Thống kê Đấu Sĩ</span>
+          {/* Left: Student Combatant Profile (4 Cols) */}
+          <div className="lg:col-span-4 bg-white rounded-2xl p-6 border border-slate-200/90 shadow-2xs space-y-5 text-center">
+            <span className="text-xs font-semibold text-slate-500 block">Hồ sơ thi đấu của em</span>
             
             <div className="relative inline-flex items-center justify-center">
-              <div className="absolute inset-0 bg-red-50 rounded-3xl animate-pulse scale-105" />
-              <div className="w-24 h-24 bg-red-100 rounded-3xl flex items-center justify-center text-6xl shadow-inner relative z-10 select-none">
+              <div className="absolute inset-0 bg-blue-100 rounded-2xl animate-pulse scale-105" />
+              <div className="w-20 h-20 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center text-5xl relative z-10 select-none">
                 {userAvatarObj.emoji}
               </div>
             </div>
 
             <div className="space-y-1">
-              <h3 className="font-display font-black text-slate-800 text-lg">{localStorage.getItem("smart_study_nickname_v2") || "Học Viên Ưu Tú"}</h3>
-              <p className="text-xs text-indigo-650 font-bold bg-indigo-50 px-2.5 py-0.5 rounded-full inline-block">{userAvatarObj.title} • Cấp {progress.level}</p>
+              <h3 className="font-display font-bold text-slate-900 text-lg">
+                {localStorage.getItem("smart_study_nickname_v2") || "Học Viên Ưu Tú"}
+              </h3>
+              <p className="text-xs text-blue-700 font-semibold bg-blue-50 border border-blue-200 px-3 py-0.5 rounded-md inline-block">
+                {userAvatarObj.title} · Cấp {progress.level}
+              </p>
             </div>
 
-            {/* Quick stats columns */}
-            <div className="grid grid-cols-3 gap-2 border-t border-b border-slate-50 py-4.5">
+            {/* Match Stats */}
+            <div className="grid grid-cols-3 gap-2 border-t border-b border-slate-100 py-3.5">
               <div>
-                <p className="text-[9px] font-black text-slate-400 uppercase">Trận đấu</p>
-                <p className="text-sm font-black text-slate-700">{totalMatches}</p>
+                <p className="text-xs text-slate-500">Tổng trận</p>
+                <p className="text-base font-mono font-bold text-slate-900 tabular-nums mt-0.5">{totalMatches}</p>
               </div>
-              <div className="border-l border-r border-slate-50">
-                <p className="text-[9px] font-black text-slate-400 uppercase">Thắng</p>
-                <p className="text-sm font-black text-emerald-600">{userPkWins} ⚔️</p>
+              <div className="border-l border-r border-slate-100">
+                <p className="text-xs text-slate-500">Thắng</p>
+                <p className="text-base font-mono font-bold text-emerald-700 tabular-nums mt-0.5">{userPkWins}</p>
               </div>
               <div>
-                <p className="text-[9px] font-black text-slate-400 uppercase">Tỷ lệ thắng</p>
-                <p className="text-sm font-black text-indigo-600">{userWinRate}%</p>
+                <p className="text-xs text-slate-500">Tỷ lệ thắng</p>
+                <p className="text-base font-mono font-bold text-blue-700 tabular-nums mt-0.5">{userWinRate}%</p>
               </div>
             </div>
 
-            {/* Magic Cards brief display */}
-            <div className="space-y-2.5 text-left bg-slate-50 p-4 rounded-2xl border border-slate-100">
-              <p className="text-[10px] font-black text-slate-450 uppercase tracking-wider flex items-center gap-1.5">
-                <Brain className="w-3.5 h-3.5 text-fuchsia-500" />
-                <span>Kho bài phép thuật ma thuật ({Object.values(magicCards).reduce((a,b)=>a+b, 0)} lá)</span>
+            {/* Magic Cards Inventory Summary */}
+            <div className="space-y-2.5 text-left bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+              <p className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                <Brain className="w-4 h-4 text-blue-600" />
+                <span>Thẻ bổ trợ đang có ({Object.values(magicCards).reduce((a,b)=>a+b, 0)} thẻ)</span>
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {MAGIC_CARDS.map(c => {
                   const qty = magicCards[c.id] || 0;
                   if (qty <= 0) return null;
                   return (
-                    <span key={c.id} className="text-[10px] font-bold bg-white px-2 py-1 rounded-lg border border-slate-100 text-slate-700 flex items-center gap-1">
+                    <span
+                      key={c.id}
+                      title={`${c.name}: ${c.effect}`}
+                      className="text-xs font-semibold bg-white px-2.5 py-1 rounded-lg border border-slate-200 text-slate-800 flex items-center gap-1"
+                    >
                       <span>{c.emoji}</span>
-                      <strong className="text-fuchsia-600">x{qty}</strong>
+                      <strong className="font-mono text-blue-700">x{qty}</strong>
                     </span>
                   );
                 })}
                 {Object.values(magicCards).reduce((a,b)=>a+b, 0) === 0 && (
-                  <p className="text-[10px] text-slate-400 font-medium">Chưa có lá bài phép thuật nào. Ghé Shop bóc thẻ nhé!</p>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    Chưa có thẻ bổ trợ nào. Em có thể đổi Xu tại Cửa hàng để nhận thẻ trợ giúp trong trận đấu.
+                  </p>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Right Setup Match Panel */}
-          <div className="lg:col-span-2 bg-white border border-slate-100 rounded-[2.5rem] p-6 shadow-sm space-y-6">
-            <h3 className="font-display font-black text-slate-850 text-base">THIẾT LẬP CHIẾN TRƯỜNG ĐỐI KHÁNG</h3>
+          {/* Right: Match Setup Panel (8 Cols) */}
+          <div className="lg:col-span-8 bg-white rounded-2xl p-6 border border-slate-200/90 shadow-2xs space-y-6">
+            <div className="border-b border-slate-100 pb-3.5">
+              <h2 className="font-display font-bold text-slate-900 text-lg">Thiết lập trận đấu Boss và Bot AI</h2>
+              <p className="text-xs text-slate-500 mt-0.5">Chọn chủ đề môn học, mức độ thử thách và Boss hoặc Bot AI bạn muốn khiêu chiến</p>
+            </div>
 
             <div className="space-y-5">
-              
-              {/* Category picker */}
-              <div className="space-y-2">
-                <label className="text-xs font-black text-slate-450 uppercase tracking-wider block">1. LỰA CHỌN PHÂN MÔN TRI THỨC</label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              {/* 1. Category Picker (Fixes truncated label bug: up to 2 lines + full title tooltip) */}
+              <div className="space-y-2.5">
+                <label className="text-xs font-semibold text-slate-700 block">
+                  1. Chọn chủ đề / môn học thi đấu:
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
                   {availableCategories.map((cat) => {
                     const isSelected = selectedCategory?.id === cat.id;
                     return (
                       <button
                         key={cat.id}
+                        type="button"
                         onClick={() => setSelectedCategory(cat)}
-                        className={`p-3 rounded-2xl border-2 text-left transition-all cursor-pointer ${
+                        title={`${cat.name} (${cat.subject})`}
+                        className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex items-start gap-2.5 min-h-[56px] ${
                           isSelected 
-                            ? "border-red-600 bg-red-50/5 text-red-950 font-black" 
-                            : "border-slate-100 hover:border-slate-200 bg-white text-slate-700"
+                            ? "border-blue-600 bg-blue-50/80 text-blue-950 ring-1 ring-blue-600/20 shadow-2xs" 
+                            : "border-slate-200 hover:border-blue-300 bg-slate-50/60 hover:bg-white text-slate-800"
                         }`}
                       >
-                        <span className="text-xl mr-2">{cat.icon}</span>
-                        <span className="text-xs font-extrabold">{cat.name}</span>
+                        <span className="w-7 h-7 rounded-lg bg-white border border-slate-200/80 flex items-center justify-center text-xs font-mono font-bold text-blue-700 shrink-0 mt-0.5">
+                          {renderCategoryBadge(cat)}
+                        </span>
+                        <span className="text-xs font-semibold leading-snug line-clamp-2 flex-1">
+                          {cat.name}
+                        </span>
                       </button>
                     );
                   })}
                 </div>
               </div>
 
-              {/* Difficulty slider */}
-              <div className="space-y-2">
-                <label className="text-xs font-black text-slate-450 uppercase tracking-wider block">2. ĐỘ KHÓ CHIẾN TRƯỜNG</label>
+              {/* 2. Difficulty Selector */}
+              <div className="space-y-2.5">
+                <label className="text-xs font-semibold text-slate-700 block">
+                  2. Chọn mức độ câu hỏi:
+                </label>
                 <div className="grid grid-cols-3 gap-3">
                   {(["easy", "medium", "hard"] as const).map((level) => {
                     const isSelected = difficulty === level;
-                    let label = "Dễ";
-                    let reward = "Nhận +25 XP / +10 Xu";
-                    let color = "hover:border-emerald-300 text-emerald-800 border-emerald-100";
-                    let activeColor = "border-emerald-500 bg-emerald-50/20";
+                    let label = "Cơ bản";
+                    let reward = "+25 XP · +10 Xu";
                     
                     if (level === "medium") {
-                      label = "Trung Bình";
-                      reward = "Nhận +40 XP / +20 Xu";
-                      color = "hover:border-amber-300 text-amber-800 border-amber-100";
-                      activeColor = "border-amber-500 bg-amber-50/20";
+                      label = "Trung bình";
+                      reward = "+40 XP · +20 Xu";
                     } else if (level === "hard") {
-                      label = "Khó Nhất ⚡";
-                      reward = "Nhận +70 XP / +45 Xu";
-                      color = "hover:border-rose-300 text-rose-800 border-rose-100";
-                      activeColor = "border-rose-500 bg-rose-50/20";
+                      label = "Nâng cao";
+                      reward = "+70 XP · +45 Xu";
                     }
 
                     return (
                       <button
                         key={level}
+                        type="button"
                         onClick={() => setDifficulty(level)}
-                        className={`p-4 rounded-2xl border-2 text-center transition-all cursor-pointer ${
-                          isSelected ? activeColor + " border-2 font-black text-sm" : color + " bg-white"
+                        className={`p-3.5 rounded-xl border text-center transition-all cursor-pointer ${
+                          isSelected 
+                            ? "border-blue-600 bg-blue-50/80 font-bold text-blue-950 ring-1 ring-blue-600/20 shadow-2xs" 
+                            : "border-slate-200 bg-slate-50/60 hover:bg-white hover:border-blue-300 text-slate-700"
                         }`}
                       >
-                        <h4 className="text-xs font-black uppercase tracking-wider">{label}</h4>
-                        <p className="text-[9px] mt-1 font-bold text-slate-400">{reward}</p>
+                        <h4 className="text-xs md:text-sm font-bold">{label}</h4>
+                        <p className="text-xs mt-1 font-mono font-medium text-blue-700">{reward}</p>
                       </button>
                     );
                   })}
                 </div>
               </div>
 
-              {/* Opponent Bot picker */}
-              <div className="space-y-2">
-                <label className="text-xs font-black text-slate-450 uppercase tracking-wider block">3. LỰA CHỌN ĐỐI THỦ THÁCH ĐẤU</label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* 3. Boss / Bot Opponent Selector */}
+              <div className="space-y-2.5">
+                <label className="text-xs font-semibold text-slate-700 block">
+                  3. Chọn Boss / Bot AI thách đấu:
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   {BOT_POOL.map((bot) => {
                     const isSelected = selectedOpponent?.name === bot.name;
                     return (
                       <div
                         key={bot.name}
                         onClick={() => setSelectedOpponent(bot)}
-                        className={`p-3.5 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between ${
+                        className={`p-3.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
                           isSelected 
-                            ? "border-red-600 bg-red-50/10 shadow-sm" 
-                            : "border-slate-100 hover:border-slate-200 bg-white"
+                            ? "border-blue-600 bg-blue-50/80 ring-1 ring-blue-600/20 shadow-2xs" 
+                            : "border-slate-200 hover:border-blue-300 bg-slate-50/60 hover:bg-white"
                         }`}
                       >
-                        <div className="flex items-center gap-3">
-                          <span className="text-3xl bg-slate-50 w-10 h-10 rounded-xl flex items-center justify-center border border-slate-100">{bot.avatarEmoji}</span>
-                          <div>
-                            <h4 className="text-xs font-black text-slate-800">{bot.name}</h4>
-                            <p className="text-[10px] text-slate-400 font-semibold">{bot.title} • Lvl {bot.level}</p>
+                        <div className="flex items-center gap-3 min-w-0">
+                          <span className="text-2xl bg-white w-10 h-10 rounded-xl flex items-center justify-center border border-slate-200 shrink-0">
+                            {bot.avatarEmoji}
+                          </span>
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <h4 className="text-xs md:text-sm font-bold text-slate-900 truncate">{bot.name}</h4>
+                              <span
+                                className={`px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-wider shrink-0 ${
+                                  bot.role === "BOSS"
+                                    ? "bg-rose-600 text-white"
+                                    : "bg-slate-800 text-sky-200"
+                                }`}
+                              >
+                                {bot.role}
+                              </span>
+                            </div>
+                            <p className="text-xs text-slate-500 truncate">{bot.title} · Cấp {bot.level}</p>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-[8px] font-black text-slate-400 uppercase">Tỷ lệ thắng</p>
-                          <p className="text-xs font-black text-red-600">{bot.winRate}%</p>
+                        <div className="text-right shrink-0 ml-2">
+                          <p className="text-[11px] text-slate-500">Độ chính xác</p>
+                          <p className="text-xs font-mono font-bold text-blue-700 tabular-nums">{bot.winRate}%</p>
                         </div>
                       </div>
                     );
@@ -1323,85 +1339,100 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
                 </div>
               </div>
 
-              {/* Play button */}
-              <div className="pt-4">
+              {/* Start Match CTA */}
+              <div className="pt-2">
                 <button
+                  type="button"
                   onClick={startMatchmaking}
-                  className="w-full py-4.5 bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 hover:from-red-700 hover:to-amber-700 text-white font-black text-sm uppercase tracking-wider rounded-3xl shadow-xl shadow-red-200 transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer flex items-center justify-center gap-2"
+                  className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-xl shadow-xs transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer flex items-center justify-center gap-2"
                 >
-                  <Sword className="w-5 h-5 fill-white" />
-                  <span>KÍCH HOẠT ĐẤU ĐÀI NGAY ⚔️</span>
+                  <Sword className="w-4 h-4" />
+                  <span>Bắt đầu khiêu chiến Boss / Bot AI</span>
                 </button>
               </div>
-
             </div>
           </div>
 
         </div>
       )}
 
-      {/* LEADERBOARD TAB INTERFACE */}
+      {/* 4. PK LEADERBOARD TAB */}
       {pkTab === "leaderboard" && (
-        <div className="bg-white border border-slate-150 rounded-[3rem] p-6 shadow-sm space-y-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-50 pb-4">
+        <div className="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-2xs space-y-5">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
             <div>
-              <h3 className="font-display font-black text-slate-850 text-base flex items-center gap-2">
+              <h3 className="font-display font-bold text-slate-900 text-lg flex items-center gap-2">
                 <Trophy className="w-5 h-5 text-amber-500" />
-                <span>Bảng Phong Thần Đấu Sĩ PK</span>
+                <span>Bảng xếp hạng Đấu trường Boss và Bot AI</span>
               </h3>
-              <p className="text-xs text-slate-400 leading-normal">Bảng xếp hạng cập nhật dựa trên số lượng trận thắng đối kháng của em!</p>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Khi chưa có người chơi thật khác vào phòng, bảng xếp hạng so sánh số trận thắng của em với các Boss và Bot AI hệ thống
+              </p>
             </div>
             
-            <div className="bg-slate-50 border border-slate-100 p-2.5 rounded-2xl text-xs font-bold text-slate-600">
-              Hạng của Em: <strong className="text-red-600 text-sm font-black">#{pkLeaderboard.findIndex(b => b.isCurrentUser) + 1}</strong>
+            <div className="bg-blue-50 border border-blue-200 px-3.5 py-2 rounded-xl text-xs font-semibold text-blue-900">
+              Vị trí của em: <strong className="text-blue-700 text-sm font-mono font-bold">#{pkLeaderboard.findIndex(b => b.isCurrentUser) + 1}</strong>
             </div>
           </div>
 
           <div className="space-y-2.5">
             {pkLeaderboard.map((competitor, idx) => {
               const isUser = competitor.isCurrentUser;
-              let medal = "";
-              if (idx === 0) medal = "🥇";
-              else if (idx === 1) medal = "🥈";
-              else if (idx === 2) medal = "🥉";
+              const isBossEntry = !isUser && competitor.name.toLowerCase().includes("boss");
 
               return (
                 <div
                   key={competitor.id}
-                  className={`p-4 rounded-2xl border flex items-center justify-between transition-all ${
+                  className={`p-4 rounded-xl border flex items-center justify-between transition-all ${
                     isUser 
-                      ? "border-red-400 bg-red-50/10 shadow-sm font-black ring-2 ring-red-500/10" 
-                      : "border-slate-50 bg-white hover:border-slate-150"
+                      ? "border-blue-500 bg-blue-50/60 ring-1 ring-blue-500/20 shadow-2xs" 
+                      : "border-slate-200/80 bg-white hover:bg-slate-50/70"
                   }`}
                 >
-                  {/* Left rank and details */}
-                  <div className="flex items-center gap-4">
-                    <span className="w-8 text-center text-xs font-black text-slate-400">
-                      {medal || `#${idx + 1}`}
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-mono font-bold shrink-0 ${
+                      idx === 0
+                        ? "bg-amber-100 text-amber-800 border border-amber-300"
+                        : idx === 1
+                        ? "bg-slate-200 text-slate-800"
+                        : idx === 2
+                        ? "bg-amber-50 text-amber-900 border border-amber-200"
+                        : "bg-slate-100 text-slate-600"
+                    }`}>
+                      {idx + 1}
                     </span>
-                    <span className="text-3xl bg-slate-50 w-11 h-11 rounded-xl flex items-center justify-center border border-slate-100">{competitor.avatarEmoji}</span>
-                    <div>
-                      <h4 className="text-xs font-black text-slate-850 flex items-center gap-2">
-                        <span>{competitor.name}</span>
-                        {isUser && (
-                          <span className="text-[8px] bg-red-500 text-white font-black px-1.5 py-0.2 rounded-full uppercase tracking-wider">
-                            Bạn
+                    <span className="text-2xl bg-slate-50 w-11 h-11 rounded-xl flex items-center justify-center border border-slate-200 shrink-0">
+                      {competitor.avatarEmoji}
+                    </span>
+                    <div className="min-w-0">
+                      <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2 truncate">
+                        <span className="truncate">{competitor.name}</span>
+                        {isUser ? (
+                          <span className="text-[11px] bg-blue-600 text-white font-semibold px-2 py-0.5 rounded-md">
+                            Người chơi thật (Em)
+                          </span>
+                        ) : isBossEntry ? (
+                          <span className="text-[10px] bg-rose-600 text-white font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md">
+                            [BOSS AI]
+                          </span>
+                        ) : (
+                          <span className="text-[10px] bg-slate-800 text-sky-200 font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md">
+                            [BOT AI]
                           </span>
                         )}
                       </h4>
-                      <p className="text-[10px] text-slate-400 font-semibold">{competitor.title} • Lvl {competitor.level}</p>
+                      <p className="text-xs text-slate-500">{competitor.title} · Cấp {competitor.level}</p>
                     </div>
                   </div>
 
-                  {/* Right PK Win stats */}
-                  <div className="flex items-center gap-6">
-                    <div className="text-right">
-                      <p className="text-[9px] font-black text-slate-400 uppercase">Tỷ lệ thắng</p>
-                      <p className="text-xs font-extrabold text-slate-600">{competitor.winRate}%</p>
+                  <div className="flex items-center gap-5 shrink-0">
+                    <div className="text-right hidden sm:block">
+                      <p className="text-xs text-slate-500">Tỷ lệ thắng</p>
+                      <p className="text-xs font-mono font-bold text-slate-800 tabular-nums">{competitor.winRate}%</p>
                     </div>
-                    <div className="bg-red-50 border border-red-100/50 rounded-2xl px-4 py-2 text-center min-w-[80px]">
-                      <p className="text-[8px] font-black text-red-500 uppercase tracking-wider">Số Trận Thắng</p>
-                      <p className="text-sm font-black text-red-700">{competitor.pkWins} ⚔️</p>
+                    <div className="bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-center min-w-[84px]">
+                      <p className="text-[11px] text-slate-500 font-medium">Trận thắng</p>
+                      <p className="text-sm font-mono font-bold text-blue-700 tabular-nums">{competitor.pkWins}</p>
                     </div>
                   </div>
                 </div>
@@ -1411,229 +1442,250 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
         </div>
       )}
 
-      {/* MATCHMAKING VIEW */}
+      {/* 5. MATCHMAKING VIEW */}
       {pkTab === "matchmaking" && (
-        <div className="bg-white border border-slate-150 rounded-[3rem] p-8 text-center shadow-xl space-y-8 py-16 relative overflow-hidden">
+        <div className="bg-white rounded-2xl p-8 border border-slate-200/90 text-center shadow-sm space-y-7 py-14 relative overflow-hidden">
           <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
-            <div className="w-96 h-96 border-4 border-dashed border-red-500 rounded-full animate-spin [animation-duration:40s]" />
-            <div className="w-72 h-72 border border-dashed border-red-500 rounded-full animate-reverse-spin absolute" />
+            <div className="w-96 h-96 border-4 border-dashed border-blue-500 rounded-full animate-spin [animation-duration:40s]" />
+            <div className="w-72 h-72 border border-dashed border-blue-500 rounded-full animate-reverse-spin absolute" />
           </div>
 
           <div className="space-y-4 max-w-md mx-auto relative z-10">
             <div className="flex justify-center">
               <div className="relative">
-                <div className="absolute -inset-1 rounded-full bg-gradient-to-tr from-red-600 to-amber-500 blur opacity-40 animate-pulse" />
-                <div className="w-20 h-20 bg-gradient-to-tr from-red-600 to-amber-500 rounded-full flex items-center justify-center text-white text-3xl shadow-lg relative">
-                  <Sword className="w-10 h-10 animate-pulse" />
+                <div className="absolute -inset-1 rounded-full bg-blue-600 blur opacity-30 animate-pulse" />
+                <div className="w-18 h-18 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-md relative">
+                  <Sword className="w-9 h-9 animate-pulse" />
                 </div>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <h3 className="font-display font-black text-slate-850 text-lg">ĐANG GHÉP CẶP ĐẤU TRƯỜNG</h3>
-              <p className="text-xs text-slate-455 leading-relaxed font-semibold">Độ khó đã chọn: <strong className="text-red-600 uppercase">{difficulty === "easy" ? "Dễ" : difficulty === "medium" ? "Trung Bình" : "Khó Nhất ⚡"}</strong></p>
+            <div className="space-y-1.5">
+              <h3 className="font-display font-bold text-slate-900 text-lg">Đang kết nối phòng thi đấu</h3>
+              <p className="text-xs text-slate-600">
+                Chủ đề: <strong className="text-slate-900">{selectedCategory?.name}</strong> · Mức độ:{" "}
+                <strong className="text-blue-700">
+                  {difficulty === "easy" ? "Cơ bản" : difficulty === "medium" ? "Trung bình" : "Nâng cao"}
+                </strong>
+              </p>
             </div>
 
-            <div className="bg-slate-50 border border-slate-100 p-4 rounded-2xl text-center">
-              <p className="text-xs font-bold text-indigo-650 animate-pulse">{searchingStatus}</p>
+            <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-xl text-center">
+              <p className="text-xs md:text-sm font-semibold text-blue-700 animate-pulse">{searchingStatus}</p>
             </div>
 
             <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden relative">
               <div 
-                className="bg-gradient-to-r from-red-500 via-rose-500 to-amber-500 h-full rounded-full transition-all duration-1000" 
+                className="bg-blue-600 h-full rounded-full transition-all duration-1000" 
                 style={{ width: `${(searchingTimer / 5) * 100}%` }}
               />
             </div>
 
-            <div className="pt-4">
+            <div className="pt-2">
               <button
+                type="button"
                 onClick={quitBattle}
-                className="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer"
+                className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl transition-all cursor-pointer"
               >
-                Hủy Tìm Trận 🛑
+                Hủy tìm trận
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* BATTLE SCREEN VIEW */}
+      {/* 6. BATTLE SCREEN VIEW */}
       {pkTab === "battle" && opponent && roundQuestions[currentRound - 1] && (
-        <div className="space-y-6">
+        <div className="space-y-5">
           
-          {/* Opponent head-to-head score bar */}
-          <div className="bg-white border border-slate-100 rounded-[2.5rem] p-5 shadow-lg grid grid-cols-1 md:grid-cols-11 gap-4 items-center">
+          {/* Head-to-Head Scoreboard */}
+          <div className="bg-white rounded-2xl p-4 md:p-5 border border-slate-200/90 shadow-2xs grid grid-cols-1 md:grid-cols-11 gap-4 items-center">
             
-            {/* Left User profile */}
-            <div className="md:col-span-4 flex items-center gap-3.5 bg-indigo-50/30 p-3 rounded-2xl border border-indigo-150/30 relative">
-              <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center text-3xl shrink-0">
+            {/* Left: Student */}
+            <div className="md:col-span-4 flex items-center gap-3 bg-blue-50/60 p-3 rounded-xl border border-blue-200/80 relative">
+              <div className="w-11 h-11 bg-white border border-blue-200 rounded-xl flex items-center justify-center text-2xl shrink-0">
                 {userAvatarObj.emoji}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-black text-indigo-600 uppercase tracking-wider">Học sinh (Em)</p>
-                <h4 className="text-xs font-black text-slate-850 truncate">{localStorage.getItem("smart_study_nickname_v2") || "Học Viên Ưu Tú"}</h4>
+                <p className="text-xs font-medium text-blue-700">Học sinh (Em)</p>
+                <h4 className="text-sm font-bold text-slate-900 truncate">
+                  {localStorage.getItem("smart_study_nickname_v2") || "Học Viên Ưu Tú"}
+                </h4>
                 <div className="flex items-center gap-1.5 mt-0.5">
-                  <span className="text-[9px] text-slate-400 font-bold">Điểm PK:</span>
-                  <span className="text-xs font-black text-indigo-600">{userScore}đ</span>
+                  <span className="text-xs text-slate-500">Điểm:</span>
+                  <span className="text-sm font-mono font-bold text-blue-700 tabular-nums">{userScore}đ</span>
                 </div>
               </div>
               {userChoice !== null && (
-                <div className="bg-indigo-100 text-indigo-700 p-1.5 rounded-lg shrink-0">
-                  <Check className="w-4 h-4 stroke-[3]" />
+                <div className="bg-blue-600 text-white p-1.5 rounded-lg shrink-0" title="Đã chọn đáp án">
+                  <Check className="w-4 h-4" />
                 </div>
               )}
             </div>
 
-            {/* Mid: Round count & Timer */}
-            <div className="md:col-span-3 text-center space-y-2 py-2 md:py-0">
-              <span className="text-[10px] font-black uppercase tracking-widest bg-red-100 text-red-700 px-3 py-1 rounded-full border border-red-200">
+            {/* Center: Round & Timer */}
+            <div className="md:col-span-3 text-center space-y-1.5 py-1 md:py-0">
+              <span className="text-xs font-semibold bg-slate-100 text-slate-800 px-3 py-1 rounded-md border border-slate-200 inline-block">
                 Vòng {currentRound} / 3
               </span>
               
               <div className="flex justify-center items-center gap-2">
-                <Clock className="w-4 h-4 text-rose-500 animate-spin" />
-                <span className={`text-xl font-display font-black ${roundTimeLeft < 4 ? "text-rose-600 scale-110 animate-ping" : "text-slate-800"}`}>
-                  0:0{roundTimeLeft}s
+                <Clock className="w-4 h-4 text-blue-600 animate-spin" />
+                <span className={`text-xl font-mono font-bold tabular-nums ${roundTimeLeft < 4 ? "text-rose-600 scale-110 animate-ping" : "text-slate-900"}`}>
+                  0:{roundTimeLeft < 10 ? `0${roundTimeLeft}` : roundTimeLeft}s
                 </span>
               </div>
             </div>
 
-            {/* Right Opponent profile */}
-            <div className="md:col-span-4 flex items-center gap-3.5 bg-red-50/30 p-3 rounded-2xl border border-red-150/30 text-right md:flex-row-reverse relative overflow-hidden">
+            {/* Right: Opponent */}
+            <div className="md:col-span-4 flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200 text-right md:flex-row-reverse relative overflow-hidden">
               {isBotFrozen && (
-                <div className="absolute inset-0 bg-sky-200/50 backdrop-blur-xs flex items-center justify-center z-10 text-xs font-black text-sky-850 animate-pulse">
-                  <Snowflake className="w-4 h-4 animate-bounce text-sky-600 mr-1" />
-                  <span>ĐÃ BỊ ĐÓNG BẰNG ❄️</span>
+                <div className="absolute inset-0 bg-blue-50/90 backdrop-blur-xs flex items-center justify-center z-10 text-xs font-bold text-blue-900 animate-pulse">
+                  <Snowflake className="w-4 h-4 animate-bounce text-blue-600 mr-1.5" />
+                  <span>Đã bị đóng băng lượt này</span>
                 </div>
               )}
               {isOpponentBlinded && (
-                <div className="absolute inset-0 bg-slate-750/30 backdrop-blur-xs flex items-center justify-center z-10 text-[9.5px] font-black text-slate-800">
-                  <EyeOff className="w-3.5 h-3.5 mr-1" />
-                  <span>BỊ GÂY MÙ TẦM NHÌN 🌫️</span>
+                <div className="absolute inset-0 bg-slate-800/80 backdrop-blur-xs flex items-center justify-center z-10 text-xs font-bold text-white">
+                  <EyeOff className="w-4 h-4 mr-1.5" />
+                  <span>Đang bị che tầm nhìn</span>
                 </div>
               )}
               {isOpponentSabotaged && (
-                <div className="absolute inset-0 bg-teal-100/40 backdrop-blur-xs flex items-center justify-center z-10 text-[9.5px] font-black text-teal-800">
-                  <Wind className="w-3.5 h-3.5 mr-1 animate-spin" />
-                  <span>CÂU HỎI NHIỄU LOẠN 🌪️</span>
+                <div className="absolute inset-0 bg-teal-50/90 backdrop-blur-xs flex items-center justify-center z-10 text-xs font-bold text-teal-900">
+                  <Wind className="w-4 h-4 mr-1.5 animate-spin" />
+                  <span>Đang bị nhiễu câu hỏi</span>
                 </div>
               )}
 
-              <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center text-3xl shrink-0">
+              <div className="w-11 h-11 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-2xl shrink-0">
                 {opponent.avatarEmoji}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-black text-red-600 uppercase tracking-wider">Đối thủ</p>
-                <h4 className="text-xs font-black text-slate-850 truncate">{opponent.name}</h4>
+                <p className="text-xs font-semibold text-rose-600">Boss / Bot AI</p>
+                <h4 className="text-sm font-bold text-slate-900 truncate">{opponent.name}</h4>
                 <div className="flex items-center gap-1.5 mt-0.5 md:flex-row-reverse">
-                  <span className="text-[9px] text-slate-400 font-bold">Điểm PK:</span>
-                  <span className="text-xs font-black text-red-600">{opponent.score}đ</span>
+                  <span className="text-xs text-slate-500">Điểm:</span>
+                  <span className="text-sm font-mono font-bold text-slate-800 tabular-nums">{opponent.score}đ</span>
                 </div>
               </div>
               {opponent.answered && (
-                <div className="bg-red-100 text-red-700 p-1.5 rounded-lg shrink-0">
-                  <Check className="w-4 h-4 stroke-[3]" />
+                <div className="bg-slate-200 text-slate-800 p-1.5 rounded-lg shrink-0" title="Boss / Bot AI đã chọn">
+                  <Check className="w-4 h-4" />
                 </div>
               )}
             </div>
           </div>
 
-          {/* Active Card Notification banner */}
+          {/* Active Card Notification Banner */}
           {activeCardNotification && (
-            <div className="bg-gradient-to-r from-fuchsia-600 to-indigo-650 text-white rounded-2xl px-5 py-3 text-xs font-extrabold shadow-md flex items-center gap-2 animate-bounce">
-              <Sparkles className="w-4 h-4 text-yellow-300 shrink-0" />
+            <div className="bg-blue-600 text-white rounded-xl px-4 py-3 text-xs md:text-sm font-semibold shadow-xs flex items-center gap-2 animate-bounce">
+              <Zap className="w-4 h-4 text-amber-300 shrink-0" />
               <span>{activeCardNotification}</span>
               {scoreMultiplier > 1 && (
-                <span className="ml-auto bg-white/25 px-2.5 py-0.5 rounded-lg border border-white/20">
-                  x{scoreMultiplier} Điểm!
+                <span className="ml-auto bg-blue-700 px-2.5 py-0.5 rounded-md border border-blue-400/40 font-mono">
+                  x{scoreMultiplier} điểm
                 </span>
               )}
             </div>
           )}
 
-          {/* Clairvoyance nextRoundHint banner */}
+          {/* Clairvoyance Next Round Hint Banner */}
           {nextRoundHint && currentRound === hintRound && (
-            <div className="bg-gradient-to-r from-amber-500/15 via-yellow-500/10 to-amber-500/15 border border-amber-300 text-amber-900 rounded-2xl px-5 py-3 text-xs font-black shadow-md flex items-center gap-2 animate-pulse">
-              <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
-              <span>🔮 Thấu Thị Tương Lai: {nextRoundHint}</span>
+            <div className="bg-amber-50 border border-amber-200 text-amber-900 rounded-xl px-4 py-3 text-xs md:text-sm font-semibold flex items-center gap-2 animate-pulse">
+              <Lightbulb className="w-4 h-4 text-amber-600 shrink-0" />
+              <span>Gợi ý biết trước: {nextRoundHint}</span>
             </div>
           )}
 
-          {/* Active Question Panel */}
-          <div className="bg-white border border-slate-100 rounded-[3rem] p-6 md:p-8 shadow-sm space-y-6 relative overflow-hidden">
+          {/* Question & Options Stage */}
+          <div className="bg-white rounded-2xl p-5 md:p-7 border border-slate-200/90 shadow-2xs space-y-5 relative overflow-hidden">
             
-            {/* SCREEN BLIND SMOKY OVERLAY (If bot blinded player screen) */}
+            {/* Screen Blind Overlay */}
             {playerBlindedTime > 0 && !roundRevealed && (
-              <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md z-30 flex flex-col items-center justify-center text-center p-6 text-white pointer-events-none">
-                <EyeOff className="w-12 h-12 text-rose-500 animate-pulse mb-3" />
-                <h4 className="font-display font-black text-sm tracking-widest text-rose-400 uppercase">MÀN HÌNH BỊ CHE MÙ!</h4>
-                <p className="text-[11px] text-slate-350 max-w-xs leading-normal mt-1.5 font-medium">
-                  Đối thủ đã sử dụng Sương Mù che khuất tầm nhìn của em. Hãy tập trung bình tĩnh nhìn qua sương mù!
+              <div className="absolute inset-0 bg-slate-950/85 backdrop-blur-md z-30 flex flex-col items-center justify-center text-center p-6 text-white pointer-events-none">
+                <EyeOff className="w-10 h-10 text-rose-400 animate-pulse mb-2.5" />
+                <h4 className="font-display font-bold text-base text-rose-300">Màn hình đang bị sương mù che phủ</h4>
+                <p className="text-xs text-slate-300 max-w-xs leading-relaxed mt-1">
+                  Đối thủ vừa dùng thẻ che tầm nhìn của em. Bình tĩnh chờ sương tan để chọn đáp án!
                 </p>
-                <div className="bg-white/10 border border-white/10 px-3 py-1 rounded-full text-xs font-extrabold mt-3 animate-bounce">
+                <div className="bg-white/10 border border-white/20 px-3.5 py-1 rounded-lg text-xs font-mono font-bold mt-3 animate-bounce">
                   Sương tan sau: {playerBlindedTime} giây
                 </div>
               </div>
             )}
 
-            <div className="flex items-center justify-between border-b border-slate-50 pb-3">
-              <span className="text-[10px] font-black uppercase tracking-widest bg-indigo-50 text-indigo-700 px-3.5 py-1 rounded-full border border-indigo-150/40">
-                Chủ Đề: {roundQuestions[currentRound - 1].subject}
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3.5">
+              <span className="text-xs font-semibold bg-blue-50 text-blue-700 px-3 py-1 rounded-md border border-blue-200">
+                Môn: {roundQuestions[currentRound - 1].subject}
               </span>
-              <div className="flex items-center gap-1.5">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                  Độ khó: {roundQuestions[currentRound - 1].difficulty === "easy" ? "Dễ" : roundQuestions[currentRound - 1].difficulty === "medium" ? "Trung Bình" : roundQuestions[currentRound - 1].difficulty === "hard" ? "Khó" : "Vô Song 👑"}
-                </span>
-              </div>
+              <span className="text-xs font-medium text-slate-600">
+                Mức độ:{" "}
+                <strong className="text-slate-900">
+                  {roundQuestions[currentRound - 1].difficulty === "easy"
+                    ? "Cơ bản"
+                    : roundQuestions[currentRound - 1].difficulty === "medium"
+                    ? "Trung bình"
+                    : roundQuestions[currentRound - 1].difficulty === "hard"
+                    ? "Nâng cao"
+                    : "Thử thách đặc biệt"}
+                </strong>
+              </span>
             </div>
 
-            <div className="space-y-4">
-              <h3 className="font-display font-black text-slate-850 text-base md:text-lg leading-snug">
+            <div>
+              <h3 className="font-display font-bold text-slate-900 text-base md:text-lg leading-snug">
                 {roundQuestions[currentRound - 1].question}
               </h3>
             </div>
 
-            {/* Answer option buttons */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+            {/* Answer Options */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-1">
               {roundQuestions[currentRound - 1].options.map((option, idx) => {
                 const isSelected = userChoice === idx;
                 const isCorrectAnswer = idx === roundQuestions[currentRound - 1].correctIndex;
                 const isOptionDisabled = disabledOptionIndices.includes(idx);
                 
-                let optionStyle = "bg-white border-slate-150 hover:border-indigo-300 hover:bg-indigo-50/10 text-slate-800";
+                let optionStyle = "bg-slate-50/70 border-slate-200 hover:border-blue-400 hover:bg-white text-slate-800";
                 
                 if (isOptionDisabled) {
-                  optionStyle = "bg-slate-50 border-slate-100 text-slate-300 line-through opacity-30 cursor-not-allowed pointer-events-none";
+                  optionStyle = "bg-slate-50 border-slate-200 text-slate-400 line-through opacity-40 cursor-not-allowed pointer-events-none";
                 } else if (roundRevealed) {
                   if (isCorrectAnswer) {
-                    optionStyle = "bg-emerald-50 border-emerald-300 text-emerald-800 ring-2 ring-emerald-500/15";
+                    optionStyle = "bg-emerald-50 border-emerald-400 text-emerald-950 ring-1 ring-emerald-500/20 font-bold";
                   } else if (isSelected) {
-                    optionStyle = "bg-rose-50 border-rose-300 text-rose-800 ring-2 ring-rose-500/15";
+                    optionStyle = "bg-rose-50 border-rose-400 text-rose-900 ring-1 ring-rose-500/20";
                   } else {
-                    optionStyle = "bg-slate-50 border-slate-100 text-slate-400 opacity-60";
+                    optionStyle = "bg-slate-50 border-slate-200 text-slate-400 opacity-65";
                   }
                 } else if (isSelected) {
-                  optionStyle = "bg-indigo-50/60 border-indigo-300 ring-2 ring-indigo-500/15 text-indigo-800";
+                  optionStyle = "bg-blue-50 border-blue-600 ring-1 ring-blue-600/20 text-blue-950 font-bold";
                 }
 
                 return (
                   <button
                     key={idx}
+                    type="button"
                     disabled={userChoice !== null || roundRevealed || isOptionDisabled}
                     onClick={() => handleUserAnswer(idx)}
-                    className={`p-4.5 rounded-2xl border text-left text-xs font-bold transition-all relative flex items-center justify-between cursor-pointer ${optionStyle}`}
+                    className={`p-4 rounded-xl border text-left text-xs md:text-sm font-semibold transition-all relative flex items-center justify-between gap-3 cursor-pointer ${optionStyle}`}
                   >
-                    <span className="pr-4">{option}</span>
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span className="w-6 h-6 rounded-md bg-white border border-slate-200 text-xs font-mono font-bold flex items-center justify-center shrink-0 text-slate-700">
+                        {String.fromCharCode(65 + idx)}
+                      </span>
+                      <span className="leading-snug">{option}</span>
+                    </div>
                     
                     {roundRevealed && (
                       <div className="flex items-center gap-1.5 shrink-0">
                         {userChoice === idx && (
-                          <span className="text-[10px] bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded-full font-black border border-indigo-200">
+                          <span className="text-xs bg-blue-600 text-white px-2 py-0.5 rounded-md font-semibold">
                             Em
                           </span>
                         )}
                         {opponent.choice === idx && (
-                          <span className="text-[10px] bg-red-100 text-red-800 px-2 py-0.5 rounded-full font-black border border-red-200">
+                          <span className="text-xs bg-slate-100 text-slate-800 px-2 py-0.5 rounded-md font-semibold border border-slate-300">
                             {opponent.avatarEmoji}
                           </span>
                         )}
@@ -1644,34 +1696,35 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
               })}
             </div>
 
-            {/* Answer explanation showing after reveal */}
+            {/* Answer Explanation */}
             {roundRevealed && (
-              <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-1.5 animate-slide-down">
-                <h4 className="text-[10px] font-black text-indigo-600 uppercase tracking-widest flex items-center gap-1">
-                  <span>💡 Giải thích đáp án</span>
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-1 animate-slide-down">
+                <h4 className="text-xs font-semibold text-blue-700 flex items-center gap-1.5">
+                  <Lightbulb className="w-4 h-4 text-amber-500" />
+                  <span>Giải thích đáp án</span>
                 </h4>
-                <p className="text-xs text-slate-500 leading-relaxed font-semibold">
+                <p className="text-xs md:text-sm text-slate-700 leading-relaxed">
                   {roundQuestions[currentRound - 1].explanation}
                 </p>
               </div>
             )}
 
-            {/* MAGIC CARDS ACTION BAR */}
+            {/* Magic Cards Deck */}
             {!roundRevealed && (
-              <div className="bg-gradient-to-r from-fuchsia-50/40 via-purple-50/20 to-indigo-50/40 border border-fuchsia-100 rounded-[2.2rem] p-4.5 space-y-3 mt-4">
-                <div className="flex items-center justify-between px-1">
-                  <span className="text-[9.5px] font-black uppercase tracking-widest text-fuchsia-600 flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-fuchsia-500 animate-spin-slow" />
-                    <span>LÁ BÀI MA THUẬT CỦA EM (mỗi vòng dùng tối đa 1 lá)</span>
+              <div className="bg-slate-50 border border-slate-200/90 rounded-xl p-4 space-y-3 mt-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                    <Layers className="w-3.5 h-3.5 text-blue-600" />
+                    <span>Thẻ bổ trợ của em (mỗi vòng dùng tối đa 1 thẻ)</span>
                   </span>
                   {cardUsedThisRound && (
-                    <span className="text-[9px] bg-fuchsia-100 text-fuchsia-700 px-2 py-0.5 rounded-full font-black animate-pulse">
-                      Đã kích hoạt ở vòng này 🌟
+                    <span className="text-xs bg-blue-600 text-white px-2.5 py-0.5 rounded-md font-semibold animate-pulse">
+                      Đã dùng thẻ ở vòng này
                     </span>
                   )}
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5">
+                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
                   {MAGIC_CARDS.map((card) => {
                     const qty = magicCards[card.id] || 0;
                     const isFreeze = card.id === "freeze";
@@ -1680,94 +1733,76 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
                     const isOnCooldown = cooldownLeft > 0;
                     const isButtonDisabled = qty <= 0 || cardUsedThisRound || isFreezeDisabled || isOnCooldown;
 
-                    let tierColor = "text-amber-600";
-                    if (card.tier === "sat") tierColor = "text-slate-500";
-                    else if (card.tier === "bac") tierColor = "text-sky-500";
-                    else if (card.tier === "vang") tierColor = "text-yellow-600";
-                    else if (card.tier === "kimcuong") tierColor = "text-rose-500";
-                    else if (card.tier === "baymau") tierColor = "text-fuchsia-600 font-extrabold";
-
                     return (
                       <button
                         key={card.id}
+                        type="button"
                         disabled={isButtonDisabled}
                         onClick={() => handleUseCardInBattle(card.id)}
-                        className={`p-2.5 rounded-2xl border flex flex-col items-center text-center justify-between transition-all select-none relative cursor-pointer group ${
+                        className={`p-2.5 rounded-xl border flex flex-col items-center text-center justify-between transition-all select-none relative cursor-pointer group ${
                           isOnCooldown
                             ? "border-amber-300 bg-amber-50/40 opacity-90"
                             : isButtonDisabled 
-                            ? "opacity-35 border-slate-100 bg-slate-50/50" 
-                            : "border-fuchsia-250 bg-white hover:border-fuchsia-400 hover:shadow-lg hover:scale-[1.03] shadow-sm"
+                            ? "opacity-40 border-slate-200 bg-white" 
+                            : "border-slate-200 bg-white hover:border-blue-500 hover:bg-blue-50/40 shadow-2xs"
                         }`}
-                        title={`${card.name}\nPhân cấp: ${card.tierLabel}\nSức mạnh: ${card.power}/100\nHồi chiêu gốc: ${card.cooldownRounds} vòng\nHiệu ứng: ${card.effect}`}
+                        title={`${card.name}\nPhân cấp: ${card.tierLabel}\nSức mạnh: ${card.power}/100\nHồi chiêu: ${card.cooldownRounds} vòng\nHiệu ứng: ${card.effect}`}
                       >
                         {/* Cooldown Radial Overlay */}
                         {isOnCooldown && (
-                          <div className="absolute inset-0 bg-slate-950/75 rounded-2xl flex flex-col items-center justify-center z-10 backdrop-blur-[1px] border border-amber-500/40 transition-all duration-300">
-                            <div className="relative w-11 h-11 flex items-center justify-center">
-                              <svg className="w-11 h-11 transform -rotate-90">
-                                {/* Track circle */}
+                          <div className="absolute inset-0 bg-slate-950/75 rounded-xl flex flex-col items-center justify-center z-10 backdrop-blur-[1px] border border-amber-500/40 transition-all duration-300">
+                            <div className="relative w-10 h-10 flex items-center justify-center">
+                              <svg className="w-10 h-10 transform -rotate-90">
                                 <circle
-                                  cx="22"
-                                  cy="22"
-                                  r="16"
+                                  cx="20"
+                                  cy="20"
+                                  r="15"
                                   stroke="rgba(255, 255, 255, 0.15)"
                                   strokeWidth="3"
                                   fill="transparent"
                                 />
-                                {/* Active progress circle */}
                                 <circle
-                                  cx="22"
-                                  cy="22"
-                                  r="16"
-                                  stroke="#fbbf24" // amber-400
+                                  cx="20"
+                                  cy="20"
+                                  r="15"
+                                  stroke="#38bdf8"
                                   strokeWidth="3"
                                   fill="transparent"
-                                  strokeDasharray={100.5}
-                                  strokeDashoffset={100.5 - (cooldownLeft / card.cooldownRounds) * 100.5}
+                                  strokeDasharray={94.2}
+                                  strokeDashoffset={94.2 - (cooldownLeft / card.cooldownRounds) * 94.2}
                                   strokeLinecap="round"
                                   className="transition-all duration-500 ease-out"
                                 />
                               </svg>
-                              {/* Center text */}
                               <div className="absolute inset-0 flex flex-col items-center justify-center leading-none">
-                                <span className="text-xs font-black text-white drop-shadow">{cooldownLeft}</span>
-                                <span className="text-[7px] font-black text-amber-400 uppercase tracking-wider">vòng</span>
+                                <span className="text-xs font-mono font-bold text-white">{cooldownLeft}</span>
                               </div>
                             </div>
-                            <span className="text-[7.5px] font-black uppercase text-amber-300 tracking-wider mt-1 animate-pulse">
-                              Đang Hồi
+                            <span className="text-[10px] font-semibold text-sky-200 mt-0.5 animate-pulse">
+                              Đang hồi
                             </span>
                           </div>
                         )}
 
-                        {/* Quantity tag */}
-                        <span className={`absolute -top-1.5 -right-1 text-[9px] font-black px-1.5 py-0.2 rounded-full shadow-sm z-20 ${
-                          qty > 0 ? "bg-fuchsia-600 text-white" : "bg-slate-200 text-slate-500"
+                        {/* Quantity Badge */}
+                        <span className={`absolute -top-1.5 -right-1 text-[11px] font-mono font-bold px-1.5 py-0.2 rounded-md shadow-2xs z-20 ${
+                          qty > 0 ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-600"
                         }`}>
                           x{qty}
                         </span>
 
-                        <span className="text-xl mb-0.5 group-hover:animate-bounce">{card.emoji}</span>
-                        <p className="text-[9.5px] font-black text-slate-850 line-clamp-1 leading-none">{card.name}</p>
+                        <span className="text-xl mb-1 group-hover:animate-bounce">{card.emoji}</span>
+                        <p className="text-xs font-bold text-slate-800 line-clamp-1 leading-tight">{card.name}</p>
                         
-                        {/* Tier & Power details */}
-                        <div className="flex items-center gap-1 mt-1 text-[8px] font-bold">
-                          <span className={`${tierColor}`}>{card.tierLabel.split(" ")[0]}</span>
-                          <span className="text-slate-300">•</span>
-                          <span className="text-slate-500 flex items-center">💪 {card.power}</span>
-                        </div>
-
-                        {/* Cooldown indicators */}
                         {isOnCooldown ? (
-                          <span className="text-[8px] font-black text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded-md mt-1 animate-pulse flex items-center gap-0.5">
-                            ⏳ Chờ: {cooldownLeft}v
+                          <span className="text-[11px] font-semibold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded mt-1 animate-pulse">
+                            Chờ {cooldownLeft}v
                           </span>
                         ) : isFreezeDisabled ? (
-                          <span className="text-[8px] font-extrabold text-red-500 mt-1 bg-red-50 px-1.5 py-0.5 rounded-md">Hết lượt</span>
+                          <span className="text-[11px] font-semibold text-rose-600 mt-1">Đã dùng</span>
                         ) : (
-                          <span className="text-[8px] font-bold text-slate-400 mt-1">
-                            🕒 Hồi: {card.cooldownRounds}v
+                          <span className="text-[11px] text-slate-500 mt-1 font-mono">
+                            Hồi: {card.cooldownRounds}v
                           </span>
                         )}
                       </button>
@@ -1777,29 +1812,32 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
               </div>
             )}
 
-            {/* Action controls */}
-            <div className="border-t border-slate-50 pt-5 flex justify-between items-center">
+            {/* Round Footer Controls */}
+            <div className="border-t border-slate-100 pt-4 flex justify-between items-center">
               <button
+                type="button"
                 onClick={quitBattle}
-                className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-650 font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer"
+                className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl transition-all cursor-pointer"
               >
-                Rút Lui 🏳️
+                Rời trận đấu
               </button>
 
               {!roundRevealed ? (
                 <button
+                  type="button"
                   disabled={userChoice === null}
                   onClick={() => revealRoundResults()}
-                  className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md cursor-pointer"
+                  className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-xs md:text-sm rounded-xl transition-all shadow-2xs cursor-pointer"
                 >
-                  Xác nhận câu trả lời 🔒
+                  Chốt đáp án
                 </button>
               ) : (
                 <button
+                  type="button"
                   onClick={handleNextRound}
-                  className="px-6 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md cursor-pointer flex items-center gap-2"
+                  className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs md:text-sm rounded-xl transition-all shadow-2xs cursor-pointer flex items-center gap-1.5"
                 >
-                  <span>{currentRound < 3 ? "Vòng Tiếp Theo" : "Xem Kết Quả Đấu Trận"}</span>
+                  <span>{currentRound < 3 ? "Sang vòng tiếp theo" : "Xem kết quả chung cuộc"}</span>
                   <ChevronRight className="w-4 h-4" />
                 </button>
               )}
@@ -1808,31 +1846,21 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
         </div>
       )}
 
-      {/* RESULTS DISPLAY VIEW */}
+      {/* 7. RESULTS DISPLAY VIEW */}
       {pkTab === "results" && opponent && (
         <motion.div 
           initial={{ opacity: 0, scale: 0.9, y: 30 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ type: "spring", duration: 0.8, bounce: 0.35 }}
-          className={`border rounded-[3rem] p-6 md:p-8 text-center shadow-2xl space-y-8 max-w-lg mx-auto py-12 relative overflow-hidden ${
-            userScore > opponent.score 
-              ? "bg-gradient-to-b from-amber-50 via-white to-white border-amber-250 ring-4 ring-amber-500/10"
-              : userScore === opponent.score 
-              ? "bg-white border-slate-150"
-              : "bg-gradient-to-b from-slate-50 via-white to-white border-slate-200"
-          }`}
+          className="bg-white rounded-2xl p-6 md:p-8 border border-slate-200/90 text-center shadow-lg space-y-7 max-w-lg mx-auto py-10 relative overflow-hidden"
         >
-          <div className="absolute top-0 right-0 w-32 h-32 bg-amber-200 rounded-full blur-3xl opacity-30" />
-          <div className="absolute bottom-0 left-0 w-32 h-32 bg-red-200 rounded-full blur-3xl opacity-30" />
-
-          {/* Winner declaration */}
           <div className="space-y-4 relative z-10">
             <div className="flex justify-center">
               <div className="relative">
                 {userScore > opponent.score ? (
                   <>
                     <motion.div 
-                      className="absolute -inset-4 rounded-full bg-gradient-to-tr from-yellow-400 via-amber-500 to-rose-500 blur opacity-50"
+                      className="absolute -inset-4 rounded-full bg-gradient-to-tr from-sky-400 via-blue-500 to-sky-600 blur opacity-35"
                       animate={{ scale: [1, 1.2, 1], rotate: 360 }}
                       transition={{ repeat: Infinity, duration: 6, ease: "linear" }}
                     />
@@ -1840,127 +1868,117 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
                       initial={{ scale: 0, rotate: -180 }}
                       animate={{ scale: 1, rotate: 0 }}
                       transition={{ type: "spring", delay: 0.2, stiffness: 120, damping: 10 }}
-                      className="w-28 h-28 bg-gradient-to-tr from-yellow-400 via-amber-500 to-rose-500 rounded-full flex items-center justify-center text-white text-6xl shadow-xl relative"
+                      className="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-md relative"
                     >
-                      🏆
+                      <Trophy className="w-12 h-12 text-amber-300" />
                       <motion.span 
                         animate={{ y: [-4, 4, -4] }}
                         transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                        className="absolute -top-3 -right-2 text-3xl"
+                        className="absolute -top-3 -right-2 bg-amber-400 text-amber-950 p-1.5 rounded-full shadow-xs"
                       >
-                        👑
+                        <Crown className="w-4 h-4 fill-current" />
                       </motion.span>
                       <motion.div
                         animate={{ scale: [1, 1.3, 1], opacity: [0.5, 1, 0.5] }}
                         transition={{ repeat: Infinity, duration: 2 }}
-                        className="absolute -inset-1 rounded-full border-2 border-yellow-300 pointer-events-none"
+                        className="absolute -inset-1 rounded-full border-2 border-blue-300 pointer-events-none"
                       />
                     </motion.div>
                   </>
                 ) : userScore === opponent.score ? (
-                  <>
-                    <div className="absolute -inset-1 rounded-full bg-amber-500/20 blur" />
-                    <motion.div 
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      className="w-24 h-24 bg-gradient-to-tr from-amber-400 to-amber-600 rounded-full flex items-center justify-center text-white text-5xl shadow-lg relative"
-                    >
-                      🤝
-                    </motion.div>
-                  </>
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-md relative"
+                  >
+                    <Shield className="w-10 h-10" />
+                  </motion.div>
                 ) : (
-                  <>
-                    <div className="absolute -inset-1 rounded-full bg-slate-400/20 blur" />
-                    <motion.div 
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      className="w-24 h-24 bg-gradient-to-tr from-slate-400 to-slate-600 rounded-full flex items-center justify-center text-white text-5xl shadow-lg relative"
-                    >
-                      💔
-                    </motion.div>
-                  </>
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="w-20 h-20 bg-slate-200 rounded-full flex items-center justify-center text-slate-600 shadow-xs relative"
+                  >
+                    <BookOpen className="w-10 h-10" />
+                  </motion.div>
                 )}
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <span className="text-[10px] font-black uppercase tracking-widest text-red-500 flex items-center justify-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
-                <span>KẾT QUẢ TRẬN ĐẤU</span>
-                <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
+              <span className="text-xs font-semibold text-blue-700 flex items-center justify-center gap-1.5">
+                <span>Tổng kết trận đấu</span>
               </span>
-              <h3 className="font-display font-black text-slate-850 text-xl leading-tight">
+              <h3 className="font-display font-bold text-slate-900 text-xl leading-tight">
                 {userScore > opponent.score ? (
                   <motion.span 
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.3 }}
-                    className="bg-gradient-to-r from-amber-600 via-yellow-500 to-emerald-600 bg-clip-text text-transparent drop-shadow-sm flex flex-col items-center gap-1"
+                    className="text-slate-900 flex flex-col items-center gap-1"
                   >
-                    <span className="font-black text-2xl">XUẤT SẮC CHIẾN THẮNG! 🎉</span>
+                    <span className="font-bold text-2xl">Chiến thắng thuyết phục!</span>
                     {pkStreak > 1 && (
-                      <span className="text-[10px] bg-red-505 text-white font-black uppercase tracking-widest px-3 py-1 rounded-full mt-2 animate-bounce flex items-center gap-1.5 shadow-md">
+                      <span className="text-xs bg-amber-500 text-white font-semibold px-3 py-1 rounded-full mt-1.5 animate-bounce flex items-center gap-1.5 shadow-xs">
                         <Flame className="w-3.5 h-3.5 fill-white" />
-                        Chuỗi {pkStreak} Trận Thắng!
+                        <span>Chuỗi {pkStreak} trận thắng liên tiếp</span>
                       </span>
                     )}
                   </motion.span>
                 ) : userScore === opponent.score ? (
-                  <span className="text-amber-600 font-extrabold">TRẬN ĐẤU HÒA NHAU! 🤝</span>
+                  <span className="text-blue-700 font-bold">Hai bên hòa điểm!</span>
                 ) : (
-                  <span className="text-rose-600 font-extrabold">ĐÃ THẤT BẠI MẤT RỒI! 😢</span>
+                  <span className="text-slate-700 font-bold">Chưa giành chiến thắng lượt này</span>
                 )}
               </h3>
-              <p className="text-xs text-slate-400 font-semibold leading-relaxed">
-                Độ khó thử thách: <strong className="text-slate-850 uppercase">{difficulty === "easy" ? "Dễ" : difficulty === "medium" ? "Trung Bình" : "Khó Nhất"}</strong>
+              <p className="text-xs text-slate-500">
+                Mức độ câu hỏi: <strong className="text-slate-800">{difficulty === "easy" ? "Cơ bản" : difficulty === "medium" ? "Trung bình" : "Nâng cao"}</strong>
               </p>
             </div>
           </div>
 
-          {/* Scores comparison card */}
+          {/* Score Comparison */}
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className={`border rounded-3xl p-5 flex items-center justify-between max-w-sm mx-auto shadow-inner relative ${
-              userScore > opponent.score 
-                ? "bg-amber-50/50 border-amber-200" 
-                : "bg-slate-50 border-slate-100"
-            }`}
+            className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-between max-w-sm mx-auto relative"
           >
             <div className="text-center space-y-1 flex-1">
-              <p className="text-[9px] font-black text-slate-400 uppercase">Điểm của Em</p>
+              <p className="text-xs font-medium text-slate-500">Điểm của em</p>
               <motion.p 
                 initial={{ scale: 0.8 }}
                 animate={{ scale: 1.1 }}
                 transition={{ type: "spring", stiffness: 200, delay: 0.5 }}
-                className="text-2xl font-display font-black text-indigo-650"
+                className="text-2xl font-mono font-bold text-blue-700 tabular-nums"
               >
                 {userScore}đ
               </motion.p>
             </div>
             <div className="h-10 w-px bg-slate-200 shrink-0 mx-2" />
             <div className="text-center space-y-1 flex-1">
-              <p className="text-[9px] font-black text-slate-400 uppercase">Điểm đối thủ</p>
-              <p className="text-2xl font-display font-black text-red-500">{opponent.score}đ</p>
+              <p className="text-xs font-medium text-slate-500">Điểm boss / bot AI</p>
+              <p className="text-2xl font-mono font-bold text-slate-700 tabular-nums">{opponent.score}đ</p>
             </div>
           </motion.div>
 
-          {/* Reward highlights */}
+          {/* Rewards Received */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="bg-slate-50 border border-slate-100/80 rounded-[2rem] p-5 space-y-3 text-left"
+            className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3 text-left"
           >
-            <h4 className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">🏆 Quà tặng nhận được:</h4>
+            <h4 className="text-xs font-semibold text-slate-700">Phần thưởng nhận được:</h4>
             
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-white p-3 rounded-2xl border border-slate-100 flex items-center gap-2.5">
-                <span className="text-lg">⚡</span>
+              <div className="bg-white p-3 rounded-xl border border-slate-200 flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center shrink-0">
+                  <Award className="w-4 h-4" />
+                </div>
                 <div>
-                  <p className="text-[9px] font-black text-slate-400 uppercase">Điểm kinh nghiệm</p>
-                  <p className="text-xs font-black text-slate-800">
+                  <p className="text-xs text-slate-500">Kinh nghiệm</p>
+                  <p className="text-sm font-mono font-bold text-slate-900">
                     {userScore > opponent.score 
                       ? `+${difficulty === "easy" ? 25 : difficulty === "medium" ? 40 : 70} XP` 
                       : userScore === opponent.score 
@@ -1971,11 +1989,13 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
                 </div>
               </div>
 
-              <div className="bg-white p-3 rounded-2xl border border-slate-100 flex items-center gap-2.5">
-                <span className="text-lg">🪙</span>
+              <div className="bg-white p-3 rounded-xl border border-slate-200 flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center shrink-0">
+                  <WisdomCoinIcon size={18} />
+                </div>
                 <div>
-                  <p className="text-[9px] font-black text-slate-400 uppercase">Xu trí tuệ</p>
-                  <p className="text-xs font-black text-slate-800">
+                  <p className="text-xs text-slate-500">Xu thưởng</p>
+                  <p className="text-sm font-mono font-bold text-slate-900">
                     {userScore > opponent.score 
                       ? `+${difficulty === "easy" ? 10 : difficulty === "medium" ? 20 : 45} Xu` 
                       : userScore === opponent.score 
@@ -1989,22 +2009,24 @@ export default function PKArena({ progress, selectedAvatarIdx, updateProgress, t
           </motion.div>
 
           {/* Actions */}
-          <div className="flex gap-4 pt-2">
+          <div className="flex gap-3 pt-1">
             <button
+              type="button"
               onClick={() => {
                 setTriggerConfetti(false);
                 setPkTab("lobby");
               }}
-              className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-650 font-extrabold text-xs uppercase tracking-wider rounded-2xl transition-all cursor-pointer text-center"
+              className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs md:text-sm rounded-xl transition-all cursor-pointer text-center"
             >
-              Quay Lại Sảnh
+              Về sảnh thi đấu
             </button>
             <button
+              type="button"
               onClick={startMatchmaking}
-              className="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs uppercase tracking-wider rounded-2xl shadow-md transition-all cursor-pointer text-center flex items-center justify-center gap-2"
+              className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs md:text-sm rounded-xl shadow-2xs transition-all cursor-pointer text-center flex items-center justify-center gap-2"
             >
               <RotateCcw className="w-4 h-4" />
-              <span>Phục Thù / Tiếp Tục</span>
+              <span>Thi đấu tiếp</span>
             </button>
           </div>
         </motion.div>

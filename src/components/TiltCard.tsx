@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 
 interface TiltCardProps {
   children: React.ReactNode;
@@ -9,82 +9,74 @@ interface TiltCardProps {
 }
 
 export default function TiltCard({ children, onClick, className = "", id, disabled = false }: TiltCardProps) {
-  const [coords, setCoords] = useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  const rectRef = useRef<DOMRect | null>(null);
+  const rafRef = useRef<number | null>(null);
+
+  const handleMouseEnter = () => {
+    if (disabled || !cardRef.current) return;
+    rectRef.current = cardRef.current.getBoundingClientRect();
+    cardRef.current.style.setProperty("--tilt-active", "1");
+  };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (disabled || !cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left; // x position within the element
-    const y = e.clientY - rect.top;  // y position within the element
-    setCoords({ x, y });
-  };
+    const clientX = e.clientX;
+    const clientY = e.clientY;
 
-  const handleMouseEnter = () => {
-    if (disabled) return;
-    setIsHovered(true);
+    if (rafRef.current !== null) return;
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = null;
+      const el = cardRef.current;
+      if (!el) return;
+      const rect = rectRef.current || el.getBoundingClientRect();
+      rectRef.current = rect;
+
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+      const xc = rect.width / 2 || 1;
+      const yc = rect.height / 2 || 1;
+
+      const rotateX = (-((y - yc) / yc) * 6).toFixed(2);
+      const rotateY = (((x - xc) / xc) * 6).toFixed(2);
+      const glareX = ((x / (rect.width || 1)) * 100).toFixed(1);
+      const glareY = ((y / (rect.height || 1)) * 100).toFixed(1);
+
+      el.style.setProperty("--tilt-rx", `${rotateX}deg`);
+      el.style.setProperty("--tilt-ry", `${rotateY}deg`);
+      el.style.setProperty("--glare-x", `${glareX}%`);
+      el.style.setProperty("--glare-y", `${glareY}%`);
+    });
   };
 
   const handleMouseLeave = () => {
-    if (disabled) return;
-    setIsHovered(false);
-    setCoords({ x: 0, y: 0 });
-  };
-
-  // Calculate rotation angles
-  let rotateX = 0;
-  let rotateY = 0;
-  let glareStyle: React.CSSProperties = {};
-
-  if (isHovered && cardRef.current && !disabled) {
-    const rect = cardRef.current.getBoundingClientRect();
-    const xc = rect.width / 2;
-    const yc = rect.height / 2;
-    // Max rotation 12 degrees
-    rotateX = -((coords.y - yc) / yc) * 12;
-    rotateY = ((coords.x - xc) / xc) * 12;
-
-    // Interactive soft light glare effect
-    glareStyle = {
-      background: `radial-gradient(circle at ${coords.x}px ${coords.y}px, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 70%)`,
-    };
-  }
-
-  const transformStyle: React.CSSProperties = disabled ? {} : {
-    transform: isHovered
-      ? `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`
-      : "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)",
-    transition: isHovered 
-      ? "transform 0.1s ease-out, box-shadow 0.1s ease-out" 
-      : "transform 0.5s ease-out, box-shadow 0.5s ease-out",
-    transformStyle: "preserve-3d",
-    boxShadow: isHovered
-      ? "0 25px 45px -12px rgba(79, 70, 229, 0.22), 0 12px 20px -8px rgba(79, 70, 229, 0.15)"
-      : "0 10px 30px -15px rgba(0, 0, 0, 0.06)",
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+    rectRef.current = null;
+    if (disabled || !cardRef.current) return;
+    const el = cardRef.current;
+    el.style.setProperty("--tilt-rx", "0deg");
+    el.style.setProperty("--tilt-ry", "0deg");
+    el.style.setProperty("--tilt-active", "0");
   };
 
   return (
     <div
       id={id}
       ref={cardRef}
-      onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
+      onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onClick={disabled ? undefined : onClick}
-      style={transformStyle}
-      className={`relative select-none overflow-hidden ${className}`}
+      className={`lesson-tilt-stage relative select-none overflow-hidden ${className}`}
     >
-      {/* Glare effect overlay */}
-      {isHovered && !disabled && (
-        <div
-          className="absolute inset-0 pointer-events-none z-30 rounded-[2rem]"
-          style={glareStyle}
-        />
-      )}
-      {/* 3D Inner Content perspective layer (makes the text/content pop out) */}
-      <div style={disabled ? {} : { transform: "translateZ(30px)", transformStyle: "preserve-3d" }} className="h-full flex flex-col justify-between w-full">
-        {children}
+      <div className="lesson-tilt-wrapper h-full w-full flex flex-col justify-between">
+        <div className="lesson-tilt-glare pointer-events-none" aria-hidden="true" />
+        <div className="relative z-10 h-full flex flex-col justify-between w-full">
+          {children}
+        </div>
       </div>
     </div>
   );

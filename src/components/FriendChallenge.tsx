@@ -148,7 +148,7 @@ export default function FriendChallenge({ onClose }: { onClose: () => void }) {
           <div className="p-10 text-center space-y-6">
             <ConfettiCelebration />
             <h2 className="text-3xl font-black text-slate-800 mb-2">
-              {myScore > friendScore ? "THẮNG RỒI!" : myScore < friendScore ? "THUA MẤT RỒI!" : "HÒA NHAU!"}
+              {myScore > friendScore ? "THẮNG RỒI!" : myScore < friendScore ? "Thua mất rồi!" : "HÒA NHAU!"}
             </h2>
             <div className="flex items-center justify-center gap-8 my-8">
               <div className="flex flex-col items-center p-4 bg-indigo-50 rounded-2xl border border-indigo-100 min-w-[120px]">

@@ -1,0 +1,16 @@
+{
+  "name": "SmartStudy - Trợ lý học tập",
+  "short_name": "SmartStudy",
+  "description": "Học bài, luyện đề, flashcard và trò chơi ôn tập cho học sinh THCS.",
+  "lang": "vi",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f2f6fc",
+  "theme_color": "#243c6e",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

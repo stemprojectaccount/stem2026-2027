@@ -1,0 +1,75 @@
+/**
+ * Harmony Theme - Chống mỏi mắt & đồng bộ màu sắc với Hồ bơi 60 FPS
+ * Đã đổi sang tiền tố --harmony-* để tránh xung đột với biến :root của src/index.css
+ * Tiếp quản & chuẩn hóa bởi: ANTIGRAVITY 1
+ */
+
+:root {
+  --harmony-bg-primary: #0f172a;
+  --harmony-bg-surface: #1e293b;
+  --harmony-bg-surface-elevated: rgba(30, 41, 59, 0.85);
+  --harmony-text-primary: #f8fafc;
+  --harmony-text-secondary: #94a3b8;
+  --harmony-accent-aqua: #06b6d4;
+  --harmony-accent-blue: #3487c8;
+  --harmony-border-subtle: rgba(148, 163, 184, 0.15);
+  --harmony-radius-card: 16px;
+  --harmony-shadow-soft: 0 10px 30px -10px rgba(2, 6, 23, 0.5);
+}
+
+/* Thẻ giao diện hài hòa, chống rối mắt */
+.harmony-card {
+  background: var(--harmony-bg-surface-elevated);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--harmony-border-subtle);
+  border-radius: var(--harmony-radius-card);
+  padding: 1.25rem;
+  box-shadow: var(--harmony-shadow-soft);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.harmony-card:hover {
+  border-color: rgba(6, 182, 212, 0.35);
+  box-shadow: 0 12px 32px -8px rgba(6, 182, 212, 0.15);
+}
+
+/* Sân khấu game hồ bơi đồng bộ với PoolPhysicsEngine */
+.harmony-game-stage {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  background: linear-gradient(180deg, #0f172a 0%, #1e293b 65%, #0a3d62 100%);
+  box-shadow: 0 12px 36px -8px rgba(6, 182, 212, 0.2);
+}
+
+/* Nút bấm điểm nhấn Aqua */
+.harmony-btn-primary {
+  background: linear-gradient(135deg, #06b6d4 0%, #3487c8 100%);
+  color: #020617;
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.5rem 1.25rem;
+  box-shadow: 0 4px 14px rgba(6, 182, 212, 0.3);
+  transition: all 0.2s ease;
+}
+
+.harmony-btn-primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(6, 182, 212, 0.45);
+}
+
+.harmony-btn-secondary {
+  background: rgba(30, 41, 59, 0.8);
+  color: #cbd5e1;
+  border: 1px solid var(--harmony-border-subtle);
+  border-radius: 12px;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.harmony-btn-secondary:hover {
+  background: rgba(51, 65, 85, 0.9);
+  color: #ffffff;
+}

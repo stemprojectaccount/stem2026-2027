@@ -1,0 +1,58 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile, educational progress, lessons, and metadata",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Unique Firebase Authentication User ID"
+        },
+        "email": {
+          "type": "string",
+          "description": "User Google email address"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "User display name or full name"
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "Profile picture URL from Google"
+        },
+        "grade": {
+          "type": "string",
+          "description": "Current school grade (Lớp 6, 7, 8, 9)"
+        },
+        "school": {
+          "type": "string",
+          "description": "School name"
+        },
+        "progress": {
+          "type": "object",
+          "description": "User gamification progress including points, coins, level, streak"
+        },
+        "lessons": {
+          "type": "array",
+          "description": "Saved study lessons, notes, and summaries"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp of last update"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp of account creation"
+        }
+      },
+      "required": ["uid"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile, learning data, and study progress documents"
+    }
+  }
+}

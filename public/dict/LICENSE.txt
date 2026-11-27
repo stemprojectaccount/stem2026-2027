@@ -1,0 +1,7 @@
+SmartStudy offline English–Vietnamese dictionary data
+
+Derived from Wiktionary (https://vi.wiktionary.org and https://en.wiktionary.org),
+extracted by wiktextract / kaikki.org (https://kaikki.org).
+Wiktionary content is available under the Creative Commons Attribution-ShareAlike License
+(CC BY-SA 4.0, https://creativecommons.org/licenses/by-sa/4.0/). These files are shared under the same license.
+Built by scripts/build-offline-dict.cjs.
