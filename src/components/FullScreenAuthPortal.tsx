@@ -18,10 +18,12 @@ interface FullScreenAuthPortalProps {
 const GRADES = ["Lớp 6", "Lớp 7", "Lớp 8", "Lớp 9"];
 
 const FEATURES = [
-  { icon: Accessibility, title: "Hỗ trợ học tập", text: "Nhìn thay nghe, ký hiệu tay, nói thay bấm" },
-  { icon: Cloud, title: "Lưu tiến độ", text: "Trên điện thoại và máy tính" },
-  { icon: WifiOff, title: "Học khi mất mạng", text: "Luyện đề, từ điển, trò chơi" },
+  { icon: Accessibility, title: "Hỗ trợ học tập", tint: "bg-[#ccfbf1] text-[#0e7279]" },
+  { icon: Cloud, title: "Lưu tiến độ", tint: "bg-[#dbeafe] text-[#2e5cb8]" },
+  { icon: WifiOff, title: "Học khi mất mạng", tint: "bg-[#fef3c7] text-[#b45309]" },
 ];
+// Bright tile colours for the feature chips, cycled (the screen used to be all pale grey-blue)
+const CHIP_TINTS = ["bg-[#dbeafe] text-[#1e40af]", "bg-[#dcfce7] text-[#166534]", "bg-[#fef3c7] text-[#92400e]", "bg-[#ffe4e6] text-[#9f1239]"];
 
 type Mode = "standard" | "support";
 const MODE_KEY = "smartstudy_learning_mode";
@@ -58,7 +60,7 @@ function ModeCard({ mode, onPick, picked }: { mode: Mode; onPick: (m: Mode) => v
     <div
       onClick={() => onPick(mode)}
       className={`group relative flex w-full cursor-pointer flex-col rounded-2xl border-2 bg-white p-3 shadow-md transition hover:-translate-y-0.5 hover:shadow-lg sm:p-5 ${
-        support ? "mt-3 border-[#2e5cb8] sm:mt-0" : picked ? "border-[#2e5cb8]" : "border-[#c9dcf4]"
+        support ? "mt-3 border-[#14b8a6] sm:mt-0" : picked ? "border-[#2e5cb8]" : "border-[#93c5fd]"
       } ${picked ? "ring-2 ring-[#8ee8b4] ring-offset-2 ring-offset-[#eef4fc]" : ""}`}
     >
       {support && (
@@ -68,7 +70,7 @@ function ModeCard({ mode, onPick, picked }: { mode: Mode; onPick: (m: Mode) => v
       )}
 
       <div className="flex items-center gap-3 sm:flex-col sm:gap-0">
-        <div aria-hidden className="flex h-24 w-28 shrink-0 items-center justify-center rounded-xl bg-[#eef4fc] sm:order-2 sm:mt-3 sm:h-44 sm:w-full">
+        <div aria-hidden className={`flex h-24 w-28 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br sm:order-2 sm:mt-3 sm:h-44 sm:w-full ${support ? "from-[#ccfbf1] to-[#fef9c3]" : "from-[#dbeafe] to-[#fce7f3]"}`}>
           {support ? (
             <span className="grid grid-cols-3 gap-1 text-2xl leading-none sm:gap-3 sm:text-5xl">
               {HAND_SIGNS.map((s) => <span key={s}>{s}</span>)}
@@ -78,15 +80,14 @@ function ModeCard({ mode, onPick, picked }: { mode: Mode; onPick: (m: Mode) => v
           )}
         </div>
         <div className="min-w-0 flex-1 text-left sm:order-1 sm:text-center">
-          <h2 className="font-display text-base font-black uppercase leading-tight text-[#243c6e] sm:text-2xl">{support ? "Chế độ hỗ trợ khiếm thính" : "Chế độ tiêu chuẩn"}</h2>
-          <p className="mt-0.5 text-sm font-medium text-slate-600">{support ? "Khiếm thính · Khó vận động" : "Học như bình thường"}</p>
+          <h2 className="font-display text-base font-black uppercase leading-tight text-[#243c6e] sm:text-2xl">{support ? "Chế độ hỗ trợ" : "Chế độ tiêu chuẩn"}</h2>
         </div>
       </div>
 
       <ul aria-hidden className="mt-3 grid grid-cols-2 gap-1.5">
-        {chips.map(({ icon: Icon, label }) => (
-          <li key={label} className="flex items-center gap-1 rounded-full border border-[#c9dcf4] bg-[#eef4fc] px-2.5 py-1 text-xs font-bold text-[#243c6e]">
-            <Icon className="h-3.5 w-3.5 shrink-0 text-[#2e5cb8]" />
+        {chips.map(({ icon: Icon, label }, i) => (
+          <li key={label} className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold sm:text-sm ${CHIP_TINTS[i % CHIP_TINTS.length]}`}>
+            <Icon className="h-4 w-4 shrink-0" />
             {label}
           </li>
         ))}
@@ -103,7 +104,7 @@ function ModeCard({ mode, onPick, picked }: { mode: Mode; onPick: (m: Mode) => v
           }}
           className="mt-2.5 flex min-h-[44px] w-full items-center justify-between gap-3 rounded-xl px-1 text-left text-sm font-semibold text-slate-700"
         >
-          Bật phụ đề và ký hiệu tay ngay lập tức
+          Bật phụ đề + ký hiệu tay
           <span aria-hidden className={`relative h-6 w-11 shrink-0 rounded-full transition ${signsOn ? "bg-[#2e5cb8]" : "bg-slate-300"}`}>
             <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${signsOn ? "left-[22px]" : "left-0.5"}`} />
           </span>
@@ -113,15 +114,11 @@ function ModeCard({ mode, onPick, picked }: { mode: Mode; onPick: (m: Mode) => v
       <div className="mt-auto flex w-full flex-col items-center pt-3 sm:pt-4">
         <button
           type="button"
-          className={`flex min-h-[48px] w-auto items-center justify-center gap-2 rounded-xl px-6 text-sm font-black uppercase leading-tight text-white focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[#fbbf24] sm:text-base ${support ? "bg-[#2e5cb8] group-hover:bg-[#284d9a]" : "ss-btn-grad"}`}
+          className={`flex min-h-[48px] w-auto items-center justify-center gap-2 rounded-xl px-6 text-sm font-black uppercase leading-tight text-white shadow-md focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[#fbbf24] sm:text-base ${support ? "bg-[#0e7279] group-hover:bg-[#0e5f66]" : "ss-btn-grad"}`}
         >
           {support ? "Vào chế độ hỗ trợ" : "Vào chế độ tiêu chuẩn"}
           <ArrowRight className="h-4 w-4 shrink-0 sm:h-5 sm:w-5" aria-hidden />
         </button>
-        <p className="mt-1.5 flex items-center justify-center gap-1 text-xs font-medium text-slate-600">
-          <UserIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
-          Đăng nhập để lưu tiến độ
-        </p>
       </div>
     </div>
   );
@@ -191,9 +188,9 @@ export default function FullScreenAuthPortal({
   };
 
   return (
-    <div className="auth-portal desktop-safe-top fixed inset-0 z-[120] flex flex-col justify-between overflow-y-auto bg-[#eef4fc] font-sans">
+    <div className="auth-portal desktop-safe-top fixed inset-0 z-[120] flex flex-col justify-between overflow-y-auto bg-gradient-to-br from-[#e0f2fe] via-[#f0f9ff] to-[#fef9c3] font-sans">
 
-      <header className="relative z-10 flex w-full shrink-0 items-center justify-between gap-2 border-b border-[#e3edfa] bg-white px-4 py-2.5 sm:px-8">
+      <header className="relative z-10 flex w-full shrink-0 items-center justify-between gap-2 border-b border-white/60 bg-white/70 px-4 py-2.5 backdrop-blur sm:px-8">
         <BrandLogo size={36} tagline={false} />
         <button
           type="button"
@@ -270,7 +267,6 @@ export default function FullScreenAuthPortal({
               Đăng nhập bằng cách chuyển trang
             </button>
           )}
-          <p className="mt-2 text-xs font-medium text-slate-600">Không cần nhớ mật khẩu</p>
         </section>
       </main>
       ) : (
@@ -286,32 +282,24 @@ export default function FullScreenAuthPortal({
                   <>Học theo cách <span className="whitespace-nowrap text-[#2e5cb8]">hợp với em</span></>
                 )}
               </h1>
-              <p className="mx-auto max-w-xl text-base font-medium leading-relaxed text-slate-700 lg:mx-0">
-                Bài học, luyện đề, từ điển và trò chơi ôn tập cho học sinh lớp 6 đến lớp 9. Đăng nhập để lưu tiến độ; không đăng nhập vẫn học được.
-              </p>
             </div>
 
-            <div className="flex flex-col items-center gap-4 rounded-3xl border border-[#c9dcf4] bg-white p-4 shadow-sm sm:flex-row sm:p-5">
-              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border-2 border-[#c9dcf4] bg-[#eef4fc] sm:h-24 sm:w-24" aria-hidden>
-                {getMascotComponent(selectedAvatarIdx, 76, 2, "default")}
+            <div className="flex items-center justify-center gap-4 lg:justify-start">
+              <div className="flex h-32 w-32 shrink-0 items-center justify-center rounded-3xl bg-gradient-to-br from-[#dbeafe] to-[#fce7f3] shadow-md sm:h-40 sm:w-40 [&>*]:!h-[85%] [&>*]:!w-[85%]" aria-hidden>
+                {getMascotComponent(selectedAvatarIdx, 140, 2, "default")}
               </div>
-              <p className="text-center text-base font-bold leading-snug text-[#243c6e] sm:text-left">
-                {mode === "support" ? (
-                  <>Chào em! Mọi âm thanh trong app đều có chữ và hình. Tay khó bấm thì gọi <span className="text-[#0e7279]">“Này SmartStudy”</span> rồi nói điều em cần; khó nói thì giơ ký hiệu tay trước camera.</>
-                ) : (
-                  <>Chào em! Cần báo đúng sai bằng hình hay nói thay bấm? Bấm <span className="text-[#0e7279]">“Em cần hỗ trợ khi học?”</span> trước khi vào học nhé.</>
-                )}
+              <p className="relative rounded-2xl bg-white px-4 py-3 text-left text-base font-bold leading-snug text-[#243c6e] shadow-md">
+                {mode === "support" ? "Có chữ, hình và ký hiệu tay cho em! 🤟" : "Chào em! Cùng học nhé! 👋"}
               </p>
             </div>
 
-            <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-3 sm:gap-3">
-              {FEATURES.map(({ icon: Icon, title, text }) => (
-                <li key={title} className="flex items-center gap-3 rounded-2xl border border-[#c9dcf4] bg-white p-3 text-left sm:block sm:text-center">
-                  <Icon className="h-5 w-5 shrink-0 text-[#13808a] sm:mx-auto sm:mb-1" aria-hidden />
-                  <span>
-                    <span className="block text-sm font-extrabold text-[#243c6e]">{title}</span>
-                    <span className="text-sm text-slate-600">{text}</span>
+            <ul className="grid grid-cols-3 gap-2.5 sm:gap-3">
+              {FEATURES.map(({ icon: Icon, title, tint }) => (
+                <li key={title} className="flex flex-col items-center gap-2 rounded-2xl bg-white/80 p-3 text-center shadow-sm">
+                  <span className={`flex h-12 w-12 items-center justify-center rounded-2xl ${tint}`}>
+                    <Icon className="h-6 w-6" aria-hidden />
                   </span>
+                  <span className="text-xs font-extrabold text-[#243c6e] sm:text-sm">{title}</span>
                 </li>
               ))}
             </ul>
@@ -352,8 +340,7 @@ export default function FullScreenAuthPortal({
                         >
                           <Icon className="h-6 w-6 shrink-0 text-[#13808a]" aria-hidden />
                           <span className="min-w-0 flex-1">
-                            <span className="block text-sm font-black text-[#0e5f66]">{label}</span>
-                            <span className="block text-xs text-slate-600">{hint}</span>
+                            <span className="block text-sm font-black text-[#0e5f66]" title={hint}>{label}</span>
                             {key === "handSigns" && <span aria-hidden className="mt-1 flex gap-1 text-lg leading-none">{HAND_SIGNS.map((e) => <span key={e}>{e}</span>)}</span>}
                           </span>
                           <span aria-hidden className={`relative h-6 w-11 shrink-0 rounded-full transition ${isOn ? "bg-[#13808a]" : "bg-slate-300"}`}>
@@ -376,7 +363,6 @@ export default function FullScreenAuthPortal({
                 <Accessibility className="h-7 w-7 shrink-0 text-[#13808a]" aria-hidden />
                 <span className="min-w-0 flex-1">
                   <span className="block text-base font-black text-[#0e5f66]">{helpOn ? "Đang bật hỗ trợ" : "Em cần hỗ trợ khi học?"}</span>
-                  <span className="block text-sm text-slate-600">{helpOn ? "Bấm để xem hoặc đổi" : "Báo bằng hình, nói thay bấm, không vội…"}</span>
                 </span>
                 {helpOn && <Check className="h-5 w-5 shrink-0 text-[#13808a]" aria-hidden />}
               </button>
@@ -462,10 +448,6 @@ export default function FullScreenAuthPortal({
                 </button>
               </div>
 
-              <p className="flex items-center justify-center gap-1.5 border-t border-[#e3edfa] pt-3 text-center text-sm font-semibold text-slate-600">
-                <ShieldCheck className="h-4 w-4 shrink-0 text-[#13808a]" aria-hidden />
-                Không cần nhớ mật khẩu · Miễn phí
-              </p>
             </div>
           </div>
         </div>
