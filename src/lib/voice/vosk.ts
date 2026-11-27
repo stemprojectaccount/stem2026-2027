@@ -5,10 +5,25 @@ import { createModel, type Model } from "vosk-browser";
 import { isSpeech, nextFloor } from "./gate";
 
 const MODEL_URL = `${import.meta.env.BASE_URL}models/vosk-vn.tar.gz`;
+// The web build (AI Studio) leaves the 32 MB model out to stay under its size limit and fetches this copy
+// instead (scripts/export-web-source.cjs). The apps ship the model, so they never need the network.
+const REMOTE_MODEL_URL = "https://raw.githubusercontent.com/stemprojectaccount/stem2026-2027/assets/vosk-vn.tar.gz";
 let modelP: Promise<Model> | null = null;
 
+// A missing file comes back as the SPA's index.html (200, text/html), so check the type too
+const modelUrl = async () => {
+  const local = new URL(MODEL_URL, location.href).href;
+  try {
+    const r = await fetch(local, { method: "HEAD" });
+    if (r.ok && !(r.headers.get("content-type") || "").includes("text/html")) return local;
+  } catch {
+    // offline and no local copy: the remote one fails too, with a clear error from createModel
+  }
+  return REMOTE_MODEL_URL;
+};
+
 export const loadSpeechModel = () =>
-  (modelP ??= createModel(new URL(MODEL_URL, location.href).href).catch((e) => {
+  (modelP ??= modelUrl().then(createModel).catch((e) => {
     modelP = null;
     throw e;
   }));
