@@ -7,8 +7,16 @@ const MathMarkdown = React.lazy(() => import("./components/MathMarkdown"));
 const AIChatBot = React.lazy(() => import("./components/AIChatBot"));
 const MiniPodcastPlayer = React.lazy(() => import("./components/MiniPodcastPlayer"));
 import { RefreshCw, MousePointer2, Lightbulb, FileText } from "lucide-react";
-import confetti from "canvas-confetti";
-import LessonQRCode from "./components/LessonQRCode";
+import type confettiFn from "canvas-confetti";
+// Loaded on the first celebration / share popover, not at startup
+const confetti = (opts: Parameters<typeof confettiFn>[0]) => void import("canvas-confetti").then((m) => m.default(opts));
+const LessonQRCode = React.lazy(() => import("./components/LessonQRCode"));
+// Main tabs, fetched while the app is idle after start so the first tap on a tab opens without a wait
+const prefetchMainTabs = () => [
+  () => import("./components/Dashboard"), () => import("./components/LessonReader"), () => import("./components/QuizArena"),
+  () => import("./components/GameHub"), () => import("./features/tools/ToolsHub"), () => import("./components/Profile"),
+  () => import("./features/dictionary/DictionaryPage"), () => import("./components/Flashcards"), () => import("./components/Shop"),
+].forEach((load, i) => setTimeout(() => void load().catch(() => {}), i * 400)); // staggered: never one big stall
 import { useFirestoreSync } from "./hooks/useFirestoreSync";
 import { ROLE_EVENT, getRoleForUser } from "./lib/familyLink";
 import AuthAccountWidget from "./components/AuthAccountModal";
@@ -209,6 +217,12 @@ export const triggerFireworksCelebration = () => {
 
 export default function App() {
   const studyReminder = useStudyReminder();
+  useEffect(() => {
+    const start = () => prefetchMainTabs();
+    const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number };
+    const id = w.requestIdleCallback ? w.requestIdleCallback(start, { timeout: 4000 }) : window.setTimeout(start, 2500);
+    return () => (w.requestIdleCallback ? (window as any).cancelIdleCallback?.(id) : clearTimeout(id));
+  }, []);
   const [activeTab, setActiveTab] = useState<string>(() => {
     try {
       // A QR code from "Chia sẻ nhanh" (?c=CODE / ?p=...) opens the tool directly
@@ -4197,6 +4211,7 @@ export default function App() {
                         </button>
                       </div>
 
+                      <React.Suspense fallback={<div className="h-40" aria-busy="true" />}>
                       <LessonQRCode
                         compact
                         lessonId={String(currentActiveLessonForShare?.id || "1")}
@@ -4223,6 +4238,7 @@ export default function App() {
                           triggerSuccessMessage("Đã tải thẻ mã QR (.png) của bài học!");
                         }}
                       />
+                      </React.Suspense>
                     </div>
                   )}
 
