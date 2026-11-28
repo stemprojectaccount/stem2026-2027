@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Accessibility, ArrowLeft, ArrowRight, RefreshCw, AlertCircle, User as UserIcon, Cloud, WifiOff, ShieldCheck, Globe, X, Check, Captions, Vibrate, Mic, TimerOff, Ear, Hand, Settings, BookOpen, ListChecks, Languages, Gamepad2 } from "lucide-react";
-import { BrandLogo, getMascotComponent } from "./CustomMascots";
+import { Accessibility, ArrowLeft, ArrowRight, RefreshCw, AlertCircle, User as UserIcon, Cloud, WifiOff, ShieldCheck, Globe, X, Check, Captions, Vibrate, Mic, TimerOff, Ear, Hand, Settings, BookOpen, ListChecks, Languages, Gamepad2, Star, Heart } from "lucide-react";
+import { BrandLogo, getMascotComponent, WhaleMascot } from "./CustomMascots";
 import { SupportAskDialog } from "./support/SupportFirstRun";
 import { isSupportActive, setSupportNeed, setSupportProfile, useSupportProfile, type SupportNeed, type SupportProfile } from "../lib/support/profile";
 import { isDesktopApp, isNativeMobileApp } from "../firebase";
@@ -49,57 +49,86 @@ const STANDARD_FEATURES = [
   { icon: Gamepad2, label: "Trò chơi ôn tập" },
 ];
 
-/** One of the two big cards of the first step (layout and palette 3 from the student's own mock-up). */
+// Feature rows on the mode cards: white icon bubble on a soft tint (the student's 2026-11 mock-up)
+const ROW_TINTS = [
+  "bg-[#e0efff] text-[#1e4fa3] [&_svg]:text-[#2e6fd8]",
+  "bg-[#dcfce7] text-[#166534] [&_svg]:text-[#16a34a]",
+  "bg-[#ffedd5] text-[#9a3412] [&_svg]:text-[#ea7a0c]",
+  "bg-[#ffe4e6] text-[#9f1239] [&_svg]:text-[#e11d48]",
+];
+
+// Help symbols floating around the support whale (hearing, vibration, voice, no timer, accessibility)
+const WHALE_BADGES = [
+  { icon: Accessibility, pos: "left-0 top-0 sm:left-1 sm:top-1", tint: "bg-[#ccfbf1] text-[#0f766e]" },
+  { icon: Ear, pos: "right-0 top-0 sm:right-1 sm:top-2", tint: "bg-[#e0efff] text-[#2e6fd8]" },
+  { icon: Mic, pos: "-left-1 bottom-3 sm:left-0 sm:bottom-6", tint: "bg-[#ffedd5] text-[#ea7a0c]" },
+  { icon: Vibrate, pos: "-right-1 bottom-3 sm:right-0 sm:bottom-6", tint: "bg-[#dcfce7] text-[#16a34a]" },
+  { icon: Hand, pos: "left-1/2 -bottom-1 -translate-x-1/2 sm:bottom-0", tint: "bg-[#ffe4e6] text-[#e11d48]" },
+];
+
+/** One of the two big cards of the first step: happy whale = standard, whale with help symbols = support. */
 function ModeCard({ mode, onPick, picked }: { mode: Mode; onPick: (m: Mode) => void; picked: boolean }) {
   const support = mode === "support";
-  const chips = support ? NEEDS : STANDARD_FEATURES;
+  const rows = support ? SUPPORT_SWITCHES : STANDARD_FEATURES;
+  const TitleIcon = support ? Heart : Star;
   // The card is a div (click anywhere) with a real button inside for keyboard and screen readers: a whole
   // card made of one <button> lost its stretch layout in the desktop app's older Chromium.
   return (
     <div
       onClick={() => onPick(mode)}
-      className={`group relative flex w-full cursor-pointer flex-col rounded-2xl border-2 bg-white p-2.5 shadow-md transition hover:-translate-y-0.5 hover:shadow-lg sm:p-5 ${
-        support ? "border-[#14b8a6]" : picked ? "border-[#2e5cb8]" : "border-[#93c5fd]"
-      } ${picked ? "ring-2 ring-[#8ee8b4] ring-offset-2 ring-offset-[#eef4fc]" : ""}`}
+      className={`group relative mt-7 flex w-full cursor-pointer flex-col rounded-[1.75rem] border-4 border-white/90 bg-gradient-to-b px-2 pb-3 pt-9 shadow-[0_12px_30px_-10px_rgba(30,64,140,0.45)] ring-2 transition hover:-translate-y-1 sm:mt-9 sm:px-5 sm:pb-5 sm:pt-14 ${
+        support ? "from-[#e6fbe9] via-[#f4fff5] to-white ring-[#86d99a]" : "from-[#e3f0ff] via-[#f3f8ff] to-white ring-[#93c0f5]"
+      } ${picked ? "outline outline-[3px] outline-offset-2 outline-[#fbbf24]" : ""}`}
     >
-
-      <div className="flex flex-col">
-        <div aria-hidden className={`order-2 mt-2 flex h-28 w-full shrink-0 items-center justify-center rounded-xl bg-gradient-to-br sm:mt-3 sm:h-44 ${support ? "from-[#ccfbf1] to-[#fef9c3]" : "from-[#dbeafe] to-[#fce7f3]"}`}>
-          {support ? (
-            <span className="grid grid-cols-2 gap-2 sm:gap-4">
-              {NEEDS.map(({ id, icon: Icon }, i) => (
-                <span key={id} className={`flex h-14 w-14 items-center justify-center rounded-2xl shadow-sm sm:h-24 sm:w-24 ${CHIP_TINTS[i % CHIP_TINTS.length]}`}>
-                  <Icon className="h-7 w-7 sm:h-12 sm:w-12" />
-                </span>
-              ))}
-            </span>
-          ) : (
-            <span className="h-24 w-24 sm:h-40 sm:w-40 [&>*]:!h-full [&>*]:!w-full">{getMascotComponent(0, 160, 2, "default")}</span>
-          )}
-        </div>
-        <div className="order-1 mt-1 min-w-0 text-center sm:mt-0">
-          <h2 className="font-display text-sm font-black uppercase leading-tight text-[#243c6e] sm:text-2xl">{support ? "Chế độ hỗ trợ" : "Chế độ tiêu chuẩn"}</h2>
-        </div>
+      {/* Title tab sitting on the card's top edge */}
+      <div
+        className={`absolute -top-6 left-1/2 flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-2xl border-[3px] border-white/80 bg-gradient-to-b px-3 py-1 shadow-lg sm:-top-8 sm:gap-3 sm:px-6 sm:py-2 ${
+          support ? "from-[#3fcf7f] to-[#169154]" : "from-[#4f9cf9] to-[#2456b8]"
+        }`}
+      >
+        <TitleIcon aria-hidden className="h-5 w-5 shrink-0 fill-[#fcd34d] text-[#f59e0b] drop-shadow sm:h-9 sm:w-9" />
+        <h2 className="text-center font-display font-black leading-none">
+          <span className="block text-[10px] text-white sm:text-lg">Chế độ</span>
+          <span className="block text-sm text-[#fde047] [text-shadow:0_2px_0_rgba(0,0,0,0.25)] sm:text-3xl">{support ? "Hỗ Trợ" : "Tiêu chuẩn"}</span>
+        </h2>
       </div>
 
-      <ul aria-hidden className="mt-2.5 grid grid-cols-1 gap-1 sm:mt-3 sm:grid-cols-2 sm:gap-1.5">
-        {chips.map(({ icon: Icon, label }, i) => (
-          <li key={label} className={`flex items-center gap-1.5 rounded-full px-2 py-1 text-[11px] font-bold leading-tight sm:px-2.5 sm:text-sm ${CHIP_TINTS[i % CHIP_TINTS.length]}`}>
-            <Icon className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
-            {label}
-          </li>
-        ))}
-      </ul>
+      <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-center sm:gap-4">
+        <div aria-hidden className="relative flex h-24 w-24 shrink-0 items-center justify-center sm:h-48 sm:w-[44%]">
+          <span className={`absolute inset-2 rounded-full blur-xl ${support ? "bg-[#bbf7d0]" : "bg-[#bfdbfe]"}`} />
+          {/* both cards use the whale; the support one is ringed by the help symbols */}
+          <WhaleMascot mood={support ? "hello" : "great"} size={190} className={`relative drop-shadow-lg ${support ? "!h-[78%] !w-[78%]" : "!h-full !w-full"}`} />
+          {support &&
+            WHALE_BADGES.map(({ icon: Icon, pos, tint }) => (
+              <span key={pos} className={`absolute ${pos} flex h-6 w-6 items-center justify-center rounded-full border-2 border-white shadow-md sm:h-10 sm:w-10 ${tint}`}>
+                <Icon className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
+              </span>
+            ))}
+        </div>
+        <ul aria-hidden className="flex w-full min-w-0 flex-1 flex-col gap-1 sm:gap-2.5">
+          {rows.map(({ icon: Icon, label }, i) => (
+            <li key={label} className={`flex items-center gap-1.5 rounded-full py-0.5 pl-0.5 pr-2 text-[11px] font-extrabold leading-tight shadow-sm sm:gap-3 sm:py-1 sm:pl-1 sm:pr-4 sm:text-base ${ROW_TINTS[i % ROW_TINTS.length]}`}>
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white shadow-sm sm:h-10 sm:w-10">
+                <Icon className="h-3.5 w-3.5 sm:h-6 sm:w-6" />
+              </span>
+              {label}
+            </li>
+          ))}
+        </ul>
+      </div>
 
-
-      <div className="mt-auto flex w-full flex-col items-center pt-3 sm:pt-4">
+      <div className="mt-auto flex w-full justify-center pt-3 sm:pt-5">
         <button
           type="button"
-          className={`flex min-h-[48px] w-full items-center justify-center gap-1.5 rounded-xl px-2 text-sm font-black uppercase sm:w-auto sm:gap-2 sm:px-6 leading-tight text-white shadow-md focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[#fbbf24] sm:text-base ${support ? "bg-[#0e7279] group-hover:bg-[#0e5f66]" : "ss-btn-grad"}`}
+          className={`flex min-h-[48px] w-full items-center justify-center gap-1.5 rounded-full border-2 border-white/70 bg-gradient-to-b px-2 text-sm font-black uppercase leading-tight shadow-[0_6px_0_rgba(0,0,0,0.12)] transition group-hover:brightness-105 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[#fbbf24] sm:min-h-[60px] sm:w-[90%] sm:gap-3 sm:text-lg ${
+            support ? "from-[#a3e635] to-[#22a845] text-[#123d1f]" : "from-[#fde047] to-[#f59e0b] text-[#1e2a5a]"
+          }`}
         >
           <span className="sm:hidden">Vào học</span>
           <span className="hidden sm:inline">{support ? "Vào chế độ hỗ trợ" : "Vào chế độ tiêu chuẩn"}</span>
-          <ArrowRight className="h-4 w-4 shrink-0 sm:h-5 sm:w-5" aria-hidden />
+          <span aria-hidden className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white sm:h-8 sm:w-8 ${support ? "bg-[#14532d]" : "bg-[#1e2a5a]"}`}>
+            <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
+          </span>
         </button>
       </div>
     </div>
@@ -249,11 +278,19 @@ export default function FullScreenAuthPortal({
       </main>
       ) : mode === null ? (
       /* Step 1: pick the interface first, so a student who needs help gets it before any sign-in */
-      <main className="relative z-10 mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-center gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-6">
-        <div className="text-center">
-          <h1 className="font-display text-xl font-black uppercase text-[#2e5cb8] sm:text-3xl">Chọn chế độ học tập</h1>
+      <main className="relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center gap-3 px-3 py-3 sm:gap-5 sm:px-6 sm:py-6">
+        {/* soft clouds behind the cards */}
+        <span aria-hidden className="pointer-events-none absolute -left-10 top-10 h-24 w-56 rounded-full bg-white/70 blur-2xl" />
+        <span aria-hidden className="pointer-events-none absolute -right-10 bottom-16 h-28 w-64 rounded-full bg-white/70 blur-2xl" />
+        <div className="relative flex flex-col items-center text-center">
+          <h1 className="rounded-[2rem] border-4 border-white/80 bg-gradient-to-b from-[#5aa8ff] to-[#2456b8] px-5 py-2 font-display text-xl font-black uppercase tracking-tight text-white shadow-xl [text-shadow:0_3px_0_rgba(20,40,110,0.45)] sm:px-10 sm:py-3 sm:text-5xl">
+            Chọn chế độ học tập
+          </h1>
+          <p className="-mt-2 rounded-full border-2 border-white bg-gradient-to-b from-[#fde68a] to-[#fbbf24] px-4 py-0.5 font-display text-xs font-black italic text-[#1e3a8a] shadow-md sm:-mt-3 sm:px-8 sm:py-1.5 sm:text-xl">
+            Cùng khám phá – Cùng tiến bộ!
+          </p>
         </div>
-        <div className="mt-2 grid w-full grid-cols-2 gap-2 sm:mt-0 sm:gap-6">
+        <div className="mt-2 grid w-full grid-cols-2 gap-2 sm:mt-0 sm:gap-8">
           <ModeCard mode="standard" onPick={pickMode} picked={lastMode === "standard"} />
           <ModeCard mode="support" onPick={pickMode} picked={lastMode === "support"} />
         </div>

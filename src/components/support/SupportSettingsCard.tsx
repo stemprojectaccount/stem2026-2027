@@ -190,6 +190,60 @@ export default function SupportSettingsCard({ value, onChange }: { value?: Suppo
   const myNeed = useSupportNeed();
   const need = remote ? null : myNeed; // a parent's card always shows everything
 
+  // Support mode (one difficulty picked): a short card, a few big switches only, nothing to fine-tune
+  if (need) {
+    return (
+      <section className="space-y-2.5" aria-labelledby="support-card-title">
+        <h3 id="support-card-title" className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-800">
+          <Accessibility className="h-4 w-4 text-[#2e5cb8]" />
+          <span>Hỗ trợ học tập</span>
+        </h3>
+        <div className="rounded-2xl border border-[#93b8e8] bg-[#eef4fc] p-4">
+          <p id="support-need-label" className="text-sm font-black text-slate-900">Em gặp khó khăn ở phần nào?</p>
+          <div role="radiogroup" aria-labelledby="support-need-label" className="mt-2 grid grid-cols-2 gap-2">
+            {NEED_CHOICES.map(({ id, icon: Icon, label }) => (
+              <button
+                key={id}
+                type="button"
+                role="radio"
+                aria-checked={need === id}
+                data-toggle-badge
+                onClick={() => setSupportNeed(id)}
+                className={`${tile} ${need === id ? "border-[#2e5cb8] bg-[#2e5cb8] text-white" : "border-[#c9dcf4] bg-white text-slate-800 hover:border-[#2e5cb8]"}`}
+              >
+                <Icon className="h-7 w-7" />
+                <span className="text-center leading-tight">{label}</span>
+              </button>
+            ))}
+          </div>
+          <div className="mt-3 divide-y divide-[#c9dcf4] border-t border-[#c9dcf4]">
+            {need === "hearing" ? (
+              <>
+                <Toggle id="support-visual" on={p.visualFeedback} onChange={(v) => setSupportProfile({ visualFeedback: v })} icon={Eye} title="Báo bằng hình" desc="Hiện ✓ hoặc ✗ lớn khi làm bài." />
+                {vibrate && <Toggle id="support-vibrate" on={p.vibration} onChange={(v) => setSupportProfile({ vibration: v })} icon={Vibrate} title="Rung thông báo" desc="Máy rung khi trả lời." />}
+              </>
+            ) : (
+              <>
+                <Toggle id="support-voice" on={p.voiceAssistant} onChange={(v) => setSupportProfile({ voiceAssistant: v })} icon={Mic} title="Ra lệnh bằng giọng" desc="Gọi “Này SmartStudy” rồi nói điều em cần." />
+                <Toggle id="support-time" on={p.timeMode === "off"} onChange={(v) => setSupportProfile({ timeMode: v ? "off" : "normal" })} icon={TimerOff} title="Không tính giờ" desc="Bỏ đồng hồ khi làm bài." />
+              </>
+            )}
+          </div>
+          {need === "hearing" && (
+            <button
+              type="button"
+              onClick={() => openTool("conversation")}
+              className="mt-2 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-2xl border-2 border-[#9fd6d8] bg-white px-3 text-sm font-bold text-slate-800 hover:border-[#13808a]"
+            >
+              <MessageSquareText className="h-5 w-5 text-[#13808a]" /> Gõ thay nói
+            </button>
+          )}
+          <TrialSection />
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="space-y-2.5" aria-labelledby="support-card-title">
       <h3 id="support-card-title" className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-800">

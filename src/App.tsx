@@ -4756,7 +4756,7 @@ export default function App() {
                             Giao diện và thông báo
                           </h2>
                           <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">
-                            Hỗ trợ học tập, tra từ nhanh, giao diện và thông báo nhắc học
+                            {supportMode ? "Bật, tắt hỗ trợ khi học" : "Hỗ trợ học tập, tra từ nhanh, giao diện và thông báo nhắc học"}
                           </p>
                         </div>
                       </div>
@@ -4776,6 +4776,8 @@ export default function App() {
                       {/* Thẻ "Thư mục lưu trữ" và "Khoá AI (tự xoay vòng)" đã bỏ khỏi Cài đặt: app vẫn tự lưu
                           dữ liệu ngầm (LocalLibrarySync) và khoá AI chỉ do người quản lý đặt trong api-keys/. */}
                       <SupportSettingsCard />
+                      {/* support mode: only the few help switches, none of the look / notification options */}
+                      {!supportMode && (<>
                       <QuickLookupSetting />
 
                       {/* 0. Bật / Tắt Hiệu ứng Ẩn hiện & Làm nổi bật khi di chuột qua các Thanh Tab (Spotlight Hover) */}
@@ -5183,6 +5185,7 @@ export default function App() {
                           </div>
                         </div>
                       </div>
+                      </>)}
                     </div>
 
                     {/* Chân Modal Settings */}

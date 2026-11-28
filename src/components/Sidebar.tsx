@@ -262,10 +262,10 @@ function Sidebar({
   // Support mode: one short flat list of the core study screens, no games / shop / ranking / extra tools
   const navEntries: NavEntry[] = supportMode
     ? pick(
-        "dashboard", "review", "quiz", "flashcards",
+        "dashboard", "support-trigger", "review", "quiz", "flashcards",
         // hard of hearing: no audio podcast, the typing board instead
         ...(supportNeed === "hearing" ? ["talk-tool"] : ["podcast"]),
-        "ai-chat-trigger", "support-trigger", "profile", "settings-trigger"
+        "ai-chat-trigger", "profile", "settings-trigger"
       ).map(
         (item): NavEntry => ({ kind: "item", item })
       )
@@ -375,8 +375,29 @@ function Sidebar({
   };
 
   // ---- Danh sách có nhóm xổ xuống (dùng cho cả máy tính và điện thoại) ----
+  // Order asked by the student: Trang chủ, then "Học bài và Ôn tập", then the rest (Hỗ trợ học tập first)
+  const renderLearnCta = (mobile: boolean) => (
+    <button
+      key="learn-cta"
+      type="button"
+      onClick={() => {
+        setActiveTab("learn");
+        if (onClose) onClose();
+      }}
+      aria-current={activeTab === "learn" ? "page" : undefined}
+      className={
+        mobile
+          ? "w-full min-h-[48px] px-4 py-3 rounded-2xl bg-[#2e5cb8] text-white font-extrabold text-base flex items-center justify-center gap-2.5 shadow-xs cursor-pointer active:scale-98"
+          : "w-full min-h-[44px] px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#3563b8] to-[#23806f] hover:from-[#3e6fc9] hover:to-[#2a9480] text-white border border-emerald-200/30 whitespace-nowrap font-extrabold text-xs sm:text-[13px] flex items-center justify-center gap-2 shadow-sm transition-colors cursor-pointer active:scale-95"
+      }
+    >
+      <Sparkles className={mobile ? "w-5 h-5 text-sky-200 shrink-0" : "w-4 h-4 text-sky-200 shrink-0"} />
+      <span>{mobile ? "Học bài mới và Ôn tập cùng AI" : "Học bài và Ôn tập"}</span>
+    </button>
+  );
   const renderNav = (mobile: boolean) =>
-    navEntries.map((entry) => {
+    navEntries.flatMap((entry, i) => [i === 1 ? renderLearnCta(mobile) : null, renderEntry(entry, mobile)]);
+  const renderEntry = (entry: NavEntry, mobile: boolean) => {
       if (entry.kind === "item") return mobile ? renderMobileItem(entry.item, false) : renderDesktopItem(entry.item, false);
       const { group } = entry;
       const open = openGroups.includes(group.id);
@@ -423,7 +444,7 @@ function Sidebar({
           </div>
         </div>
       );
-    });
+  };
 
   const renderSidebarContent = (isDrawer: boolean) => (
     <aside
@@ -479,19 +500,6 @@ function Sidebar({
             )
           )}
         </div>
-
-        {/* Student-Friendly Primary CTA Button */}
-        <button
-          type="button"
-          onClick={() => {
-            setActiveTab("learn");
-            if (onClose) onClose();
-          }}
-          className="w-full min-h-[44px] px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#3563b8] to-[#23806f] hover:from-[#3e6fc9] hover:to-[#2a9480] text-white border border-emerald-200/30 whitespace-nowrap font-extrabold text-xs sm:text-[13px] flex items-center justify-center gap-2 shadow-sm transition-colors cursor-pointer active:scale-95"
-        >
-          <Sparkles className="w-4 h-4 text-sky-200 shrink-0" />
-          <span>Học bài và Ôn tập</span>
-        </button>
       </div>
 
       {/* Navigation Links List (100% Pure CSS Spotlight, 0 React Re-renders) */}
@@ -591,18 +599,6 @@ function Sidebar({
 
         {/* Single scroll container for mobile bottom sheet */}
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
-          <button
-            type="button"
-            onClick={() => {
-              setActiveTab("learn");
-              if (onClose) onClose();
-            }}
-            className="w-full min-h-[48px] px-4 py-3 rounded-2xl bg-[#2e5cb8] text-white font-extrabold text-base flex items-center justify-center gap-2.5 shadow-xs cursor-pointer active:scale-98"
-          >
-            <Sparkles className="w-5 h-5 text-sky-200 shrink-0" />
-            <span>Học bài mới và Ôn tập cùng AI</span>
-          </button>
-
           <div className="grid grid-cols-1 gap-2">{renderNav(true)}</div>
         </div>
       </div>
