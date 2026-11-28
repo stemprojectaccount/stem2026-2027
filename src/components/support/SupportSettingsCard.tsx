@@ -1,7 +1,7 @@
 import React from "react";
-import { Accessibility, Mic, Check, Clock, Ear, Eye, MessageSquareText, RotateCcw, TimerOff, Vibrate } from "lucide-react";
+import { Accessibility, Hand, Mic, Check, Clock, Ear, Eye, MessageSquareText, RotateCcw, TimerOff, Vibrate } from "lucide-react";
 import { openTool } from "../../features/tools/openTool";
-import { DEFAULT_SUPPORT, setSupportProfile as setLocalSupport, useSupportProfile, type SupportProfile, type TimeMode } from "../../lib/support/profile";
+import { DEFAULT_SUPPORT, setSupportNeed, setSupportProfile as setLocalSupport, useSupportNeed, useSupportProfile, type SupportNeed, type SupportProfile, type TimeMode } from "../../lib/support/profile";
 import { canVibrate, signalFeedback } from "../../lib/support/feedback";
 import { speakVi } from "../../features/tools/conversation/speakVi";
 import { clearTrialLog, getTrialCode, readTrialLog, setTrialCode, summarizeTrial, trialCsv } from "../../lib/support/trialLog";
@@ -24,6 +24,12 @@ const AREAS: { id: string; title: string; hint: string; packs: Pack[]; talkTool?
   },
 ];
 const PACKS = AREAS.flatMap((a) => a.packs);
+// support mode picked one difficulty: show only its area
+const AREA_OF: Record<SupportNeed, string> = { hearing: "hear", motor: "move" };
+const NEED_CHOICES: { id: SupportNeed; icon: React.ComponentType<{ className?: string }>; label: string }[] = [
+  { id: "hearing", icon: Ear, label: "Khó nghe" },
+  { id: "motor", icon: Hand, label: "Khó vận động" },
+];
 
 const packOn = (p: SupportProfile, patch: Partial<SupportProfile>) => (Object.keys(patch) as (keyof SupportProfile)[]).every((k) => p[k] === patch[k]);
 
@@ -100,11 +106,14 @@ export function SupportPacks({
   onTool?: () => void;
   hideLabel?: boolean;
 }) {
+  const myNeed = useSupportNeed();
+  const need = remote ? null : myNeed;
+  const areas = need ? AREAS.filter((a) => a.id === AREA_OF[need]) : AREAS;
   return (
     <>
       <p id="support-packs-label" className={hideLabel ? "sr-only" : "mt-3 text-sm font-black text-slate-900"}>{remote ? "Con cần hỗ trợ gì?" : "Em cần hỗ trợ gì?"}</p>
       <div role="group" aria-labelledby="support-packs-label" className="mt-2 space-y-2">
-        {AREAS.map((area) => (
+        {areas.map((area) => (
           <div key={area.id} role="group" aria-labelledby={`support-area-${area.id}`} aria-describedby={`support-hint-${area.id}`} className="rounded-2xl border border-[#dbe7f6] bg-[#f6f9fe] p-2">
             <p className="px-1 text-sm leading-snug">
               <span id={`support-area-${area.id}`} className="font-black text-[#243c6e]">{area.title}</span>
@@ -178,6 +187,8 @@ export default function SupportSettingsCard({ value, onChange }: { value?: Suppo
   const p = value ?? local;
   const setSupportProfile = onChange ?? setLocalSupport;
   const vibrate = remote || canVibrate();
+  const myNeed = useSupportNeed();
+  const need = remote ? null : myNeed; // a parent's card always shows everything
 
   return (
     <section className="space-y-2.5" aria-labelledby="support-card-title">
@@ -192,9 +203,32 @@ export default function SupportSettingsCard({ value, onChange }: { value?: Suppo
             : "Bật những gì giúp em học dễ hơn. Chỉ áp dụng trên máy này (và bố mẹ nếu đã kết nối), bạn bè không nhìn thấy."}
         </p>
 
+        {need && (
+          <div className="mt-3">
+            <p id="support-need-label" className="text-sm font-black text-slate-900">Em gặp khó khăn ở phần nào?</p>
+            <div role="radiogroup" aria-labelledby="support-need-label" className="mt-2 grid grid-cols-2 gap-2">
+              {NEED_CHOICES.map(({ id, icon: Icon, label }) => (
+                <button
+                  key={id}
+                  type="button"
+                  role="radio"
+                  aria-checked={need === id}
+                  data-toggle-badge
+                  onClick={() => setSupportNeed(id)}
+                  className={`${tile} ${need === id ? "border-[#2e5cb8] bg-[#2e5cb8] text-white" : "border-[#c9dcf4] bg-white text-slate-800 hover:border-[#2e5cb8]"}`}
+                >
+                  <Icon className="h-7 w-7" />
+                  <span className="text-center leading-tight">{label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         <SupportPacks p={p} set={setSupportProfile} remote={remote} />
 
         {/* Thời gian làm bài */}
+        {need !== "hearing" && (
         <div className="mt-3 border-t border-[#c9dcf4] pt-3">
           <div className="flex items-center gap-3">
             <Clock className="h-5 w-5 shrink-0 text-[#2e5cb8]" />
@@ -223,7 +257,10 @@ export default function SupportSettingsCard({ value, onChange }: { value?: Suppo
           </div>
         </div>
 
+        )}
+
         <p className="mt-4 border-t border-[#c9dcf4] pt-3 text-sm font-black text-slate-900">Chỉnh từng phần</p>
+        {need !== "motor" && (<>
         <GroupHead title="Nghe, nói" />
         <div className="divide-y divide-[#c9dcf4]">
           <Toggle
@@ -251,6 +288,8 @@ export default function SupportSettingsCard({ value, onChange }: { value?: Suppo
             />
           )}
         </div>
+        </>)}
+        {need !== "hearing" && (<>
         <GroupHead title="Vận động" />
         <div className="divide-y divide-[#c9dcf4]">
           <Toggle
@@ -272,6 +311,7 @@ export default function SupportSettingsCard({ value, onChange }: { value?: Suppo
             />
           )}
         </div>
+        </>)}
 
         {p.visualFeedback && !remote && (
           <div className="mt-2 flex flex-wrap gap-2">

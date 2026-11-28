@@ -148,13 +148,48 @@ export function useSupportProfile(): SupportProfile {
   return p;
 }
 
+const MODE_KEY = "smartstudy_learning_mode";
+const NEED_KEY = "smartstudy_support_need";
+
 /** "Giao diện hỗ trợ" picked on the start screen: menus show only the core study screens (fewer choices, easier to use). */
 export function useSupportMode(): boolean {
   useSupportProfile(); // the start screen saves the mode, then fires SUPPORT_CHANGED: re-read it then
   try {
-    return localStorage.getItem("smartstudy_learning_mode") === "support";
+    return localStorage.getItem(MODE_KEY) === "support";
   } catch {
     return false;
+  }
+}
+
+/** Which difficulty support mode is for; each one turns on only its own help. */
+export type SupportNeed = "hearing" | "motor";
+export const NEED_PATCH: Record<SupportNeed, Partial<SupportProfile>> = {
+  // hard of hearing: see and feel instead of hear; no voice assistant (it talks back out loud)
+  hearing: { visualFeedback: true, vibration: true, voiceAssistant: false, voicePanel: false, timeMode: "normal" },
+  // hard to move / tap: speak instead of tap, no clock
+  motor: { visualFeedback: false, vibration: false, voiceAssistant: true, timeMode: "off" },
+};
+
+/** Saves support mode + its difficulty and applies only that difficulty's help. */
+export function setSupportNeed(n: SupportNeed) {
+  try {
+    localStorage.setItem(MODE_KEY, "support"); // before setSupportProfile: its change event makes menus re-read
+    localStorage.setItem(NEED_KEY, n);
+  } catch {
+    // storage blocked: the help still applies for this visit
+  }
+  setSupportProfile(NEED_PATCH[n]);
+}
+
+/** The difficulty picked in support mode; null in standard mode (or an older support choice without one). */
+export function useSupportNeed(): SupportNeed | null {
+  useSupportProfile();
+  try {
+    if (localStorage.getItem(MODE_KEY) !== "support") return null;
+    const n = localStorage.getItem(NEED_KEY);
+    return n === "hearing" || n === "motor" ? n : null;
+  } catch {
+    return null;
   }
 }
 

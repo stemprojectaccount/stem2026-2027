@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useWordbookDueCount } from "../features/dictionary/useDueCount";
 import { createPortal } from "react-dom";
-import { Home, Compass, BookOpen, Gamepad2, Trophy, Layers, Zap, Headphones, ShoppingBag, Settings, User, GraduationCap, ShieldCheck, MessageSquare, Plus, Accessibility, Sparkles, PanelLeftClose, X, Download, PencilRuler, Languages, Medal, ChevronDown, ArrowRight, Wrench } from "lucide-react";
+import { MessageSquareText, Home, Compass, BookOpen, Gamepad2, Trophy, Layers, Zap, Headphones, ShoppingBag, Settings, User, GraduationCap, ShieldCheck, MessageSquare, Plus, Accessibility, Sparkles, PanelLeftClose, X, Download, PencilRuler, Languages, Medal, ChevronDown, ArrowRight, Wrench } from "lucide-react";
 import { isDesktopApp, isNativeMobileApp } from "../firebase";
 import { UserProgress } from "../types";
-import { useSupportMode } from "../lib/support/profile";
+import { useSupportMode, useSupportNeed } from "../lib/support/profile";
+import { openTool } from "../features/tools/openTool";
 import { SyncStatus } from "../hooks/useFirestoreSync";
 
 interface SidebarProps {
@@ -111,6 +112,7 @@ function Sidebar({
 
   const wordsDue = useWordbookDueCount();
   const supportMode = useSupportMode();
+  const supportNeed = useSupportNeed();
   const navItems: QuestoraNavItem[] = [
     {
       id: "dashboard",
@@ -205,6 +207,12 @@ function Sidebar({
       icon: Settings,
       isAction: "settings",
     },
+    // hard of hearing: type instead of talk, face to face (the two-way conversation board)
+    {
+      id: "talk-tool",
+      label: "Gõ thay nói",
+      icon: MessageSquareText,
+    },
     {
       id: "ai-chat-trigger",
       label: "Trợ lý AI",
@@ -224,6 +232,11 @@ function Sidebar({
   ];
 
   const handleItemClick = (item: QuestoraNavItem) => {
+    if (item.id === "talk-tool") {
+      openTool("conversation");
+      if (onClose) onClose();
+      return;
+    }
     if (item.isAction === "settings" && onOpenSettings) {
       if (onClose) onClose();
       // the phone sheet closes with history.back(); its popstate would also close Settings, so open it after
@@ -248,7 +261,12 @@ function Sidebar({
   const pick = (...ids: string[]) => ids.map((id) => byId.get(id)).filter((i): i is QuestoraNavItem => !!i);
   // Support mode: one short flat list of the core study screens, no games / shop / ranking / extra tools
   const navEntries: NavEntry[] = supportMode
-    ? pick("dashboard", "review", "quiz", "flashcards", "podcast", "ai-chat-trigger", "support-trigger", "profile", "settings-trigger").map(
+    ? pick(
+        "dashboard", "review", "quiz", "flashcards",
+        // hard of hearing: no audio podcast, the typing board instead
+        ...(supportNeed === "hearing" ? ["talk-tool"] : ["podcast"]),
+        "ai-chat-trigger", "support-trigger", "profile", "settings-trigger"
+      ).map(
         (item): NavEntry => ({ kind: "item", item })
       )
     : (

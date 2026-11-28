@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Accessibility, ArrowLeft, ArrowRight, RefreshCw, AlertCircle, User as UserIcon, Cloud, WifiOff, ShieldCheck, Globe, X, Check, Captions, Vibrate, Mic, TimerOff, Settings, BookOpen, ListChecks, Languages, Gamepad2 } from "lucide-react";
+import { Accessibility, ArrowLeft, ArrowRight, RefreshCw, AlertCircle, User as UserIcon, Cloud, WifiOff, ShieldCheck, Globe, X, Check, Captions, Vibrate, Mic, TimerOff, Ear, Hand, Settings, BookOpen, ListChecks, Languages, Gamepad2 } from "lucide-react";
 import { BrandLogo, getMascotComponent } from "./CustomMascots";
 import { SupportAskDialog } from "./support/SupportFirstRun";
-import { isSupportActive, setSupportProfile, useSupportProfile, type SupportProfile } from "../lib/support/profile";
+import { isSupportActive, setSupportNeed, setSupportProfile, useSupportProfile, type SupportNeed, type SupportProfile } from "../lib/support/profile";
 import { isDesktopApp, isNativeMobileApp } from "../firebase";
 import { authErrorMessage, isUserCancelled } from "../lib/authErrorMessage";
 
@@ -28,10 +28,13 @@ const CHIP_TINTS = ["bg-[#dbeafe] text-[#1e40af]", "bg-[#dcfce7] text-[#166534]"
 type Mode = "standard" | "support";
 const MODE_KEY = "smartstudy_learning_mode";
 
-// What the support mode turns on (hearing: see instead of hear; movement: speak instead of tap, no clock).
-// Standard mode turns these back off; the voice assistant stays as the student set it.
-const SUPPORT_ON: Partial<SupportProfile> = { visualFeedback: true, vibration: true, timeMode: "off", voiceAssistant: true };
-const SUPPORT_OFF: Partial<SupportProfile> = { visualFeedback: false, vibration: false, timeMode: "normal" };
+// Support mode asks for one difficulty and turns on only that help (NEED_PATCH in profile.ts).
+// Standard mode turns the help back off and the voice assistant back to its default (on).
+const SUPPORT_OFF: Partial<SupportProfile> = { visualFeedback: false, vibration: false, timeMode: "normal", voiceAssistant: true };
+const NEEDS: { id: SupportNeed; icon: React.ComponentType<{ className?: string }>; label: string; hint: string; keys: (keyof SupportProfile)[] }[] = [
+  { id: "hearing", icon: Ear, label: "Khó nghe", hint: "Báo bằng hình, chữ và rung thay cho âm thanh", keys: ["visualFeedback", "vibration"] },
+  { id: "motor", icon: Hand, label: "Khó vận động", hint: "Nói thay cho bấm, làm bài không tính giờ", keys: ["voiceAssistant", "timeMode"] },
+];
 
 const SUPPORT_SWITCHES: { key: keyof SupportProfile; on: SupportProfile[keyof SupportProfile]; off: SupportProfile[keyof SupportProfile]; icon: React.ComponentType<{ className?: string }>; label: string; hint: string }[] = [
   { key: "visualFeedback", on: true, off: false, icon: Captions, label: "Báo bằng hình", hint: "Báo đúng, sai, hết giờ bằng hình và chữ" },
@@ -49,7 +52,7 @@ const STANDARD_FEATURES = [
 /** One of the two big cards of the first step (layout and palette 3 from the student's own mock-up). */
 function ModeCard({ mode, onPick, picked }: { mode: Mode; onPick: (m: Mode) => void; picked: boolean }) {
   const support = mode === "support";
-  const chips = support ? SUPPORT_SWITCHES : STANDARD_FEATURES;
+  const chips = support ? NEEDS : STANDARD_FEATURES;
   // The card is a div (click anywhere) with a real button inside for keyboard and screen readers: a whole
   // card made of one <button> lost its stretch layout in the desktop app's older Chromium.
   return (
@@ -64,9 +67,9 @@ function ModeCard({ mode, onPick, picked }: { mode: Mode; onPick: (m: Mode) => v
         <div aria-hidden className={`order-2 mt-2 flex h-28 w-full shrink-0 items-center justify-center rounded-xl bg-gradient-to-br sm:mt-3 sm:h-44 ${support ? "from-[#ccfbf1] to-[#fef9c3]" : "from-[#dbeafe] to-[#fce7f3]"}`}>
           {support ? (
             <span className="grid grid-cols-2 gap-2 sm:gap-4">
-              {SUPPORT_SWITCHES.map(({ key, icon: Icon }, i) => (
-                <span key={key} className={`flex h-10 w-10 items-center justify-center rounded-2xl shadow-sm sm:h-16 sm:w-16 ${CHIP_TINTS[i % CHIP_TINTS.length]}`}>
-                  <Icon className="h-5 w-5 sm:h-8 sm:w-8" />
+              {NEEDS.map(({ id, icon: Icon }, i) => (
+                <span key={id} className={`flex h-14 w-14 items-center justify-center rounded-2xl shadow-sm sm:h-24 sm:w-24 ${CHIP_TINTS[i % CHIP_TINTS.length]}`}>
+                  <Icon className="h-7 w-7 sm:h-12 sm:w-12" />
                 </span>
               ))}
             </span>
@@ -115,6 +118,8 @@ export default function FullScreenAuthPortal({
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [askOpen, setAskOpen] = useState(false);
   const [mode, setMode] = useState<Mode | null>(null);
+  const [need, setNeed] = useState<SupportNeed | null>(null);
+  const choosing = mode === null || (mode === "support" && need === null); // still on the "pick a mode / a difficulty" steps
   const lastMode = (() => {
     try {
       return localStorage.getItem(MODE_KEY) as Mode | null;
@@ -122,14 +127,31 @@ export default function FullScreenAuthPortal({
       return null;
     }
   })();
+  const markAsked = () => {
+    try {
+      localStorage.setItem("smartstudy_support_asked_v1", String(Date.now())); // the mode answers the old "Em cần hỗ trợ gì?" question
+    } catch {
+      // ignore
+    }
+  };
+  const pickNeed = (n: SupportNeed) => {
+    setSupportNeed(n);
+    markAsked();
+    setNeed(n);
+  };
   const pickMode = (m: Mode) => {
+    if (m === "support") {
+      setNeed(null); // next step: which difficulty
+      setMode(m);
+      return;
+    }
     try {
       localStorage.setItem(MODE_KEY, m); // before setSupportProfile: its change event makes menus re-read the mode
       localStorage.setItem("smartstudy_support_asked_v1", String(Date.now())); // the mode answers the old "Em cần hỗ trợ gì?" question
     } catch {
       // storage blocked: the choice still applies for this visit
     }
-    setSupportProfile(m === "support" ? SUPPORT_ON : SUPPORT_OFF);
+    setSupportProfile(SUPPORT_OFF);
     setMode(m);
   };
   const profile = useSupportProfile(); // re-render when help is turned on, so the button shows it
@@ -181,7 +203,7 @@ export default function FullScreenAuthPortal({
           <span className="hidden sm:inline">Cài đặt hỗ trợ</span>
         </button>
         {/* the interface is chosen first: no way in (sign-in or guest) until a mode is picked */}
-        {mode !== null && (
+        {!choosing && (
         <button
           type="button"
           onClick={onContinueAsGuest}
@@ -194,7 +216,38 @@ export default function FullScreenAuthPortal({
         )}
       </header>
 
-      {mode === null ? (
+      {mode === "support" && need === null ? (
+      /* Step 1b: which difficulty; only its help is turned on */
+      <main className="relative z-10 mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-center gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-6">
+        <div className="text-center">
+          <h1 className="font-display text-xl font-black uppercase text-[#0e7279] sm:text-3xl">Em gặp khó khăn ở phần nào?</h1>
+          <p className="mt-1 text-sm font-semibold text-slate-600 sm:text-base">Chọn một. SmartStudy chỉ bật hỗ trợ cho phần đó.</p>
+        </div>
+        <div className="grid w-full grid-cols-2 gap-2 sm:gap-6">
+          {NEEDS.map(({ id, icon: Icon, label, hint }, i) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => pickNeed(id)}
+              className="group flex min-h-[200px] flex-col items-center gap-2 rounded-2xl border-2 border-[#14b8a6] bg-white p-3 text-center shadow-md transition hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[#fbbf24] sm:gap-3 sm:p-6"
+            >
+              <span aria-hidden className={`flex h-20 w-20 items-center justify-center rounded-3xl shadow-sm sm:h-28 sm:w-28 ${CHIP_TINTS[i % CHIP_TINTS.length]}`}>
+                <Icon className="h-10 w-10 sm:h-14 sm:w-14" />
+              </span>
+              <span className="font-display text-lg font-black uppercase leading-tight text-[#243c6e] sm:text-2xl">{label}</span>
+              <span className="text-xs font-semibold leading-snug text-slate-600 sm:text-base">{hint}</span>
+              <span aria-hidden className="mt-auto flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl bg-[#0e7279] px-3 text-sm font-black uppercase text-white group-hover:bg-[#0e5f66] sm:w-auto sm:px-6 sm:text-base">
+                Chọn <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
+              </span>
+            </button>
+          ))}
+        </div>
+        <button type="button" onClick={() => setMode(null)} className="flex min-h-[44px] items-center gap-1 rounded-xl px-3 text-sm font-bold text-[#2e5cb8] hover:bg-[#eef4fc]">
+          <ArrowLeft className="h-4 w-4" aria-hidden />
+          Quay lại
+        </button>
+      </main>
+      ) : mode === null ? (
       /* Step 1: pick the interface first, so a student who needs help gets it before any sign-in */
       <main className="relative z-10 mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-center gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-6">
         <div className="text-center">
@@ -226,7 +279,7 @@ export default function FullScreenAuthPortal({
                 {getMascotComponent(selectedAvatarIdx, 140, 2, "default")}
               </div>
               <p className="relative rounded-2xl bg-white px-4 py-3 text-left text-base font-bold leading-snug text-[#243c6e] shadow-md">
-                {mode === "support" ? "Có chữ, hình và giọng nói giúp em! 💬" : "Chào em! Cùng học nhé! 👋"}
+                {mode === "support" ? (need === "motor" ? "Em chỉ cần nói, mình làm giúp! 🎙️" : "Có hình, chữ và rung báo cho em! 💬") : "Chào em! Cùng học nhé! 👋"}
               </p>
             </div>
 
@@ -259,12 +312,12 @@ export default function FullScreenAuthPortal({
                 <h2 className="flex-1 pr-16 text-center font-display text-2xl font-black text-[#243c6e]">Vào học</h2>
               </div>
               <p className={`-mt-3 text-center text-sm font-black ${mode === "support" ? "text-[#0e5f66]" : "text-[#2e5cb8]"}`}>
-                {mode === "support" ? "Chế độ hỗ trợ: khiếm thính, khó vận động" : "Chế độ tiêu chuẩn"}
+                {mode === "support" ? `Chế độ hỗ trợ: ${need === "motor" ? "khó vận động" : "khó nghe"}` : "Chế độ tiêu chuẩn"}
               </p>
 
               {mode === "support" ? (
                 <ul aria-label="Hỗ trợ đang bật" className="space-y-2">
-                  {SUPPORT_SWITCHES.map(({ key, on, off, icon: Icon, label, hint }) => {
+                  {SUPPORT_SWITCHES.filter((s) => NEEDS.find((n) => n.id === need)?.keys.includes(s.key)).map(({ key, on, off, icon: Icon, label, hint }) => {
                     const isOn = profile[key] === on;
                     return (
                       <li key={key}>
