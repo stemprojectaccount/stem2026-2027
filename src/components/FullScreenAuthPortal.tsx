@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Accessibility, ArrowLeft, ArrowRight, RefreshCw, AlertCircle, User as UserIcon, Cloud, WifiOff, ShieldCheck, Globe, X, Check, Captions, Vibrate, Mic, TimerOff, Ear, Hand, Settings, BookOpen, ListChecks, Languages, Gamepad2, Star, Heart } from "lucide-react";
+import { Accessibility, ArrowLeft, ArrowRight, RefreshCw, AlertCircle, User as UserIcon, Cloud, WifiOff, ShieldCheck, Globe, X, Check, Captions, Vibrate, Mic, TimerOff, Ear, Hand, Settings, BookOpen, ListChecks, Languages, Gamepad2 } from "lucide-react";
 import { BrandLogo, getMascotComponent, WhaleMascot } from "./CustomMascots";
 import { SupportAskDialog } from "./support/SupportFirstRun";
 import { isSupportActive, setSupportNeed, setSupportProfile, useSupportProfile, type SupportNeed, type SupportProfile } from "../lib/support/profile";
@@ -70,28 +70,16 @@ const WHALE_BADGES = [
 function ModeCard({ mode, onPick, picked }: { mode: Mode; onPick: (m: Mode) => void; picked: boolean }) {
   const support = mode === "support";
   const rows = support ? SUPPORT_SWITCHES : STANDARD_FEATURES;
-  const TitleIcon = support ? Heart : Star;
   // The card is a div (click anywhere) with a real button inside for keyboard and screen readers: a whole
   // card made of one <button> lost its stretch layout in the desktop app's older Chromium.
   return (
     <div
       onClick={() => onPick(mode)}
-      className={`group relative mt-7 flex w-full cursor-pointer flex-col rounded-[1.75rem] border-4 border-white/90 bg-gradient-to-b px-2 pb-3 pt-9 shadow-[0_12px_30px_-10px_rgba(30,64,140,0.45)] ring-2 transition hover:-translate-y-1 sm:mt-9 sm:px-5 sm:pb-5 sm:pt-14 ${
+      className={`group relative flex w-full cursor-pointer flex-col rounded-[1.75rem] border-4 border-white/90 bg-gradient-to-b px-2 pb-3 pt-3 shadow-[0_12px_30px_-10px_rgba(30,64,140,0.45)] ring-2 transition hover:-translate-y-1 sm:px-5 sm:pb-5 sm:pt-5 ${
         support ? "from-[#e6fbe9] via-[#f4fff5] to-white ring-[#86d99a]" : "from-[#e3f0ff] via-[#f3f8ff] to-white ring-[#93c0f5]"
       } ${picked ? "outline outline-[3px] outline-offset-2 outline-[#fbbf24]" : ""}`}
     >
-      {/* Title tab sitting on the card's top edge */}
-      <div
-        className={`absolute -top-6 left-1/2 flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-2xl border-[3px] border-white/80 bg-gradient-to-b px-3 py-1 shadow-lg sm:-top-8 sm:gap-3 sm:px-6 sm:py-2 ${
-          support ? "from-[#3fcf7f] to-[#169154]" : "from-[#4f9cf9] to-[#2456b8]"
-        }`}
-      >
-        <TitleIcon aria-hidden className="h-5 w-5 shrink-0 fill-[#fcd34d] text-[#f59e0b] drop-shadow sm:h-9 sm:w-9" />
-        <h2 className="text-center font-display font-black leading-none">
-          <span className="block text-[10px] text-white sm:text-lg">Chế độ</span>
-          <span className="block text-sm text-[#fde047] [text-shadow:0_2px_0_rgba(0,0,0,0.25)] sm:text-3xl">{support ? "Hỗ Trợ" : "Tiêu chuẩn"}</span>
-        </h2>
-      </div>
+      <h2 className="sr-only">{support ? "Chế độ hỗ trợ" : "Chế độ tiêu chuẩn"}</h2>
 
       <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-center sm:gap-4">
         <div aria-hidden className="relative flex h-24 w-24 shrink-0 items-center justify-center sm:h-48 sm:w-[44%]">
@@ -124,7 +112,7 @@ function ModeCard({ mode, onPick, picked }: { mode: Mode; onPick: (m: Mode) => v
             support ? "from-[#a3e635] to-[#22a845] text-[#123d1f]" : "from-[#fde047] to-[#f59e0b] text-[#1e2a5a]"
           }`}
         >
-          <span className="sm:hidden">Vào học</span>
+          <span className="sm:hidden">{support ? "Hỗ trợ" : "Tiêu chuẩn"}</span>
           <span className="hidden sm:inline">{support ? "Vào chế độ hỗ trợ" : "Vào chế độ tiêu chuẩn"}</span>
           <span aria-hidden className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white sm:h-8 sm:w-8 ${support ? "bg-[#14532d]" : "bg-[#1e2a5a]"}`}>
             <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -286,9 +274,6 @@ export default function FullScreenAuthPortal({
           <h1 className="rounded-[2rem] border-4 border-white/80 bg-gradient-to-b from-[#5aa8ff] to-[#2456b8] px-5 py-2 font-display text-xl font-black uppercase tracking-tight text-white shadow-xl [text-shadow:0_3px_0_rgba(20,40,110,0.45)] sm:px-10 sm:py-3 sm:text-5xl">
             Chọn chế độ học tập
           </h1>
-          <p className="-mt-2 rounded-full border-2 border-white bg-gradient-to-b from-[#fde68a] to-[#fbbf24] px-4 py-0.5 font-display text-xs font-black italic text-[#1e3a8a] shadow-md sm:-mt-3 sm:px-8 sm:py-1.5 sm:text-xl">
-            Cùng khám phá – Cùng tiến bộ!
-          </p>
         </div>
         <div className="mt-2 grid w-full grid-cols-2 gap-2 sm:mt-0 sm:gap-8">
           <ModeCard mode="standard" onPick={pickMode} picked={lastMode === "standard"} />
