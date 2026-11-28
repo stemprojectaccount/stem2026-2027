@@ -123,13 +123,13 @@ export default function FullScreenAuthPortal({
     }
   })();
   const pickMode = (m: Mode) => {
-    setSupportProfile(m === "support" ? SUPPORT_ON : SUPPORT_OFF);
     try {
-      localStorage.setItem(MODE_KEY, m);
+      localStorage.setItem(MODE_KEY, m); // before setSupportProfile: its change event makes menus re-read the mode
       localStorage.setItem("smartstudy_support_asked_v1", String(Date.now())); // the mode answers the old "Em cần hỗ trợ gì?" question
     } catch {
       // storage blocked: the choice still applies for this visit
     }
+    setSupportProfile(m === "support" ? SUPPORT_ON : SUPPORT_OFF);
     setMode(m);
   };
   const profile = useSupportProfile(); // re-render when help is turned on, so the button shows it

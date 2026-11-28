@@ -22,13 +22,6 @@ const PRESET_TOPICS = [
   { bookName: "Tiếng Anh 8", grade: "Lớp 8", curriculum: "Global Success", topic: "Life in the countryside (Cuộc sống làng quê)", emoji: "🌾" }
 ];
 
-const CURRICULUMS = [
-  "Kết nối tri thức với cuộc sống",
-  "Cánh diều",
-  "Chân trời sáng tạo",
-  "Chương trình phổ thông chuẩn"
-];
-
 const GRADES = [
   "Lớp 6", "Lớp 7", "Lớp 8", "Lớp 9"
 ];
@@ -54,7 +47,7 @@ function getSubjectMonogram(bookName: string): string {
 export default function LessonForm({ onGenerateLesson, loading }: LessonFormProps) {
   const [bookName, setBookName] = useState("");
   const [grade, setGrade] = useState("Lớp 6");
-  const [curriculum, setCurriculum] = useState("Kết nối tri thức với cuộc sống");
+  const curriculum = "Chương trình GDPT 2018"; // no textbook-series choice: students only pick their grade
   const [topicDescription, setTopicDescription] = useState("");
   const [loadingTextIndex, setLoadingTextIndex] = useState(0);
 
@@ -83,7 +76,6 @@ export default function LessonForm({ onGenerateLesson, loading }: LessonFormProp
   const selectPreset = (preset: typeof PRESET_TOPICS[0]) => {
     setBookName(preset.bookName);
     setGrade(preset.grade);
-    setCurriculum(preset.curriculum);
     setTopicDescription(preset.topic);
   };
 
@@ -154,7 +146,7 @@ export default function LessonForm({ onGenerateLesson, loading }: LessonFormProp
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <div className="space-y-2">
                 <label htmlFor="lesson-grade" className="text-xs font-bold text-slate-800 block">
                   2. Khối lớp
@@ -171,26 +163,11 @@ export default function LessonForm({ onGenerateLesson, loading }: LessonFormProp
                 </select>
               </div>
 
-              <div className="space-y-2">
-                <label htmlFor="lesson-curriculum" className="text-xs font-bold text-slate-800 block">
-                  3. Bộ sách giáo khoa
-                </label>
-                <select
-                  id="lesson-curriculum"
-                  value={curriculum}
-                  onChange={(e) => setCurriculum(e.target.value)}
-                  className="w-full min-h-[44px] px-3.5 py-2.5 bg-slate-50 border border-slate-300 focus:bg-white focus:border-blue-600 rounded-xl text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all text-base cursor-pointer"
-                >
-                  {CURRICULUMS.map((c) => (
-                    <option key={c} value={c} className="bg-white text-slate-900">{c}</option>
-                  ))}
-                </select>
-              </div>
             </div>
 
             <div className="space-y-2">
               <label htmlFor="lesson-topic-desc" className="text-xs font-bold text-slate-800 block">
-                4. Chủ đề hoặc bài học cụ thể cần ôn tập (Tùy chọn)
+                3. Chủ đề hoặc bài học cụ thể cần ôn tập (Tùy chọn)
               </label>
               <textarea
                 id="lesson-topic-desc"

@@ -53,7 +53,7 @@ import VoiceControl, { ASK_AI_EVENT } from './components/support/VoiceControl';
 import HandSignControl from './components/support/HandSignControl';
 import { levelFromXp } from "./lib/levels";
 import { signalFeedback } from './lib/support/feedback';
-import { getSupportProfile, prefersLessMotion } from './lib/support/profile';
+import { getSupportProfile, prefersLessMotion, useSupportMode } from './lib/support/profile';
 import { OPEN_DICTIONARY_EVENT } from './features/dictionary/quickLookupPrefs';
 const StudyLockSettings = React.lazy(() => import('./components/StudyLockSettings'));
 const StudyLockHost = React.lazy(() => import('./components/StudyLockHost'));
@@ -543,6 +543,7 @@ export default function App() {
   // Only auto-show if accessing authenticated-only tools without guest mode, or when explicitly requested
   // first launch: the portal opens on its own so the student picks standard or support mode before anything else
   // read once: after picking a mode the portal stays for the sign-in step until login or "Khách"
+  const supportMode = useSupportMode(); // "Giao diện hỗ trợ": fewer menu entries
   const [learningModeChosen] = useState(() => { try { return !!localStorage.getItem("smartstudy_learning_mode"); } catch { return true; } });
   const shouldShowAuthPortal = isAuthModalOpen || (!user && !isGuestSession && !authLoading && (!learningModeChosen || (activeTab !== "dashboard" && activeTab !== "parent-teacher" && activeTab !== "download-app")));
 
@@ -1950,7 +1951,7 @@ export default function App() {
     review: {
       title: "Thư viện Bài học và Đọc sách",
       subtitle: "Hệ thống bài giảng SGK, công thức Toán - KHTN và ghi chú thông minh",
-      summary: "Tra cứu bài học theo bộ sách (Kết nối tri thức, Chân trời sáng tạo, Cánh diều), khối lớp và môn học kèm chế độ đọc tập trung.",
+      summary: "Tra cứu bài học theo khối lớp và môn học kèm chế độ đọc tập trung.",
       steps: [
         { title: "Lọc bài học theo Môn và Khối lớp", detail: "Sử dụng thanh bộ lọc hoặc ô tìm kiếm để tìm nhanh bài giảng theo chương trình SGK của em." },
         { title: "Đọc bài và Ghi chú trực tiếp", detail: "Nhấn vào một bài học để mở trình đọc chi tiết, xem sơ đồ tóm tắt và lưu lại ghi chú quan trọng." },
@@ -3332,7 +3333,9 @@ export default function App() {
     { id: "dashboard", label: "Trang chủ", purpose: "Tổng quan tiến độ và nhiệm vụ hôm nay", icon: LayoutDashboard },
     { id: "review", label: "Bài học", purpose: "Thư viện bài giảng và sơ đồ tri thức", icon: FolderOpen },
     { id: "quiz", label: "Luyện tập", purpose: "Luyện đề trắc nghiệm và củng cố kiến thức", icon: Trophy },
-    { id: "games", label: "Trò chơi", purpose: "Kho trò chơi học tập và phản xạ", icon: Gamepad2 }
+    supportMode
+      ? { id: "flashcards", label: "Flashcard", purpose: "Ôn bài bằng thẻ ghi nhớ", icon: Layers }
+      : { id: "games", label: "Trò chơi", purpose: "Kho trò chơi học tập và phản xạ", icon: Gamepad2 }
   ];
 
   const activeToolbarTooltipItem = hoveredToolbarItem ?? longPressTooltipItem;
@@ -3783,11 +3786,18 @@ export default function App() {
 
                       {/* Đi nhanh: 3 khu vực hay dùng (đủ các mục khác ở menu trái / nút "Thêm") – Claude Code 2 */}
                       <div className="grid grid-cols-3 gap-1.5" role="group" aria-label="Đi nhanh">
-                        {([
-                          { id: "games", label: "Trò chơi", Icon: Gamepad2 },
-                          { id: "quiz", label: "Luyện đề", Icon: Trophy },
-                          { id: "pk", label: "Đấu trường", Icon: Zap },
-                        ] as const).map(({ id, label, Icon }) => (
+                        {(supportMode
+                          ? [
+                              { id: "review", label: "Bài học", Icon: BookOpen },
+                              { id: "quiz", label: "Luyện đề", Icon: Trophy },
+                              { id: "flashcards", label: "Flashcard", Icon: Layers },
+                            ]
+                          : [
+                              { id: "games", label: "Trò chơi", Icon: Gamepad2 },
+                              { id: "quiz", label: "Luyện đề", Icon: Trophy },
+                              { id: "pk", label: "Đấu trường", Icon: Zap },
+                            ]
+                        ).map(({ id, label, Icon }) => (
                           <button
                             key={id}
                             type="button"
@@ -5677,12 +5687,6 @@ export default function App() {
                                     </span>
                                   )}
 
-                                  {lesson.curriculum && (
-                                    <span className="text-[9px] font-bold px-2 py-0.5 bg-slate-100/90 text-slate-600 rounded-lg">
-                                      {lesson.curriculum}
-                                    </span>
-                                  )}
-
                                   {lesson.pinned && (
                                     <span className="text-[9px] font-bold px-1.5 py-0.5 bg-amber-100 text-amber-800 rounded-lg flex items-center gap-0.5">
                                       📌 Ghim
@@ -6087,7 +6091,7 @@ export default function App() {
                                 {/* Front Bottom Bar with Interactive 3D Flip Action */}
                                 <div className="pt-2 border-t border-sky-200/80 flex items-center justify-between text-[11px] relative z-10 lesson-tilt-depth-layer">
                                   <span className="text-slate-500 font-medium text-[10px]">
-                                    {lesson.curriculum || "Chuẩn bộ GD&ĐT"}
+                                    {lesson.grade || "THCS"}
                                   </span>
                                   <button
                                     type="button"

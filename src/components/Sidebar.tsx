@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import { Home, Compass, BookOpen, Gamepad2, Trophy, Layers, Zap, Headphones, ShoppingBag, Settings, User, GraduationCap, ShieldCheck, MessageSquare, Plus, Accessibility, Sparkles, PanelLeftClose, X, Download, PencilRuler, Languages, Medal, ChevronDown, ArrowRight, Wrench } from "lucide-react";
 import { isDesktopApp, isNativeMobileApp } from "../firebase";
 import { UserProgress } from "../types";
+import { useSupportMode } from "../lib/support/profile";
 import { SyncStatus } from "../hooks/useFirestoreSync";
 
 interface SidebarProps {
@@ -109,6 +110,7 @@ function Sidebar({
   }, [isOpen, isDesktopDocked]);
 
   const wordsDue = useWordbookDueCount();
+  const supportMode = useSupportMode();
   const navItems: QuestoraNavItem[] = [
     {
       id: "dashboard",
@@ -244,7 +246,12 @@ function Sidebar({
   // Gom các mục thành nhóm (giữ nguyên id tab; mục nào không có thì nhóm tự bỏ qua).
   const byId = new Map(navItems.map((i) => [i.id, i] as const));
   const pick = (...ids: string[]) => ids.map((id) => byId.get(id)).filter((i): i is QuestoraNavItem => !!i);
-  const navEntries: NavEntry[] = (
+  // Support mode: one short flat list of the core study screens, no games / shop / ranking / extra tools
+  const navEntries: NavEntry[] = supportMode
+    ? pick("dashboard", "review", "quiz", "flashcards", "podcast", "ai-chat-trigger", "support-trigger", "profile", "settings-trigger").map(
+        (item): NavEntry => ({ kind: "item", item })
+      )
+    : (
     [
       { kind: "item", item: byId.get("dashboard")! },
       { kind: "item", item: byId.get("support-trigger")! },
@@ -479,7 +486,7 @@ function Sidebar({
 
       {/* Bottom Medium-Blue Mascot Card */}
       {/* Hidden on short screens so every menu item stays visible */}
-      <div className="p-3 shrink-0 border-t border-[#c9ddef] bg-white/40 [@media(max-height:960px)]:hidden">
+      <div className={`p-3 shrink-0 border-t border-[#c9ddef] bg-white/40 [@media(max-height:960px)]:hidden ${supportMode ? "hidden" : ""}`}>
         <div
           onClick={() => {
             setActiveTab("games");

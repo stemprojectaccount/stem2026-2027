@@ -2312,11 +2312,6 @@ export default function LessonReader({
             <span className={`px-2.5 py-1 font-extrabold rounded-lg border ${isDarkReader ? "bg-slate-900 text-indigo-300 border-slate-700" : "bg-sky-200/60 text-sky-800 border-sky-300/50"}`}>
               {lesson.grade}
             </span>
-            {lesson.curriculum && (
-              <span className={`px-2.5 py-1 font-extrabold rounded-lg border ${isDarkReader ? "bg-teal-950/80 text-teal-300 border-teal-800/80" : "bg-teal-100/70 text-teal-800 border-teal-200/50"}`}>
-                {lesson.curriculum}
-              </span>
-            )}
             <span className={`px-2.5 py-1 font-bold flex items-center gap-1 text-[11px] ${isDarkReader ? "text-slate-400" : "text-slate-500"}`}>
               <Clock className={`w-3.5 h-3.5 ${isDarkReader ? "text-sky-400" : "text-sky-600"}`} />
               <span>~{readingTimeMinutes} phút đọc</span>
@@ -3773,11 +3768,6 @@ export default function LessonReader({
                 <span className="text-[10px] font-black px-2 py-0.5 rounded-lg bg-indigo-100 text-indigo-800">
                   {lesson.grade}
                 </span>
-                {lesson.curriculum && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-slate-200 text-slate-700">
-                    {lesson.curriculum}
-                  </span>
-                )}
                 <span className="ml-auto text-[11px] font-bold text-slate-500 flex items-center gap-1">
                   <Clock className="w-3 h-3 text-sky-600" /> ~{readingTimeMinutes} phút đọc
                 </span>
@@ -3927,11 +3917,6 @@ export default function LessonReader({
                 <span className="px-2 py-0.5 bg-slate-100 rounded border border-slate-300">
                   Khối: {lesson.grade}
                 </span>
-                {lesson.curriculum && (
-                  <span className="px-2 py-0.5 bg-slate-100 rounded border border-slate-300">
-                    Bộ sách: {lesson.curriculum}
-                  </span>
-                )}
                 <span className="ml-auto text-slate-500 font-medium text-[10px]">
                   Ngày xuất: {new Date().toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })}
                 </span>

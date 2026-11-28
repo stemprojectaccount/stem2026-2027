@@ -69,7 +69,7 @@ export function getStudentProfile(progressOverride?: Partial<UserProgress> | nul
   let name = progressOverride?.displayName || progressOverride?.nickname || "";
   let level = typeof progressOverride?.level === "number" ? progressOverride.level : 1;
   let userId = "student_local";
-  let curriculum = "Kết nối tri thức với cuộc sống";
+  const curriculum = "Chương trình GDPT 2018"; // one programme: students pick only their grade, no textbook series
   let explicitGradeFound = false;
 
   if (rawGrade && parseGradeNumber(rawGrade).valid) {
@@ -108,14 +108,6 @@ export function getStudentProfile(progressOverride?: Partial<UserProgress> | nul
       }
       if (!name && aiMem?.userProfile?.name) {
         name = aiMem.userProfile.name;
-      }
-    }
-
-    const lessonsRaw = localStorage.getItem("smart_study_lessons");
-    if (lessonsRaw) {
-      const lessons: Lesson[] = JSON.parse(lessonsRaw);
-      if (Array.isArray(lessons) && lessons.length > 0 && lessons[0]?.curriculum) {
-        curriculum = lessons[0].curriculum;
       }
     }
 

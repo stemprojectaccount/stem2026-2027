@@ -148,6 +148,16 @@ export function useSupportProfile(): SupportProfile {
   return p;
 }
 
+/** "Giao diện hỗ trợ" picked on the start screen: menus show only the core study screens (fewer choices, easier to use). */
+export function useSupportMode(): boolean {
+  useSupportProfile(); // the start screen saves the mode, then fires SUPPORT_CHANGED: re-read it then
+  try {
+    return localStorage.getItem("smartstudy_learning_mode") === "support";
+  } catch {
+    return false;
+  }
+}
+
 /** True when the student asked for fewer effects (setting) or the device asks for it. */
 export function prefersLessMotion(): boolean {
   if (getSupportProfile().reduceMotion) return true;
