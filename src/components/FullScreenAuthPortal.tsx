@@ -201,6 +201,8 @@ export default function FullScreenAuthPortal({
           <span className="sr-only sm:hidden">Hỗ trợ</span>
           <span className="hidden sm:inline">Cài đặt hỗ trợ</span>
         </button>
+        {/* the interface is chosen first: no way in (sign-in or guest) until a mode is picked */}
+        {mode !== null && (
         <button
           type="button"
           onClick={onContinueAsGuest}
@@ -210,6 +212,7 @@ export default function FullScreenAuthPortal({
           <X className="h-5 w-5" aria-hidden />
           <span className="hidden sm:inline">Đóng</span>
         </button>
+        )}
       </header>
 
       {mode === null ? (
@@ -223,51 +226,6 @@ export default function FullScreenAuthPortal({
           <ModeCard mode="support" onPick={pickMode} picked={lastMode === "support"} />
         </div>
 
-        <section aria-labelledby="start-login" className="w-full max-w-sm rounded-2xl border border-[#c9dcf4] bg-white p-4 text-center shadow-md">
-          <h2 id="start-login" className="font-display text-base font-black uppercase text-[#243c6e]">Đăng nhập để bắt đầu</h2>
-          {errorMessage && (
-            <p role="alert" className="mt-2 flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 p-2.5 text-left text-sm font-medium text-rose-800">
-              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-600" aria-hidden />
-              {errorMessage}
-            </p>
-          )}
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => handleGoogleLogin(false)}
-              disabled={isLoggingIn || authLoading}
-              className="flex min-h-[48px] items-center justify-center gap-2 rounded-xl border-2 border-slate-300 bg-white px-2 text-sm font-black text-slate-900 hover:border-[#2e5cb8] disabled:opacity-60"
-            >
-              {isLoggingIn || authLoading ? (
-                <RefreshCw className="h-5 w-5 animate-spin text-[#2e5cb8]" aria-hidden />
-              ) : (
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="" aria-hidden className="h-5 w-5" />
-              )}
-              Google
-            </button>
-            <button
-              type="button"
-              onClick={onContinueAsGuest}
-              className="flex min-h-[48px] items-center justify-center gap-2 rounded-xl border-2 border-slate-300 bg-white px-2 text-sm font-black text-slate-900 hover:border-[#2e5cb8]"
-            >
-              <UserIcon className="h-5 w-5 shrink-0" aria-hidden />
-              Khách
-            </button>
-          </div>
-          {isLoggingIn && isDesktopApp() && (
-            <p role="status" className="mt-2 text-sm text-slate-600">Trình duyệt trên máy đã mở trang đăng nhập Google. Đăng nhập xong, quay lại cửa sổ này.</p>
-          )}
-          {showRedirectOption && (
-            <button
-              type="button"
-              onClick={() => handleGoogleLogin(true)}
-              disabled={isLoggingIn || authLoading}
-              className="mt-2 min-h-[44px] w-full rounded-xl px-2 text-sm font-bold text-[#2e5cb8] hover:bg-[#eef4fc]"
-            >
-              Đăng nhập bằng cách chuyển trang
-            </button>
-          )}
-        </section>
       </main>
       ) : (
       <main className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 items-center justify-center px-4 py-4 sm:px-6 sm:py-8">

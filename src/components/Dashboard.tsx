@@ -116,7 +116,12 @@ function cleanLessonExcerpt(raw?: string): string {
     .replace(/#{1,6}\s*/g, "")
     .replace(/\*\*|\*|__|`|~~|>/g, "")
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    // only the lesson itself: no "(Bộ sách: …)" note, no "Kiến thức:"-style labels or list dashes
+    .replace(/\((?:Bộ sách|Sách|Nguồn)[^)]*\)/gi, " ")
+    .replace(/\b(?:Kiến thức|Kỹ năng|Năng lực|Phẩm chất|Mục tiêu|Yêu cầu cần đạt)\s*:/gi, " ")
+    .replace(/(^|\s)[-–•]\s+/g, " ")
     .replace(/\s+/g, " ")
+    .replace(/^[\s\-–:.,]+/, "")
     .trim();
   if (!stripped) {
     return "Nắm vững kiến thức trọng tâm, công thức cốt lõi và vận dụng giải nhanh các dạng bài tập tự luyện.";
