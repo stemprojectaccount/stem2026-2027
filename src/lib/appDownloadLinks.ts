@@ -11,3 +11,17 @@ export function externalDownloadUrl(fileName: string): string | null {
   if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) return null;
   return `https://github.com/${repo}/releases/latest/download/${fileName}`;
 }
+
+/** Sizes (MB) of the files in the latest GitHub Release, by file name; empty when unreachable. */
+export async function externalDownloadSizes(): Promise<Record<string, number>> {
+  const repo = GITHUB_RELEASES_REPO.trim();
+  if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) return {};
+  try {
+    const r = await fetch(`https://api.github.com/repos/${repo}/releases/latest`);
+    if (!r.ok) return {};
+    const data: { assets?: { name: string; size: number }[] } = await r.json();
+    return Object.fromEntries((data.assets || []).map((a) => [a.name, Math.round(a.size / 1048576)]));
+  } catch {
+    return {};
+  }
+}

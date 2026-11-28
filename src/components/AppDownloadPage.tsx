@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from "react";
 import { Download, Smartphone, Monitor, Share, PlusSquare, RefreshCw, CheckCircle2, AlertCircle } from "lucide-react";
 import { isDesktopApp, isNativeMobileApp } from "../firebase";
-import { externalDownloadUrl } from "../lib/appDownloadLinks";
+import { externalDownloadUrl, externalDownloadSizes } from "../lib/appDownloadLinks";
 
 interface FileInfo {
   available: boolean;
@@ -89,6 +89,7 @@ export default function AppDownloadPage() {
           ...data,
           android: withExternal(data.android, "SmartStudy.apk"),
           windows: withExternal(data.windows, "SmartStudy-Windows.exe"),
+          windowsLite: withExternal(data.windowsLite, "SmartStudy-Windows-Lite.exe"),
         });
         setState("ready");
       })
@@ -96,8 +97,9 @@ export default function AppDownloadPage() {
         // Server unreachable or an older server without this API: fall back to GitHub if set
         const android = withExternal(undefined, "SmartStudy.apk");
         const windows = withExternal(undefined, "SmartStudy-Windows.exe");
+        const windowsLite = withExternal(undefined, "SmartStudy-Windows-Lite.exe");
         if (android.available || windows.available) {
-          setInfo({ version: null, updatedAt: null, android, windows });
+          setInfo({ version: null, updatedAt: null, android, windows, windowsLite });
           setState("ready");
         } else {
           setState("error");
@@ -108,6 +110,14 @@ export default function AppDownloadPage() {
   useEffect(() => {
     if (!insideApp) load();
   }, [insideApp]);
+
+  // GitHub files come without a size: read them from the Release so students see light vs full
+  const [ghSizes, setGhSizes] = useState<Record<string, number>>({});
+  useEffect(() => {
+    if (!insideApp) externalDownloadSizes().then(setGhSizes);
+  }, [insideApp]);
+  const sized = (file: FileInfo | undefined, name: string): FileInfo | undefined =>
+    file && !file.sizeMB && file.url?.endsWith("/" + name) && ghSizes[name] ? { ...file, sizeMB: ghSizes[name] } : file;
 
   if (insideApp) {
     return (
@@ -140,7 +150,7 @@ export default function AppDownloadPage() {
       <p className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-900">
         Máy có thể báo "ứng dụng không rõ nguồn gốc" vì app chưa có trên Google Play. Bấm <strong>Vẫn cài đặt</strong> là được.
       </p>
-      <DownloadButton file={info?.android} label="Tải cho Android" />
+      <DownloadButton file={sized(info?.android, "SmartStudy.apk")} label="Tải cho Android" />
     </section>
   );
 
@@ -156,21 +166,15 @@ export default function AppDownloadPage() {
       <Steps
         items={[
           <><strong>Bản đầy đủ</strong> có sẵn AI trong máy: cài xong hỏi bài được ngay, không cần mạng. <strong>Bản nhẹ</strong> chạy luôn không cần cài, AI tải thêm khi cần.</>,
-          <>Mở file <strong>SmartStudy-Windows.exe</strong>: máy tự cài và mở app luôn.</>,
+          <>Mở file vừa tải: bản đầy đủ tự cài và mở app luôn, bản nhẹ mở chạy ngay.</>,
           <>Lần sau bấm biểu tượng <strong>SmartStudy</strong> ngoài màn hình Desktop hoặc trong menu Start.</>,
           <>Nếu Windows báo "đã bảo vệ PC của bạn", bấm <strong>Thông tin khác</strong> rồi <strong>Vẫn chạy</strong>.</>,
         ]}
       />
-      <DownloadButton file={info?.windows} label="Bản đầy đủ, có sẵn AI" />
-      {info?.windowsLite?.available && info.windowsLite.url && (
-        <a
-          href={info.windowsLite.url}
-          download
-          className="min-h-[44px] px-5 py-2.5 rounded-xl border border-[#d8e5f7] bg-white hover:border-[#2e5cb8] text-[#2e5cb8] font-bold text-sm inline-flex items-center justify-center gap-2 transition-colors"
-        >
-          Bản nhẹ, không cần cài{info.windowsLite.sizeMB ? ` (${info.windowsLite.sizeMB} MB)` : ""}
-        </a>
-      )}
+      <div className="mt-auto grid gap-2">
+        <DownloadButton file={sized(info?.windowsLite, "SmartStudy-Windows-Lite.exe")} label="Bản nhẹ" />
+        <DownloadButton file={sized(info?.windows, "SmartStudy-Windows.exe")} label="Bản đầy đủ, có sẵn AI" />
+      </div>
     </section>
   );
 
