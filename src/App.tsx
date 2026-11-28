@@ -544,24 +544,21 @@ export default function App() {
   // first launch: the portal opens on its own so the student picks standard or support mode before anything else
   // read once: after picking a mode the portal stays for the sign-in step until login or "Khách"
   const supportMode = useSupportMode(); // "Giao diện hỗ trợ": fewer menu entries
-  const [learningModeChosen] = useState(() => { try { return !!localStorage.getItem("smartstudy_learning_mode"); } catch { return true; } });
-  const shouldShowAuthPortal = isAuthModalOpen || (!user && !isGuestSession && !authLoading && (!learningModeChosen || (activeTab !== "dashboard" && activeTab !== "parent-teacher" && activeTab !== "download-app")));
+  // No guest mode any more (2026-11): signed out = the portal (mode chooser, then Google sign-in).
+  // isGuestSession is now only set by a shared lesson link, so a shared lesson still opens without an account.
+  const shouldShowAuthPortal = !user && !authLoading && (isAuthModalOpen || (!isGuestSession && activeTab !== "parent-teacher" && activeTab !== "download-app"));
 
   const handleOpenAuthPortal = () => {
     setIsAuthModalOpen(true);
   };
 
-  const handleContinueAsGuest = () => {
-    setIsAuthModalOpen(false);
-    setIsGuestSession(true);
-    try {
-      sessionStorage.setItem("smartstudy_guest_mode", "true");
-    } catch {}
-  };
-
   const handleCustomLogOut = async () => {
     try {
       await logOut();
+      setIsGuestSession(false);
+      try {
+        sessionStorage.removeItem("smartstudy_guest_mode");
+      } catch {}
       setIsAuthModalOpen(true);
     } catch (err) {
       console.error(err);
@@ -3388,7 +3385,6 @@ export default function App() {
             onLoginWithGoogle={async (opts) => {
               await logInWithGoogle(opts);
             }}
-            onContinueAsGuest={handleContinueAsGuest}
             selectedGrade={progress.grade || "Lớp 6"}
             onSelectGrade={(g) => {
               setProgress((prev) => {
@@ -3424,6 +3420,7 @@ export default function App() {
             selectedAvatarIdx={selectedAvatarIdx}
             onOpenAIChat={() => setIsAIChatOpen(true)}
             onOpenSettings={() => setIsSettingsModalOpen(true)}
+            onLogOut={handleCustomLogOut}
             isOpen={isSystemMenuOpen}
             onClose={() => setIsSystemMenuOpen(false)}
             isDesktopDocked={!isMobileOrTablet}

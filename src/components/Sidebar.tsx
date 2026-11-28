@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useWordbookDueCount } from "../features/dictionary/useDueCount";
 import { createPortal } from "react-dom";
-import { MessageSquareText, Home, Compass, BookOpen, Gamepad2, Trophy, Layers, Zap, Headphones, ShoppingBag, Settings, User, GraduationCap, ShieldCheck, MessageSquare, Plus, Accessibility, Sparkles, PanelLeftClose, X, Download, PencilRuler, Languages, Medal, ChevronDown, ArrowRight, Wrench } from "lucide-react";
+import { MessageSquareText, Home, Compass, BookOpen, Gamepad2, Trophy, Layers, Zap, Headphones, ShoppingBag, Settings, User, GraduationCap, ShieldCheck, MessageSquare, Plus, Accessibility, Sparkles, PanelLeftClose, X, Download, PencilRuler, Languages, Medal, ChevronDown, ArrowRight, Wrench, LogOut } from "lucide-react";
 import { isDesktopApp, isNativeMobileApp } from "../firebase";
 import { UserProgress } from "../types";
 import { useSupportMode, useSupportNeed } from "../lib/support/profile";
@@ -18,6 +18,7 @@ interface SidebarProps {
   selectedAvatarIdx?: number;
   onOpenAIChat?: () => void;
   onOpenSettings?: () => void;
+  onLogOut?: () => void;
   lessonsCount?: number;
   gamesCount?: number;
   isOpen?: boolean;
@@ -63,6 +64,8 @@ function Sidebar({
   progress,
   onOpenAIChat,
   onOpenSettings,
+  onLogOut,
+  user,
   lessonsCount = 10,
   gamesCount = 8,
   isOpen = false,
@@ -127,7 +130,7 @@ function Sidebar({
     },
     {
       id: "review",
-      label: "Thư viện của tôi",
+      label: "Thư viện",
       countBadge: lessonsCount,
       icon: BookOpen,
     },
@@ -321,8 +324,8 @@ function Sidebar({
               isActive ? "text-white" : "text-[#2e5cb8] group-hover:text-white"
             }`}
           />
-          {/* Tên dài tự xuống dòng thay vì bị cắt "…" (chữ to trên màn hình phóng 125 %) */}
-          <span className="min-w-0 text-left leading-tight break-words">{item.label}</span>
+          {/* one line always (the student asked); a label that still can't fit is cut with "…", full name in title */}
+          <span className="min-w-0 truncate whitespace-nowrap text-left leading-tight">{item.label}</span>
         </div>
         <div className="flex items-center gap-1.5 shrink-0">
           {item.countBadge !== undefined && (
@@ -514,6 +517,20 @@ function Sidebar({
         {renderNav(false)}
       </nav>
 
+      {/* Sign out: back to the start screen (mode chooser + sign-in) */}
+      {user && onLogOut && (
+        <div className="px-3 py-2 shrink-0">
+          <button
+            type="button"
+            onClick={onLogOut}
+            className="w-full min-h-[44px] px-3.5 rounded-xl flex items-center gap-3 whitespace-nowrap text-[13px] font-bold border border-white/30 bg-white/10 text-white hover:bg-white/20 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#fbbf24] cursor-pointer"
+          >
+            <LogOut className="w-4 h-4 shrink-0" aria-hidden />
+            Đăng xuất
+          </button>
+        </div>
+      )}
+
       {/* Bottom Medium-Blue Mascot Card */}
       {/* Hidden on short screens so every menu item stays visible */}
       <div className={`p-3 shrink-0 border-t border-[#c9ddef] bg-white/40 [@media(max-height:960px)]:hidden ${supportMode ? "hidden" : ""}`}>
@@ -604,6 +621,19 @@ function Sidebar({
         {/* Single scroll container for mobile bottom sheet */}
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           <div className="grid grid-cols-1 gap-2">{renderNav(true)}</div>
+          {user && onLogOut && (
+            <button
+              type="button"
+              onClick={() => {
+                onClose?.();
+                onLogOut();
+              }}
+              className="w-full min-h-[52px] px-4 rounded-2xl flex items-center gap-3 text-base font-bold border border-rose-200 bg-rose-50 text-rose-700 active:scale-[0.99] cursor-pointer"
+            >
+              <LogOut className="w-5 h-5 shrink-0" aria-hidden />
+              Đăng xuất
+            </button>
+          )}
         </div>
       </div>
     </div>,

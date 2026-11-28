@@ -436,7 +436,7 @@ export default function AuthAccountWidget({
                   onClick={() => setIsModalOpen(false)}
                   className="w-full min-h-[48px] py-2.5 px-4 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-sm flex items-center justify-center cursor-pointer"
                 >
-                  Vào học dạng Khách
+                  Đóng
                 </button>
               </div>
             </div>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Accessibility, ArrowLeft, ArrowRight, RefreshCw, AlertCircle, User as UserIcon, Cloud, WifiOff, ShieldCheck, Globe, X, Check, Captions, Vibrate, Mic, TimerOff, Ear, Hand, Settings, BookOpen, ListChecks, Languages, Gamepad2 } from "lucide-react";
+import { Accessibility, ArrowLeft, ArrowRight, RefreshCw, AlertCircle, Cloud, WifiOff, ShieldCheck, Globe, Check, Captions, Vibrate, Mic, TimerOff, Ear, Hand, Settings, BookOpen, ListChecks, Languages, Gamepad2 } from "lucide-react";
 import { BrandLogo, getMascotComponent, WhaleMascot } from "./CustomMascots";
 import { SupportAskDialog } from "./support/SupportFirstRun";
 import { isSupportActive, setSupportNeed, setSupportProfile, useSupportProfile, type SupportNeed, type SupportProfile } from "../lib/support/profile";
@@ -8,7 +8,6 @@ import { authErrorMessage, isUserCancelled } from "../lib/authErrorMessage";
 
 interface FullScreenAuthPortalProps {
   onLoginWithGoogle: (options?: { forceRedirect?: boolean }) => Promise<any>;
-  onContinueAsGuest: () => void;
   selectedGrade: string;
   onSelectGrade: (grade: string) => void;
   authLoading: boolean;
@@ -22,8 +21,6 @@ const FEATURES = [
   { icon: Cloud, title: "Lưu tiến độ", tint: "bg-[#dbeafe] text-[#2e5cb8]" },
   { icon: WifiOff, title: "Học khi mất mạng", tint: "bg-[#fef3c7] text-[#b45309]" },
 ];
-// Bright tile colours for the feature chips, cycled (the screen used to be all pale grey-blue)
-const CHIP_TINTS = ["bg-[#dbeafe] text-[#1e40af]", "bg-[#dcfce7] text-[#166534]", "bg-[#fef3c7] text-[#92400e]", "bg-[#ffe4e6] text-[#9f1239]"];
 
 type Mode = "standard" | "support";
 const MODE_KEY = "smartstudy_learning_mode";
@@ -65,6 +62,68 @@ const WHALE_BADGES = [
   { icon: Vibrate, pos: "-right-1 bottom-3 sm:right-0 sm:bottom-6", tint: "bg-[#dcfce7] text-[#16a34a]" },
   { icon: Hand, pos: "left-1/2 -bottom-1 -translate-x-1/2 sm:bottom-0", tint: "bg-[#ffe4e6] text-[#e11d48]" },
 ];
+
+/**
+ * Props drawn over the "hello" whale (viewBox = the image's 354×417, so it lines up under object-contain):
+ * hearing = headphones + sound waves, motor = waving fin + microphone (talk instead of tapping).
+ */
+function NeedWhaleProps({ need }: { need: SupportNeed }) {
+  return (
+    <svg viewBox="0 0 354 417" className="pointer-events-none absolute inset-0 h-full w-full overflow-visible">
+      <defs>
+        <linearGradient id="nw-cup" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#7cc0ff" />
+          <stop offset="1" stopColor="#1d4ed8" />
+        </linearGradient>
+        <linearGradient id="nw-mic" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#fde68a" />
+          <stop offset="1" stopColor="#f59e0b" />
+        </linearGradient>
+      </defs>
+      {need === "hearing" ? (
+        <g>
+          {/* headband over the head, cups on both sides */}
+          <path d="M40 190 C 40 70, 300 70, 300 190" fill="none" stroke="#1e3a8a" strokeWidth="22" strokeLinecap="round" />
+          <path d="M40 190 C 40 70, 300 70, 300 190" fill="none" stroke="#60a5fa" strokeWidth="12" strokeLinecap="round" />
+          <rect x="0" y="140" width="74" height="112" rx="32" fill="url(#nw-cup)" stroke="#fff" strokeWidth="8" />
+          <rect x="266" y="140" width="74" height="112" rx="32" fill="url(#nw-cup)" stroke="#fff" strokeWidth="8" />
+          <ellipse cx="30" cy="178" rx="8" ry="16" fill="#fff" opacity=".7" />
+          <ellipse cx="292" cy="178" rx="8" ry="16" fill="#fff" opacity=".7" />
+          {/* sound waves coming in */}
+          <g fill="none" stroke="#2563eb" strokeWidth="12" strokeLinecap="round">
+            <path d="M-18 168 Q -34 198 -18 228" />
+            <path d="M-50 148 Q -76 198 -50 248" opacity=".6" />
+            <path d="M358 168 Q 374 198 358 228" />
+            <path d="M390 148 Q 416 198 390 248" opacity=".6" />
+          </g>
+        </g>
+      ) : (
+        <g>
+          {/* motion lines by the waving fin */}
+          <g fill="none" stroke="#16a34a" strokeWidth="11" strokeLinecap="round">
+            <path d="M352 150 Q 378 175 372 210" />
+            <path d="M378 120 Q 418 165 406 222" opacity=".6" />
+          </g>
+          {/* microphone held up to the mouth, with speech lines */}
+          <g transform="rotate(-35 80 300)">
+            <rect x="64" y="262" width="30" height="110" rx="12" fill="#1e293b" stroke="#fff" strokeWidth="7" />
+            <rect x="58" y="258" width="42" height="18" rx="6" fill="#475569" stroke="#fff" strokeWidth="5" />
+            <circle cx="79" cy="222" r="44" fill="url(#nw-mic)" stroke="#fff" strokeWidth="8" />
+            <g stroke="#b45309" strokeWidth="5" opacity=".55">
+              <path d="M45 210 H113 M42 230 H116 M79 182 V262 M56 190 V256 M102 190 V256" />
+            </g>
+            <ellipse cx="62" cy="203" rx="10" ry="7" fill="#fff" opacity=".8" />
+          </g>
+          {/* voice going into the mic */}
+          <g fill="none" stroke="#f59e0b" strokeWidth="10" strokeLinecap="round">
+            <path d="M132 196 Q 118 218 132 240" />
+            <path d="M110 184 Q 90 218 110 252" opacity=".6" />
+          </g>
+        </g>
+      )}
+    </svg>
+  );
+}
 
 /** One of the two big cards of the first step: happy whale = standard, whale with help symbols = support. */
 function ModeCard({ mode, onPick, picked }: { mode: Mode; onPick: (m: Mode) => void; picked: boolean }) {
@@ -126,7 +185,6 @@ function ModeCard({ mode, onPick, picked }: { mode: Mode; onPick: (m: Mode) => v
 
 export default function FullScreenAuthPortal({
   onLoginWithGoogle,
-  onContinueAsGuest,
   selectedGrade,
   onSelectGrade,
   authLoading,
@@ -136,7 +194,6 @@ export default function FullScreenAuthPortal({
   const [askOpen, setAskOpen] = useState(false);
   const [mode, setMode] = useState<Mode | null>(null);
   const [need, setNeed] = useState<SupportNeed | null>(null);
-  const choosing = mode === null || (mode === "support" && need === null); // still on the "pick a mode / a difficulty" steps
   const lastMode = (() => {
     try {
       return localStorage.getItem(MODE_KEY) as Mode | null;
@@ -219,48 +276,76 @@ export default function FullScreenAuthPortal({
           <span className="sr-only sm:hidden">Hỗ trợ</span>
           <span className="hidden sm:inline">Cài đặt hỗ trợ</span>
         </button>
-        {/* the interface is chosen first: no way in (sign-in or guest) until a mode is picked */}
-        {!choosing && (
-        <button
-          type="button"
-          onClick={onContinueAsGuest}
-          aria-label="Đóng, vào học dạng Khách"
-          className="flex min-h-[44px] min-w-[44px] items-center justify-center gap-1.5 rounded-xl px-3 text-sm font-bold text-slate-700 hover:bg-[#eef4fc]"
-        >
-          <X className="h-5 w-5" aria-hidden />
-          <span className="hidden sm:inline">Đóng</span>
-        </button>
-        )}
       </header>
 
       {mode === "support" && need === null ? (
       /* Step 1b: which difficulty; only its help is turned on */
-      <main className="relative z-10 mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-center gap-4 px-3 py-3 sm:gap-6 sm:px-6 sm:py-6">
-        <div className="text-center">
-          <h1 className="font-display text-xl font-black uppercase text-[#0e7279] sm:text-3xl">Em gặp khó khăn ở phần nào?</h1>
-          <p className="mt-1 text-sm font-semibold text-slate-600 sm:text-base">Chọn một. SmartStudy chỉ bật hỗ trợ cho phần đó.</p>
+      <main className="relative z-10 mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center gap-3 px-3 py-3 sm:gap-6 sm:px-6 sm:py-6">
+        <span aria-hidden className="pointer-events-none absolute -left-10 top-10 h-24 w-56 rounded-full bg-white/70 blur-2xl" />
+        <span aria-hidden className="pointer-events-none absolute -right-10 bottom-16 h-28 w-64 rounded-full bg-white/70 blur-2xl" />
+        <div className="relative flex flex-col items-center text-center">
+          <h1 className="rounded-[2rem] border-4 border-white/80 bg-gradient-to-b from-[#5aa8ff] to-[#2456b8] px-5 py-2 font-display text-lg font-black tracking-tight text-white shadow-xl [text-shadow:0_3px_0_rgba(20,40,110,0.45)] sm:px-10 sm:py-3 sm:text-4xl">
+            Em gặp khó khăn ở phần nào?
+          </h1>
+          <p className="mt-2 text-sm font-bold text-[#1e3a6e] sm:text-lg">Chọn một. SmartStudy chỉ bật hỗ trợ cho phần đó.</p>
         </div>
-        <div className="grid w-full grid-cols-2 gap-2 sm:gap-6">
-          {NEEDS.map(({ id, icon: Icon, label, hint }, i) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => pickNeed(id)}
-              className="group flex min-h-[200px] flex-col items-center gap-2 rounded-2xl border-2 border-[#14b8a6] bg-white p-3 text-center shadow-md transition hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[#fbbf24] sm:gap-3 sm:p-6"
-            >
-              <span aria-hidden className={`flex h-20 w-20 items-center justify-center rounded-3xl shadow-sm sm:h-28 sm:w-28 ${CHIP_TINTS[i % CHIP_TINTS.length]}`}>
-                <Icon className="h-10 w-10 sm:h-14 sm:w-14" />
-              </span>
-              <span className="font-display text-lg font-black uppercase leading-tight text-[#243c6e] sm:text-2xl">{label}</span>
-              <span className="text-xs font-semibold leading-snug text-slate-600 sm:text-base">{hint}</span>
-              <span aria-hidden className="mt-auto flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl bg-[#0e7279] px-3 text-sm font-black uppercase text-white group-hover:bg-[#0e5f66] sm:w-auto sm:px-6 sm:text-base">
-                Chọn <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
-              </span>
-            </button>
-          ))}
+        <div className="relative grid w-full grid-cols-2 gap-2 sm:gap-8">
+          {NEEDS.map(({ id, icon: Icon, label, hint }) => {
+            const hearing = id === "hearing";
+            return (
+              <button
+                key={id}
+                type="button"
+                onClick={() => pickNeed(id)}
+                className={`group flex flex-col items-center gap-2 rounded-[1.75rem] border-4 border-white/90 bg-gradient-to-b px-2 pb-3 pt-3 text-center shadow-[0_12px_30px_-10px_rgba(30,64,140,0.45)] ring-2 transition hover:-translate-y-1 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[#fbbf24] sm:gap-3 sm:px-6 sm:pb-6 sm:pt-5 ${
+                  hearing ? "from-[#e3f0ff] via-[#f3f8ff] to-white ring-[#93c0f5]" : "from-[#e6fbe9] via-[#f4fff5] to-white ring-[#86d99a]"
+                }`}
+              >
+                {/* whale + the help sign in a big speech bubble (the reference's kids are swapped for our whale) */}
+                <span aria-hidden className="relative flex w-full items-center justify-center gap-1 sm:gap-4">
+                  <span className="relative flex h-24 w-24 shrink-0 items-center justify-center sm:h-48 sm:w-48">
+                    <span className={`absolute inset-2 rounded-full blur-xl ${hearing ? "bg-[#bfdbfe]" : "bg-[#bbf7d0]"}`} />
+                    <WhaleMascot mood="hello" size={160} className="relative !h-full !w-full drop-shadow-lg" />
+                    <NeedWhaleProps need={id} />
+                  </span>
+                  <span
+                    className={`relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-4 border-white shadow-lg sm:h-24 sm:w-24 ${
+                      hearing ? "bg-gradient-to-b from-[#5aa8ff] to-[#2456b8] text-white" : "bg-white text-[#14532d]"
+                    }`}
+                  >
+                    <Icon className="h-6 w-6 sm:h-12 sm:w-12" />
+                    {/* "no hand" sign: motor card means talking instead of tapping */}
+                    {!hearing && <span className="absolute inset-0 rounded-full border-[3px] border-[#e11d48] sm:border-[6px]"><span className="absolute left-1/2 top-1/2 h-[3px] w-[115%] -translate-x-1/2 -translate-y-1/2 -rotate-45 bg-[#e11d48] sm:h-[6px]" /></span>}
+                  </span>
+                </span>
+                <span
+                  className={`-mt-1 w-full rounded-2xl border-2 border-white/80 bg-gradient-to-b px-2 py-1 font-display text-base font-black leading-tight text-white shadow-md [text-shadow:0_2px_0_rgba(0,0,0,0.25)] sm:w-[85%] sm:py-2 sm:text-3xl ${
+                    hearing ? "from-[#5aa8ff] to-[#2456b8]" : "from-[#4ade80] to-[#16a34a]"
+                  }`}
+                >
+                  {label}
+                </span>
+                <span className="text-xs font-bold leading-snug text-[#1e3a6e] sm:text-lg">{hint}</span>
+                <span
+                  aria-hidden
+                  className={`mt-auto flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-full border-2 border-white/70 bg-gradient-to-b px-3 text-base font-black text-white shadow-[0_6px_0_rgba(0,0,0,0.12)] group-hover:brightness-105 sm:min-h-[56px] sm:w-auto sm:px-10 sm:text-xl ${
+                    hearing ? "from-[#3b82f6] to-[#1d4ed8]" : "from-[#22c55e] to-[#15803d]"
+                  }`}
+                >
+                  Chọn <ArrowRight className="h-4 w-4 sm:h-6 sm:w-6" />
+                </span>
+              </button>
+            );
+          })}
         </div>
-        <button type="button" onClick={() => setMode(null)} className="flex min-h-[44px] items-center gap-1 rounded-xl px-3 text-sm font-bold text-[#2e5cb8] hover:bg-[#eef4fc]">
-          <ArrowLeft className="h-4 w-4" aria-hidden />
+        <button
+          type="button"
+          onClick={() => setMode(null)}
+          className="relative flex min-h-[48px] items-center gap-2 rounded-full border-2 border-white bg-white/90 py-1 pl-1.5 pr-5 text-base font-black text-[#1e3a6e] shadow-md hover:bg-white focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[#fbbf24]"
+        >
+          <span aria-hidden className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-b from-[#5aa8ff] to-[#2456b8] text-white">
+            <ArrowLeft className="h-5 w-5" />
+          </span>
           Quay lại
         </button>
       </main>
@@ -448,15 +533,6 @@ export default function FullScreenAuthPortal({
                   </button>
                 )}
 
-                <button
-                  type="button"
-                  onClick={onContinueAsGuest}
-                  className="ss-btn-grad flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl px-4 py-3 text-base font-black text-white"
-                >
-                  <UserIcon className="h-5 w-5 shrink-0" aria-hidden />
-                  <span>Vào học dạng Khách</span>
-                  <ArrowRight className="h-5 w-5 shrink-0" aria-hidden />
-                </button>
               </div>
 
             </div>
