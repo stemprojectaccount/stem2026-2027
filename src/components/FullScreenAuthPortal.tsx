@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Accessibility, ArrowLeft, ArrowRight, RefreshCw, AlertCircle, User as UserIcon, Cloud, WifiOff, ShieldCheck, Globe, X, Check, Captions, Vibrate, Mic, Hand, HandMetal, Settings, BookOpen, ListChecks, Languages, Gamepad2 } from "lucide-react";
+import { Accessibility, ArrowLeft, ArrowRight, RefreshCw, AlertCircle, User as UserIcon, Cloud, WifiOff, ShieldCheck, Globe, X, Check, Captions, Vibrate, Mic, TimerOff, Settings, BookOpen, ListChecks, Languages, Gamepad2 } from "lucide-react";
 import { BrandLogo, getMascotComponent } from "./CustomMascots";
 import { SupportAskDialog } from "./support/SupportFirstRun";
 import { isSupportActive, setSupportProfile, useSupportProfile, type SupportProfile } from "../lib/support/profile";
@@ -31,14 +31,13 @@ const MODE_KEY = "smartstudy_learning_mode";
 // What the support mode turns on (hearing: see instead of hear; movement: speak instead of tap, no clock).
 // Standard mode turns these back off; the voice assistant stays as the student set it.
 const SUPPORT_ON: Partial<SupportProfile> = { visualFeedback: true, vibration: true, timeMode: "off", voiceAssistant: true };
-const SUPPORT_OFF: Partial<SupportProfile> = { visualFeedback: false, vibration: false, timeMode: "normal", handSigns: false };
+const SUPPORT_OFF: Partial<SupportProfile> = { visualFeedback: false, vibration: false, timeMode: "normal" };
 
 const SUPPORT_SWITCHES: { key: keyof SupportProfile; on: SupportProfile[keyof SupportProfile]; off: SupportProfile[keyof SupportProfile]; icon: React.ComponentType<{ className?: string }>; label: string; hint: string }[] = [
-  { key: "handSigns", on: true, off: false, icon: HandMetal, label: "Ký hiệu tay", hint: "Giơ ngón tay trước camera để chọn đáp án, nói thay em" },
   { key: "visualFeedback", on: true, off: false, icon: Captions, label: "Báo bằng hình", hint: "Báo đúng, sai, hết giờ bằng hình và chữ" },
   { key: "vibration", on: true, off: false, icon: Vibrate, label: "Rung thông báo", hint: "Điện thoại rung khi có thông báo" },
   { key: "voiceAssistant", on: true, off: false, icon: Mic, label: "Ra lệnh bằng giọng", hint: "Gọi “Này SmartStudy” rồi nói điều em cần" },
-  { key: "timeMode", on: "off", off: "normal", icon: Hand, label: "Không tính giờ", hint: "Bỏ đồng hồ đếm giờ khi làm bài" },
+  { key: "timeMode", on: "off", off: "normal", icon: TimerOff, label: "Không tính giờ", hint: "Bỏ đồng hồ đếm giờ khi làm bài" },
 ];
 const STANDARD_FEATURES = [
   { icon: BookOpen, label: "Bài học" },
@@ -46,14 +45,11 @@ const STANDARD_FEATURES = [
   { icon: Languages, label: "Từ điển" },
   { icon: Gamepad2, label: "Trò chơi ôn tập" },
 ];
-const HAND_SIGNS = ["☝️", "✌️", "👍", "✋", "🤟"]; // shown on the cards so the camera signs stand out
 
 /** One of the two big cards of the first step (layout and palette 3 from the student's own mock-up). */
 function ModeCard({ mode, onPick, picked }: { mode: Mode; onPick: (m: Mode) => void; picked: boolean }) {
   const support = mode === "support";
-  const profile = useSupportProfile();
-  const signsOn = profile.handSigns;
-  const chips = support ? SUPPORT_SWITCHES.filter((x) => x.key !== "handSigns") : STANDARD_FEATURES;
+  const chips = support ? SUPPORT_SWITCHES : STANDARD_FEATURES;
   // The card is a div (click anywhere) with a real button inside for keyboard and screen readers: a whole
   // card made of one <button> lost its stretch layout in the desktop app's older Chromium.
   return (
@@ -63,17 +59,16 @@ function ModeCard({ mode, onPick, picked }: { mode: Mode; onPick: (m: Mode) => v
         support ? "border-[#14b8a6]" : picked ? "border-[#2e5cb8]" : "border-[#93c5fd]"
       } ${picked ? "ring-2 ring-[#8ee8b4] ring-offset-2 ring-offset-[#eef4fc]" : ""}`}
     >
-      {support && (
-        <span aria-hidden className="absolute left-1/2 top-0 z-10 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 whitespace-nowrap rounded-full border border-[#f59e0b] bg-[#fbbf24] px-2 py-0.5 text-[11px] font-bold text-[#422006] shadow-sm sm:px-3 sm:py-1 sm:text-sm">
-          🤟 Ký hiệu tay<span className="hidden sm:inline"> qua camera</span> <span className="hidden leading-none sm:inline">☝️ ✌️ 👍 ✋</span>
-        </span>
-      )}
 
       <div className="flex flex-col">
         <div aria-hidden className={`order-2 mt-2 flex h-28 w-full shrink-0 items-center justify-center rounded-xl bg-gradient-to-br sm:mt-3 sm:h-44 ${support ? "from-[#ccfbf1] to-[#fef9c3]" : "from-[#dbeafe] to-[#fce7f3]"}`}>
           {support ? (
-            <span className="grid grid-cols-3 gap-1.5 text-3xl leading-none sm:gap-3 sm:text-5xl">
-              {HAND_SIGNS.map((s) => <span key={s}>{s}</span>)}
+            <span className="grid grid-cols-2 gap-2 sm:gap-4">
+              {SUPPORT_SWITCHES.map(({ key, icon: Icon }, i) => (
+                <span key={key} className={`flex h-10 w-10 items-center justify-center rounded-2xl shadow-sm sm:h-16 sm:w-16 ${CHIP_TINTS[i % CHIP_TINTS.length]}`}>
+                  <Icon className="h-5 w-5 sm:h-8 sm:w-8" />
+                </span>
+              ))}
             </span>
           ) : (
             <span className="h-24 w-24 sm:h-40 sm:w-40 [&>*]:!h-full [&>*]:!w-full">{getMascotComponent(0, 160, 2, "default")}</span>
@@ -93,23 +88,6 @@ function ModeCard({ mode, onPick, picked }: { mode: Mode; onPick: (m: Mode) => v
         ))}
       </ul>
 
-      {support && (
-        <button
-          type="button"
-          role="switch"
-          aria-checked={signsOn}
-          onClick={(e) => {
-            e.stopPropagation(); // flips the switch without picking the card
-            setSupportProfile(signsOn ? { handSigns: false } : { handSigns: true, visualFeedback: true });
-          }}
-          className="mt-2 flex min-h-[44px] w-full items-center justify-between gap-2 rounded-xl px-1 text-left text-xs font-semibold leading-tight text-slate-700 sm:mt-2.5 sm:gap-3 sm:text-sm"
-        >
-          Bật phụ đề + ký hiệu tay
-          <span aria-hidden className={`relative h-6 w-11 shrink-0 rounded-full transition ${signsOn ? "bg-[#2e5cb8]" : "bg-slate-300"}`}>
-            <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${signsOn ? "left-[22px]" : "left-0.5"}`} />
-          </span>
-        </button>
-      )}
 
       <div className="mt-auto flex w-full flex-col items-center pt-3 sm:pt-4">
         <button
@@ -248,7 +226,7 @@ export default function FullScreenAuthPortal({
                 {getMascotComponent(selectedAvatarIdx, 140, 2, "default")}
               </div>
               <p className="relative rounded-2xl bg-white px-4 py-3 text-left text-base font-bold leading-snug text-[#243c6e] shadow-md">
-                {mode === "support" ? "Có chữ, hình và ký hiệu tay cho em! 🤟" : "Chào em! Cùng học nhé! 👋"}
+                {mode === "support" ? "Có chữ, hình và giọng nói giúp em! 💬" : "Chào em! Cùng học nhé! 👋"}
               </p>
             </div>
 
@@ -295,12 +273,11 @@ export default function FullScreenAuthPortal({
                           role="switch"
                           aria-checked={isOn}
                           onClick={() => setSupportProfile({ [key]: isOn ? off : on })}
-                          className={`flex min-h-[52px] w-full items-center gap-3 rounded-2xl border-2 px-3 py-2 text-left transition ${isOn ? "border-[#13808a] bg-[#e6f6f3]" : "border-[#c9dcf4] bg-white"} ${key === "handSigns" ? "ring-2 ring-[#8ee8b4] ring-offset-1" : ""}`}
+                          className={`flex min-h-[52px] w-full items-center gap-3 rounded-2xl border-2 px-3 py-2 text-left transition ${isOn ? "border-[#13808a] bg-[#e6f6f3]" : "border-[#c9dcf4] bg-white"}`}
                         >
                           <Icon className="h-6 w-6 shrink-0 text-[#13808a]" aria-hidden />
                           <span className="min-w-0 flex-1">
                             <span className="block text-sm font-black text-[#0e5f66]" title={hint}>{label}</span>
-                            {key === "handSigns" && <span aria-hidden className="mt-1 flex gap-1 text-lg leading-none">{HAND_SIGNS.map((e) => <span key={e}>{e}</span>)}</span>}
                           </span>
                           <span aria-hidden className={`relative h-6 w-11 shrink-0 rounded-full transition ${isOn ? "bg-[#13808a]" : "bg-slate-300"}`}>
                             <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${isOn ? "left-[22px]" : "left-0.5"}`} />

@@ -1,5 +1,5 @@
 import React from "react";
-import { Accessibility, Mic, Check, Clock, Ear, Eye, Hand, MessageSquareText, RotateCcw, Vibrate } from "lucide-react";
+import { Accessibility, Mic, Check, Clock, Ear, Eye, MessageSquareText, RotateCcw, TimerOff, Vibrate } from "lucide-react";
 import { openTool } from "../../features/tools/openTool";
 import { DEFAULT_SUPPORT, setSupportProfile as setLocalSupport, useSupportProfile, type SupportProfile, type TimeMode } from "../../lib/support/profile";
 import { canVibrate, signalFeedback } from "../../lib/support/feedback";
@@ -18,7 +18,7 @@ const AREAS: { id: string; title: string; hint: string; packs: Pack[]; talkTool?
     title: "Vận động",
     hint: "Khi tay khó bấm nhanh, bấm trúng nút nhỏ",
     packs: [
-      { id: "tap", icon: Hand, label: "Không tính giờ", patch: { timeMode: "off" } },
+      { id: "tap", icon: TimerOff, label: "Không tính giờ", patch: { timeMode: "off" } },
       { id: "voice", icon: Mic, label: "Ra lệnh bằng giọng", patch: { voiceAssistant: true } },
     ],
   },
@@ -250,14 +250,6 @@ export default function SupportSettingsCard({ value, onChange }: { value?: Suppo
               desc="Rung 1 lần ngắn khi đúng, 2 lần dài khi sai, nhiều lần khi xong bài."
             />
           )}
-          <Toggle
-            id="support-hand"
-            on={p.handSigns}
-            onChange={(v) => setSupportProfile({ handSigns: v })}
-            icon={Hand}
-            title="Ký hiệu tay (camera)"
-            desc="Giơ 1–4 ngón tay để chọn đáp án A–D; 👍 “Em hiểu rồi”, 👎 “Em chưa hiểu”, ✋ “Em muốn hỏi”, 🤟 “Cảm ơn” được hiện chữ và đọc to. Nhận ngay trong máy, không gửi hình đi đâu."
-          />
         </div>
         <GroupHead title="Vận động" />
         <div className="divide-y divide-[#c9dcf4]">

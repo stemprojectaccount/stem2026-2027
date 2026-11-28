@@ -79,6 +79,7 @@ const RETIRED: Partial<SupportProfile> = {
   readingRuler: false,
   softBackground: false,
   breakReminder: false,
+  handSigns: false, // camera hand signs taken out of the app (11/2026)
 };
 
 /** Seconds for a timed task after the student's time setting; null = no clock. */
