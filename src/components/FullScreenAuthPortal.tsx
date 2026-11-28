@@ -35,10 +35,10 @@ const SUPPORT_OFF: Partial<SupportProfile> = { visualFeedback: false, vibration:
 
 const SUPPORT_SWITCHES: { key: keyof SupportProfile; on: SupportProfile[keyof SupportProfile]; off: SupportProfile[keyof SupportProfile]; icon: React.ComponentType<{ className?: string }>; label: string; hint: string }[] = [
   { key: "handSigns", on: true, off: false, icon: HandMetal, label: "Ký hiệu tay", hint: "Giơ ngón tay trước camera để chọn đáp án, nói thay em" },
-  { key: "visualFeedback", on: true, off: false, icon: Captions, label: "Nhìn thay nghe", hint: "Báo đúng, sai, hết giờ bằng hình và chữ" },
-  { key: "vibration", on: true, off: false, icon: Vibrate, label: "Rung báo", hint: "Điện thoại rung khi có thông báo" },
-  { key: "voiceAssistant", on: true, off: false, icon: Mic, label: "Nói thay bấm", hint: "Gọi “Này SmartStudy” rồi nói điều em cần" },
-  { key: "timeMode", on: "off", off: "normal", icon: Hand, label: "Không vội", hint: "Bỏ đồng hồ đếm giờ khi làm bài" },
+  { key: "visualFeedback", on: true, off: false, icon: Captions, label: "Báo bằng hình", hint: "Báo đúng, sai, hết giờ bằng hình và chữ" },
+  { key: "vibration", on: true, off: false, icon: Vibrate, label: "Rung thông báo", hint: "Điện thoại rung khi có thông báo" },
+  { key: "voiceAssistant", on: true, off: false, icon: Mic, label: "Ra lệnh bằng giọng", hint: "Gọi “Này SmartStudy” rồi nói điều em cần" },
+  { key: "timeMode", on: "off", off: "normal", icon: Hand, label: "Không tính giờ", hint: "Bỏ đồng hồ đếm giờ khi làm bài" },
 ];
 const STANDARD_FEATURES = [
   { icon: BookOpen, label: "Bài học" },
@@ -59,35 +59,35 @@ function ModeCard({ mode, onPick, picked }: { mode: Mode; onPick: (m: Mode) => v
   return (
     <div
       onClick={() => onPick(mode)}
-      className={`group relative flex w-full cursor-pointer flex-col rounded-2xl border-2 bg-white p-3 shadow-md transition hover:-translate-y-0.5 hover:shadow-lg sm:p-5 ${
-        support ? "mt-3 border-[#14b8a6] sm:mt-0" : picked ? "border-[#2e5cb8]" : "border-[#93c5fd]"
+      className={`group relative flex w-full cursor-pointer flex-col rounded-2xl border-2 bg-white p-2.5 shadow-md transition hover:-translate-y-0.5 hover:shadow-lg sm:p-5 ${
+        support ? "border-[#14b8a6]" : picked ? "border-[#2e5cb8]" : "border-[#93c5fd]"
       } ${picked ? "ring-2 ring-[#8ee8b4] ring-offset-2 ring-offset-[#eef4fc]" : ""}`}
     >
       {support && (
-        <span aria-hidden className="absolute left-1/2 top-0 z-10 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 whitespace-nowrap rounded-full border border-[#f59e0b] bg-[#fbbf24] px-3 py-1 text-xs font-bold text-[#422006] shadow-sm sm:text-sm">
-          🤟 Ký hiệu tay qua camera <span className="leading-none">☝️ ✌️ 👍 ✋</span>
+        <span aria-hidden className="absolute left-1/2 top-0 z-10 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 whitespace-nowrap rounded-full border border-[#f59e0b] bg-[#fbbf24] px-2 py-0.5 text-[11px] font-bold text-[#422006] shadow-sm sm:px-3 sm:py-1 sm:text-sm">
+          🤟 Ký hiệu tay<span className="hidden sm:inline"> qua camera</span> <span className="hidden leading-none sm:inline">☝️ ✌️ 👍 ✋</span>
         </span>
       )}
 
-      <div className="flex items-center gap-3 sm:flex-col sm:gap-0">
-        <div aria-hidden className={`flex h-24 w-28 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br sm:order-2 sm:mt-3 sm:h-44 sm:w-full ${support ? "from-[#ccfbf1] to-[#fef9c3]" : "from-[#dbeafe] to-[#fce7f3]"}`}>
+      <div className="flex flex-col">
+        <div aria-hidden className={`order-2 mt-2 flex h-28 w-full shrink-0 items-center justify-center rounded-xl bg-gradient-to-br sm:mt-3 sm:h-44 ${support ? "from-[#ccfbf1] to-[#fef9c3]" : "from-[#dbeafe] to-[#fce7f3]"}`}>
           {support ? (
-            <span className="grid grid-cols-3 gap-1 text-2xl leading-none sm:gap-3 sm:text-5xl">
+            <span className="grid grid-cols-3 gap-1.5 text-3xl leading-none sm:gap-3 sm:text-5xl">
               {HAND_SIGNS.map((s) => <span key={s}>{s}</span>)}
             </span>
           ) : (
-            <span className="h-20 w-20 sm:h-40 sm:w-40 [&>*]:!h-full [&>*]:!w-full">{getMascotComponent(0, 160, 2, "default")}</span>
+            <span className="h-24 w-24 sm:h-40 sm:w-40 [&>*]:!h-full [&>*]:!w-full">{getMascotComponent(0, 160, 2, "default")}</span>
           )}
         </div>
-        <div className="min-w-0 flex-1 text-left sm:order-1 sm:text-center">
-          <h2 className="font-display text-base font-black uppercase leading-tight text-[#243c6e] sm:text-2xl">{support ? "Chế độ hỗ trợ" : "Chế độ tiêu chuẩn"}</h2>
+        <div className="order-1 mt-1 min-w-0 text-center sm:mt-0">
+          <h2 className="font-display text-sm font-black uppercase leading-tight text-[#243c6e] sm:text-2xl">{support ? "Chế độ hỗ trợ" : "Chế độ tiêu chuẩn"}</h2>
         </div>
       </div>
 
-      <ul aria-hidden className="mt-3 grid grid-cols-2 gap-1.5">
+      <ul aria-hidden className="mt-2.5 grid grid-cols-1 gap-1 sm:mt-3 sm:grid-cols-2 sm:gap-1.5">
         {chips.map(({ icon: Icon, label }, i) => (
-          <li key={label} className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold sm:text-sm ${CHIP_TINTS[i % CHIP_TINTS.length]}`}>
-            <Icon className="h-4 w-4 shrink-0" />
+          <li key={label} className={`flex items-center gap-1.5 rounded-full px-2 py-1 text-[11px] font-bold leading-tight sm:px-2.5 sm:text-sm ${CHIP_TINTS[i % CHIP_TINTS.length]}`}>
+            <Icon className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
             {label}
           </li>
         ))}
@@ -102,7 +102,7 @@ function ModeCard({ mode, onPick, picked }: { mode: Mode; onPick: (m: Mode) => v
             e.stopPropagation(); // flips the switch without picking the card
             setSupportProfile(signsOn ? { handSigns: false } : { handSigns: true, visualFeedback: true });
           }}
-          className="mt-2.5 flex min-h-[44px] w-full items-center justify-between gap-3 rounded-xl px-1 text-left text-sm font-semibold text-slate-700"
+          className="mt-2 flex min-h-[44px] w-full items-center justify-between gap-2 rounded-xl px-1 text-left text-xs font-semibold leading-tight text-slate-700 sm:mt-2.5 sm:gap-3 sm:text-sm"
         >
           Bật phụ đề + ký hiệu tay
           <span aria-hidden className={`relative h-6 w-11 shrink-0 rounded-full transition ${signsOn ? "bg-[#2e5cb8]" : "bg-slate-300"}`}>
@@ -114,9 +114,10 @@ function ModeCard({ mode, onPick, picked }: { mode: Mode; onPick: (m: Mode) => v
       <div className="mt-auto flex w-full flex-col items-center pt-3 sm:pt-4">
         <button
           type="button"
-          className={`flex min-h-[48px] w-auto items-center justify-center gap-2 rounded-xl px-6 text-sm font-black uppercase leading-tight text-white shadow-md focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[#fbbf24] sm:text-base ${support ? "bg-[#0e7279] group-hover:bg-[#0e5f66]" : "ss-btn-grad"}`}
+          className={`flex min-h-[48px] w-full items-center justify-center gap-1.5 rounded-xl px-2 text-sm font-black uppercase sm:w-auto sm:gap-2 sm:px-6 leading-tight text-white shadow-md focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[#fbbf24] sm:text-base ${support ? "bg-[#0e7279] group-hover:bg-[#0e5f66]" : "ss-btn-grad"}`}
         >
-          {support ? "Vào chế độ hỗ trợ" : "Vào chế độ tiêu chuẩn"}
+          <span className="sm:hidden">Vào học</span>
+          <span className="hidden sm:inline">{support ? "Vào chế độ hỗ trợ" : "Vào chế độ tiêu chuẩn"}</span>
           <ArrowRight className="h-4 w-4 shrink-0 sm:h-5 sm:w-5" aria-hidden />
         </button>
       </div>
@@ -221,7 +222,7 @@ export default function FullScreenAuthPortal({
         <div className="text-center">
           <h1 className="font-display text-xl font-black uppercase text-[#2e5cb8] sm:text-3xl">Chọn chế độ học tập</h1>
         </div>
-        <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-6">
+        <div className="mt-2 grid w-full grid-cols-2 gap-2 sm:mt-0 sm:gap-6">
           <ModeCard mode="standard" onPick={pickMode} picked={lastMode === "standard"} />
           <ModeCard mode="support" onPick={pickMode} picked={lastMode === "support"} />
         </div>

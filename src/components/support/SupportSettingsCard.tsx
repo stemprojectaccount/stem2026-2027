@@ -12,14 +12,14 @@ type Pack = { id: string; icon: React.ComponentType<{ className?: string }>; lab
 // không theo tên khuyết tật. Nhiều nút dùng chung một cài đặt; tắt nút này không tắt cài đặt mà nút khác đang dùng.
 // `hint` says in plain words when to pick the area (W3C COGA: make the purpose of each part clear).
 const AREAS: { id: string; title: string; hint: string; packs: Pack[]; talkTool?: boolean }[] = [
-  { id: "hear", title: "Nghe, nói", hint: "Khi em khó nghe tiếng, hoặc khó nói thành lời", talkTool: true, packs: [{ id: "see", icon: Ear, label: "Nhìn thay nghe", patch: { visualFeedback: true, vibration: true } }] },
+  { id: "hear", title: "Nghe, nói", hint: "Khi em khó nghe tiếng, hoặc khó nói thành lời", talkTool: true, packs: [{ id: "see", icon: Ear, label: "Báo bằng hình và rung", patch: { visualFeedback: true, vibration: true } }] },
   {
     id: "move",
     title: "Vận động",
     hint: "Khi tay khó bấm nhanh, bấm trúng nút nhỏ",
     packs: [
-      { id: "tap", icon: Hand, label: "Không vội", patch: { timeMode: "off" } },
-      { id: "voice", icon: Mic, label: "Nói thay bấm", patch: { voiceAssistant: true } },
+      { id: "tap", icon: Hand, label: "Không tính giờ", patch: { timeMode: "off" } },
+      { id: "voice", icon: Mic, label: "Ra lệnh bằng giọng", patch: { voiceAssistant: true } },
     ],
   },
 ];
