@@ -269,6 +269,16 @@ export default function SupportSettingsCard({ value, onChange }: { value?: Suppo
             title="Trợ lý giọng nói (luôn nghe)"
             desc="Gọi “Này SmartStudy” rồi nói “mở trò chơi”, “cuộn xuống”, “quay lại”, “chọn đáp án B” hoặc hỏi bài. Nhận giọng ngay trong máy, không cần mạng, không gửi tiếng nói đi đâu."
           />
+          {p.voiceAssistant && (
+            <Toggle
+              id="support-voice-panel"
+              on={p.voicePanel}
+              onChange={(v) => setSupportProfile({ voicePanel: v })}
+              icon={Mic}
+              title="Hiện ô giọng nói"
+              desc="Hiện ô nhỏ ở góc màn hình cho thấy máy đang nghe em nói gì. Tắt thì trợ lý vẫn luôn nghe và đọc to câu trả lời."
+            />
+          )}
         </div>
 
         {p.visualFeedback && !remote && (

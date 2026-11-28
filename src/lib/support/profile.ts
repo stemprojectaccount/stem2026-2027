@@ -37,6 +37,9 @@ export interface SupportProfile {
    *  scrolls, or answers study questions, so students who find tapping hard need no hands. Replaces the
    *  old voiceControl switch (off by default, so its saved false is ignored on purpose). */
   voiceAssistant: boolean;
+  /** Shows the voice assistant's box (what it hears, its answer). Off by default: it still always listens and
+   *  speaks its answers, the box just stays out of the way until the student turns it on in Settings. */
+  voicePanel: boolean;
   /** Hand signs in front of the camera: 1–4 fingers pick answer A–D, 👍 👎 ✋ 🤟 speak a short sentence for
    *  students who cannot speak. Off by default (it turns the camera on). */
   handSigns: boolean;
@@ -60,6 +63,7 @@ export const DEFAULT_SUPPORT: SupportProfile = {
   softBackground: false,
   breakReminder: false,
   voiceAssistant: true,
+  voicePanel: false,
   handSigns: false,
 };
 

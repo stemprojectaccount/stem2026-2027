@@ -92,7 +92,7 @@ async function answer(q: string, onPartial: (t: string) => void): Promise<string
 type Phase = "loading" | "sleep" | "awake" | "thinking" | "error";
 
 export default function VoiceControl() {
-  const { voiceAssistant } = useSupportProfile();
+  const { voiceAssistant, voicePanel } = useSupportProfile();
   const [phase, setPhase] = useState<Phase>("loading");
   const [heard, setHeard] = useState("");
   const [reply, setReply] = useState("");
@@ -229,7 +229,8 @@ export default function VoiceControl() {
     };
   }, [voiceAssistant]);
 
-  if (!voiceAssistant) return null;
+  // still listening (the effect above runs), only the box is hidden until turned on in Settings
+  if (!voiceAssistant || !voicePanel) return null;
   const open = phase === "awake" || phase === "thinking" || phase === "error" || (silent && phase === "sleep");
   const title =
     phase === "loading" ? "Đang bật trợ lý giọng nói…"
