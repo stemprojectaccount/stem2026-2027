@@ -375,28 +375,32 @@ function Sidebar({
   };
 
   // ---- Danh sách có nhóm xổ xuống (dùng cho cả máy tính và điện thoại) ----
-  // Order asked by the student: Trang chủ, then "Học bài và Ôn tập", then the rest (Hỗ trợ học tập first)
-  const renderLearnCta = (mobile: boolean) => (
-    <button
-      key="learn-cta"
-      type="button"
-      onClick={() => {
-        setActiveTab("learn");
-        if (onClose) onClose();
-      }}
-      aria-current={activeTab === "learn" ? "page" : undefined}
-      className={
-        mobile
-          ? "w-full min-h-[48px] px-4 py-3 rounded-2xl bg-[#2e5cb8] text-white font-extrabold text-base flex items-center justify-center gap-2.5 shadow-xs cursor-pointer active:scale-98"
-          : "w-full min-h-[44px] px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#3563b8] to-[#23806f] hover:from-[#3e6fc9] hover:to-[#2a9480] text-white border border-emerald-200/30 whitespace-nowrap font-extrabold text-xs sm:text-[13px] flex items-center justify-center gap-2 shadow-sm transition-colors cursor-pointer active:scale-95"
-      }
-    >
-      <Sparkles className={mobile ? "w-5 h-5 text-sky-200 shrink-0" : "w-4 h-4 text-sky-200 shrink-0"} />
-      <span>{mobile ? "Học bài mới và Ôn tập cùng AI" : "Học bài và Ôn tập"}</span>
-    </button>
-  );
+  // Order asked by the student: Trang chủ (the big highlighted button), then "Học bài và Ôn tập", then the rest
+  const learnItem: QuestoraNavItem = { id: "learn", label: "Học bài và Ôn tập", icon: Sparkles };
+  const renderHomeCta = (item: QuestoraNavItem, mobile: boolean) => {
+    const Icon = item.icon;
+    const isActive = isItemActive(item);
+    return (
+      <button
+        key={item.id}
+        type="button"
+        onClick={() => handleItemClick(item)}
+        aria-current={isActive ? "page" : undefined}
+        className={`w-full ${mobile ? "min-h-[60px] text-lg rounded-2xl" : "min-h-[56px] text-base rounded-2xl"} px-4 py-3 bg-gradient-to-r from-[#3563b8] to-[#13808a] hover:from-[#3e6fc9] hover:to-[#16949f] text-white font-black flex items-center justify-center gap-2.5 shadow-md transition-colors cursor-pointer active:scale-[0.98] ${
+          isActive ? "ring-[3px] ring-[#fbbf24] ring-offset-2 ring-offset-white/60" : ""
+        }`}
+      >
+        <Icon className={mobile ? "w-6 h-6 shrink-0" : "w-6 h-6 shrink-0"} />
+        <span>{item.label}</span>
+      </button>
+    );
+  };
   const renderNav = (mobile: boolean) =>
-    navEntries.flatMap((entry, i) => [i === 1 ? renderLearnCta(mobile) : null, renderEntry(entry, mobile)]);
+    navEntries.flatMap((entry, i) =>
+      i === 0 && entry.kind === "item" && entry.item.id === "dashboard"
+        ? [renderHomeCta(entry.item, mobile), <div key="learn-gap" className={mobile ? "" : "h-1"} />, mobile ? renderMobileItem(learnItem, false) : renderDesktopItem(learnItem, false)]
+        : [renderEntry(entry, mobile)]
+    );
   const renderEntry = (entry: NavEntry, mobile: boolean) => {
       if (entry.kind === "item") return mobile ? renderMobileItem(entry.item, false) : renderDesktopItem(entry.item, false);
       const { group } = entry;
