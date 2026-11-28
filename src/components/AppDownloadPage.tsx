@@ -56,7 +56,7 @@ function DownloadButton({ file, label }: { file: FileInfo | undefined; label: st
     <a
       href={file.url}
       download
-      className="mt-auto min-h-[48px] px-5 py-3 rounded-xl bg-[#2e5cb8] hover:bg-[#254da0] text-white font-bold text-base inline-flex items-center justify-center gap-2 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2e5cb8]"
+      className="mt-auto min-h-[48px] px-5 py-3 rounded-xl bg-[#2e5cb8] hover:bg-[#254da0] text-white font-bold text-base whitespace-nowrap inline-flex items-center justify-center gap-2 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2e5cb8]"
     >
       <Download className="w-5 h-5 shrink-0" aria-hidden="true" />
       <span>
@@ -173,7 +173,7 @@ export default function AppDownloadPage() {
       />
       <div className="mt-auto grid gap-2">
         <DownloadButton file={sized(info?.windowsLite, "SmartStudy-Windows-Lite.exe")} label="Bản nhẹ" />
-        <DownloadButton file={sized(info?.windows, "SmartStudy-Windows.exe")} label="Bản đầy đủ, có sẵn AI" />
+        <DownloadButton file={sized(info?.windows, "SmartStudy-Windows.exe")} label="Bản đầy đủ có AI" />
       </div>
     </section>
   );

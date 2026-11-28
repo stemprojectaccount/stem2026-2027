@@ -780,13 +780,13 @@ export default function Flashcards({
                   setCurrentIndex(prev => prev > 0 ? prev - 1 : activeCards.length - 1);
                 }, 100);
               }}
-              className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-700 flex items-center gap-1 cursor-pointer transition-colors"
+              className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-xs font-semibold whitespace-nowrap text-slate-700 flex items-center gap-1 cursor-pointer transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
               <span>Thẻ trước</span>
             </button>
             
-            <span className="text-xs text-slate-500 font-medium">
+            <span className="hidden text-xs text-slate-500 font-medium sm:inline">
               Ôn tập ngắt quãng theo trí nhớ
             </span>
 
@@ -798,7 +798,7 @@ export default function Flashcards({
                   setCurrentIndex(prev => prev < activeCards.length - 1 ? prev + 1 : 0);
                 }, 100);
               }}
-              className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-700 flex items-center gap-1 cursor-pointer transition-colors"
+              className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-xs font-semibold whitespace-nowrap text-slate-700 flex items-center gap-1 cursor-pointer transition-colors"
             >
               <span>Thẻ tiếp theo</span>
               <ChevronRight className="w-4 h-4" />

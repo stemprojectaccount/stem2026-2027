@@ -825,7 +825,7 @@ export default function Shop({
           }`}
         >
           <Gift className="w-4 h-4" />
-          <span>Linh thú và thức ăn</span>
+          <span className="whitespace-nowrap">Linh thú</span>
         </button>
         <button
           onClick={() => setActiveTab("outfits")}
@@ -836,7 +836,7 @@ export default function Shop({
           }`}
         >
           <Shirt className="w-4 h-4" />
-          <span>Trang phục linh thú</span>
+          <span className="whitespace-nowrap">Trang phục</span>
           <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" aria-hidden="true" />
         </button>
         <button
@@ -1270,7 +1270,7 @@ export default function Shop({
                 ) : (
                   <button
                     onClick={handleCheckIn}
-                    className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-xs transition-all hover:scale-[1.03] active:scale-[0.97] cursor-pointer"
+                    className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wider whitespace-nowrap rounded-xl shadow-xs transition-all hover:scale-[1.03] active:scale-[0.97] cursor-pointer"
                   >
                     Điểm danh nhận Xu
                   </button>

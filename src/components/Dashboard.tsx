@@ -722,7 +722,7 @@ export default function Dashboard({
               <button
                 type="button"
                 onClick={() => onSelectTab("quiz")}
-                className="flex-1 sm:flex-none justify-center min-h-[44px] lg:min-h-0 px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-semibold text-xs transition-colors cursor-pointer flex items-center gap-1.5"
+                className="flex-1 sm:flex-none justify-center min-h-[44px] lg:min-h-0 px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-semibold text-xs whitespace-nowrap transition-colors cursor-pointer flex items-center gap-1.5"
               >
                 <Trophy className="w-3.5 h-3.5 text-blue-600" />
                 <span>Luyện đề trắc nghiệm</span>
@@ -902,7 +902,7 @@ export default function Dashboard({
             <button
               type="button"
               onClick={() => onSelectTab("quiz")}
-              className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition-colors flex items-center gap-1.5 self-start sm:self-auto cursor-pointer"
+              className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs whitespace-nowrap transition-colors flex items-center gap-1.5 self-start sm:self-auto cursor-pointer"
             >
               <Zap className="w-3.5 h-3.5 text-amber-500" />
               <span>Luyện đề trắc nghiệm</span>
@@ -1011,7 +1011,7 @@ export default function Dashboard({
                   <button
                     type="button"
                     onClick={() => setChartMode("daily")}
-                    className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                    className={`shrink-0 whitespace-nowrap px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer ${
                       chartMode === "daily" ? "bg-white text-slate-900 shadow-2xs" : "text-slate-600 hover:text-slate-900"
                     }`}
                   >
@@ -1020,7 +1020,7 @@ export default function Dashboard({
                   <button
                     type="button"
                     onClick={() => setChartMode("weekly")}
-                    className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                    className={`shrink-0 whitespace-nowrap px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer ${
                       chartMode === "weekly" ? "bg-white text-slate-900 shadow-2xs" : "text-slate-600 hover:text-slate-900"
                     }`}
                   >
@@ -1220,7 +1220,7 @@ export default function Dashboard({
                 <button
                   type="button"
                   onClick={() => setSelectedScoreSubject("all")}
-                  className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                  className={`shrink-0 whitespace-nowrap px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer ${
                     selectedScoreSubject === "all" ? "bg-white text-slate-900 shadow-2xs" : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
@@ -1236,7 +1236,7 @@ export default function Dashboard({
                     key={sub.id}
                     type="button"
                     onClick={() => setSelectedScoreSubject(sub.id)}
-                    className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                    className={`shrink-0 whitespace-nowrap px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer flex items-center gap-1 ${
                       selectedScoreSubject === sub.id ? "bg-white text-slate-900 shadow-2xs" : "text-slate-600 hover:text-slate-900"
                     }`}
                   >
@@ -1376,7 +1376,7 @@ export default function Dashboard({
                 <button
                   type="button"
                   onClick={() => setBarChartMetric("stacked")}
-                  className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                  className={`shrink-0 whitespace-nowrap px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
                     barChartMetric === "stacked" ? "bg-white text-slate-900 shadow-2xs" : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
@@ -1385,7 +1385,7 @@ export default function Dashboard({
                 <button
                   type="button"
                   onClick={() => setBarChartMetric("total")}
-                  className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                  className={`shrink-0 whitespace-nowrap px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
                     barChartMetric === "total" ? "bg-white text-slate-900 shadow-2xs" : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
@@ -1461,7 +1461,7 @@ export default function Dashboard({
                     key={cat.id}
                     type="button"
                     onClick={() => setSelectedCategory(cat.id)}
-                    className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                    className={`shrink-0 whitespace-nowrap px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
                       selectedCategory === cat.id ? "bg-white text-slate-900 shadow-2xs" : "text-slate-600 hover:text-slate-900"
                     }`}
                   >

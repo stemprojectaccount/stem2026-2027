@@ -654,12 +654,12 @@ export function Achievements({
                           {isEquipped ? (
                             <>
                               <BadgeCheck className="w-3.5 h-3.5 text-amber-600" />
-                              <span>Đang dùng làm danh hiệu</span>
+                              <span className="whitespace-nowrap">Đang dùng làm danh hiệu</span>
                             </>
                           ) : (
                             <>
                               <Award className="w-3.5 h-3.5 text-sky-600" />
-                              <span>Trang bị danh hiệu: {badge.titleBadgeValue}</span>
+                              <span className="whitespace-nowrap" title={`Dùng ${badge.titleBadgeValue} làm danh hiệu`}>Dùng làm danh hiệu</span>
                             </>
                           )}
                         </button>

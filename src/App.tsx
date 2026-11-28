@@ -6274,11 +6274,11 @@ export default function App() {
                                   <span className="text-xs font-semibold text-slate-600">
                                     Nhấn <strong className="text-sky-950">Mở toàn bộ bài đọc</strong> để vào chế độ đọc tập trung, nghe giọng đọc AI và tra cứu thuật ngữ.
                                   </span>
-                                  <div className="flex items-center gap-2 ml-auto">
+                                  <div className="flex flex-wrap items-center justify-end gap-2 ml-auto">
                                     <button
                                       type="button"
                                       onClick={() => handleTogglePinLesson(lesson.id)}
-                                      className={`px-3 py-2 rounded-xl text-xs font-extrabold border inline-flex items-center gap-1.5 transition-all cursor-pointer ${
+                                      className={`whitespace-nowrap px-3 py-2 rounded-xl text-xs font-extrabold border inline-flex items-center gap-1.5 transition-all cursor-pointer ${
                                         lesson.pinned
                                           ? "bg-amber-100 border-amber-300 text-amber-800"
                                           : "bg-white border-sky-200 text-slate-700 hover:bg-amber-50 hover:border-amber-200"
@@ -6290,7 +6290,7 @@ export default function App() {
                                     <button
                                       type="button"
                                       onClick={() => handleSelectLesson(lesson)}
-                                      className="px-4 py-2 rounded-xl ss-btn-grad text-white font-black text-xs shadow-md shadow-sky-600/25 inline-flex items-center gap-1.5 transition-all cursor-pointer active:scale-95"
+                                      className="whitespace-nowrap px-4 py-2 rounded-xl ss-btn-grad text-white font-black text-xs shadow-md shadow-sky-600/25 inline-flex items-center gap-1.5 transition-all cursor-pointer active:scale-95"
                                     >
                                       <BookOpen className="w-4 h-4" />
                                       <span>Mở toàn bộ bài đọc</span>

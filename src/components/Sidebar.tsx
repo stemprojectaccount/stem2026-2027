@@ -487,10 +487,10 @@ function Sidebar({
             setActiveTab("learn");
             if (onClose) onClose();
           }}
-          className="w-full min-h-[44px] px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#3563b8] to-[#23806f] hover:from-[#3e6fc9] hover:to-[#2a9480] text-white border border-emerald-200/30 font-extrabold text-xs sm:text-[13px] flex items-center justify-center gap-2 shadow-sm transition-colors cursor-pointer active:scale-95"
+          className="w-full min-h-[44px] px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#3563b8] to-[#23806f] hover:from-[#3e6fc9] hover:to-[#2a9480] text-white border border-emerald-200/30 whitespace-nowrap font-extrabold text-xs sm:text-[13px] flex items-center justify-center gap-2 shadow-sm transition-colors cursor-pointer active:scale-95"
         >
           <Sparkles className="w-4 h-4 text-sky-200 shrink-0" />
-          <span>Học bài mới và Ôn tập</span>
+          <span>Học bài và Ôn tập</span>
         </button>
       </div>
 

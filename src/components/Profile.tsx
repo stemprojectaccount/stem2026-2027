@@ -691,7 +691,7 @@ export default function Profile({
             {onNavigateTab && (
               <button
                 onClick={() => onNavigateTab("shop")}
-                className="min-h-6 py-1 text-[11px] font-extrabold text-blue-600 hover:text-blue-800 underline underline-offset-2 cursor-pointer"
+                className="min-h-6 py-1 whitespace-nowrap text-[11px] font-extrabold text-blue-600 hover:text-blue-800 underline underline-offset-2 cursor-pointer"
               >
                 Đổi đồ trong Shop →
               </button>
@@ -1043,7 +1043,7 @@ export default function Profile({
           <button
             type="button"
             onClick={() => setConfirmingReset(true)}
-            className="px-4 py-2 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
+            className="px-4 py-2 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer"
           >
             Đặt lại toàn bộ
           </button>

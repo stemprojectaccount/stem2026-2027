@@ -62,14 +62,14 @@ interface ToolDef {
 }
 
 const TOOLS: ToolDef[] = [
-  { id: "grades", name: "Tính điểm trung bình", desc: "Điểm TB môn, học kỳ, cả năm theo Thông tư 22 và điểm thi cuối kỳ cần đạt.", icon: Calculator, tint: "from-emerald-500 to-teal-600", isNew: true, Comp: GradeCalculator },
+  { id: "grades", name: "Tính điểm TB", desc: "Điểm TB môn, học kỳ, cả năm theo Thông tư 22 và điểm thi cuối kỳ cần đạt.", icon: Calculator, tint: "from-emerald-500 to-teal-600", isNew: true, Comp: GradeCalculator },
   { id: "equation", name: "Giải phương trình", desc: "Bậc nhất, bậc hai (Δ, Vi-ét), hệ 2 ẩn — hiện lời giải từng bước.", icon: Sigma, tint: "from-[#3b6fd0] to-[#2e5cb8]", isNew: true, Comp: EquationSolver },
   { id: "periodic", name: "Bảng tuần hoàn", desc: "118 nguyên tố, cấu hình electron, hoá trị và máy tính khối lượng mol.", icon: Atom, tint: "from-cyan-500 to-teal-600", isNew: true, Comp: PeriodicTable },
   { id: "units", name: "Đổi đơn vị", desc: "Độ dài, khối lượng, diện tích, thể tích, tốc độ, nhiệt độ, năng lượng…", icon: Ruler, tint: "from-amber-400 to-amber-500", isNew: true, Comp: UnitConverter },
   { id: "formula", name: "Sổ công thức", desc: "Tra công thức Toán, Lý, Hoá, Anh; che đáp án để tự kiểm tra.", icon: BookMarked, tint: "from-sky-500 to-blue-600", Comp: FormulaBank },
   { id: "geomath", name: "Vẽ hình nháp", desc: "Bảng vẽ hình học: điểm, đường thẳng, đường tròn, đa giác, đo góc và độ dài.", icon: PencilRuler, tint: "from-teal-500 to-emerald-600", Comp: GeoMathTool },
   { id: "dictionary", name: "Tra từ và Dịch", desc: "Từ điển Anh–Việt, phát âm, dịch câu, chụp ảnh để dịch và sổ từ ôn tập.", icon: Languages, tint: "from-[#2e5cb8] to-[#243c6e]", ai: true, Comp: DictionaryTool },
-  { id: "conversation", name: "Bảng trò chuyện hai chiều", desc: "Một máy cho hai người: nói thành chữ thật to, gõ chữ thì máy đọc to. Giúp bạn khiếm thính trò chuyện với cả nhóm.", icon: MessagesSquare, tint: "from-sky-400 to-cyan-600", isNew: true, Comp: ConversationBoard },
+  { id: "conversation", name: "Trò chuyện 2 chiều", desc: "Một máy cho hai người: nói thành chữ thật to, gõ chữ thì máy đọc to. Giúp bạn khiếm thính trò chuyện với cả nhóm.", icon: MessagesSquare, tint: "from-sky-400 to-cyan-600", isNew: true, Comp: ConversationBoard },
   { id: "essay", name: "Rà soát bài viết", desc: "Bắt lỗi chính tả, dấu câu, câu dài, lặp từ; đối chiếu ý chính trước khi nộp.", icon: SpellCheck, tint: "from-emerald-400 to-green-600", Comp: EssayChecker },
   { id: "textcleaner", name: "Dọn văn bản", desc: "Dọn chữ copy từ PDF, nối dòng, lọc link, sắp xếp danh sách, dịch.", icon: Eraser, tint: "from-cyan-400 to-sky-600", ai: true, Comp: TextCleaner },
   { id: "document", name: "PDF và Dịch ảnh", desc: "Chuyển PDF sang Word, chụp màn hình rồi Ctrl+V để đọc và dịch chữ.", icon: FileText, tint: "from-blue-500 to-[#243c6e]", ai: true, Comp: DocumentTools },
