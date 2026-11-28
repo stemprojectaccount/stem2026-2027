@@ -37,7 +37,7 @@ import {
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { localAnswer, searchKnowledge } from '../lib/localMind';
-import { askOnDevice, downloadModel, isModelDownloaded, LLM_PROGRESS_EVENT, loadModel, MODELS, nativeModelsChecked, selectedModel, selectModel, type ModelId } from '../lib/onDeviceLLM';
+import { askOnDevice, downloadModel, isModelDownloaded, LLM_AVAILABLE, LLM_PROGRESS_EVENT, loadModel, MODELS, nativeModelsChecked, selectedModel, selectModel, type ModelId } from '../lib/onDeviceLLM';
 import { ASK_AI_EVENT, PENDING_ASK_KEY } from './support/VoiceControl';
 import { mathRemarkPlugins, mathRehypePlugins, normalizeMathInText } from '../lib/mathFormatter';
 import { UserProgress, Lesson, AIMemoryStore, UserProfileMemory, ConversationTurn } from '../types';
@@ -1750,6 +1750,7 @@ export default function AIChatBot({
                                   <WifiOff className="w-4 h-4" aria-hidden />
                                   <span className="max-lg:hidden">Ngoại tuyến</span>
                                 </button>
+                                {LLM_AVAILABLE && (<>
                                 <span className="relative inline-flex">
                                   <select
                                     value={llmModel}
@@ -1780,6 +1781,7 @@ export default function AIChatBot({
                                     <span className="max-lg:hidden">{llmProgress === null ? 'Tải AI trong máy' : `${llmProgress}%`}</span>
                                   </button>
                                 )}
+                                </>)}
                                 <button
                                   type="button"
                                   onClick={toggleListening}
